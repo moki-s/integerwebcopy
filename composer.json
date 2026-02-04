@@ -1,0 +1,11 @@
+{
+    "name": "integer/integer-training",
+    "description": "Custom PHP E-Commerce Platform for Integer Training",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {}
+}
