@@ -633,6 +633,119 @@ img {
         grid-template-columns: 1fr !important;
     }
 
+    /* ===== PRODUCT PAGE MOBILE ===== */
+
+    .product-header {
+        padding: 0.75rem 0 !important;
+    }
+    .product-header h1 {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    .product-meta {
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* Stack to single column */
+    .product-layout {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+        padding-top: 1rem !important;
+    }
+
+    /* Sidebar: un-stick, full width */
+    .product-sidebar {
+        position: static !important;
+        order: -1;
+    }
+
+    /* Benefits grid: single column */
+    .product-benefits-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Review carousel: constrain overflow */
+    .product-layout [style*="animation: simple-swap"] {
+        width: 100% !important;
+    }
+
+    /* ===== CART PAGE MOBILE ===== */
+
+    .cart-layout {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+
+    /* Hide table header, stack cells */
+    .cart-table thead {
+        display: none;
+    }
+    .cart-table tbody tr {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+    .cart-table tbody td {
+        padding: 0.25rem 0 !important;
+        border: none !important;
+    }
+    /* Price column */
+    .cart-table tbody td:nth-child(2) {
+        display: none;
+    }
+    /* Total column */
+    .cart-table tbody td:nth-child(3) {
+        font-size: 1.1rem;
+    }
+    /* Remove link */
+    .cart-table tbody td:nth-child(4) {
+        text-align: left !important;
+    }
+
+    .cart-summary {
+        padding: 1.25rem !important;
+    }
+
+    /* ===== CHECKOUT PAGE MOBILE ===== */
+
+    .checkout-container {
+        padding: 1.5rem 1rem !important;
+    }
+    .checkout-container > h1 {
+        font-size: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .checkout-layout {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+
+    /* Order summary: show first on mobile */
+    .checkout-summary {
+        order: -1;
+        padding: 1.25rem !important;
+    }
+
+    /* Name row: stack on mobile */
+    .checkout-name-row {
+        grid-template-columns: 1fr !important;
+    }
+
+    .checkout-pay-btn {
+        font-size: 1rem !important;
+        padding: 0.85rem !important;
+    }
+
+    /* ===== FOOTER MOBILE ===== */
+    .footer-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+
     /* ===== GLOBAL: prevent overflow on all elements ===== */
     img, video, iframe, table, pre, code {
         max-width: 100% !important;
