@@ -5,7 +5,7 @@
     box-sizing: border-box;
 }
 
-html, body {
+html {
     overflow-x: hidden;
     max-width: 100vw;
 }
@@ -183,6 +183,25 @@ img {
     gap: 1rem;
 }
 
+/* Desktop phone number in header */
+.header-phone-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--color-primary-navy);
+    color: white !important;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1rem;
+    font-family: var(--font-heading);
+    transition: background-color 0.2s ease;
+}
+.header-phone-link:hover {
+    background-color: #152a45;
+    color: white !important;
+}
+
 /* Footer Styles */
 .site-footer {
     background-color: var(--color-primary-navy);
@@ -318,14 +337,25 @@ img {
     .header-main { padding: 0.5rem 0; }
     .logo img { height: 45px !important; }
 
-    /* Show phone number */
+    /* Show phone number — prominent on mobile */
     .mobile-header-phone {
-        display: block !important;
-        color: var(--color-primary-navy);
-        font-weight: 600;
-        font-size: 0.9rem;
+        display: inline-flex !important;
+        align-items: center;
+        gap: 0.4rem;
+        color: white !important;
+        background-color: var(--color-primary-navy);
+        font-weight: 700;
+        font-size: 1.05rem;
         margin-left: auto;
-        margin-right: 1rem;
+        margin-right: 0.75rem;
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        letter-spacing: 0.3px;
+    }
+
+    /* Hide desktop phone link on mobile (shown via .mobile-header-phone instead) */
+    .header-phone-link {
+        display: none !important;
     }
 
     /* Show hamburger button */
