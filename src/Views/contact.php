@@ -1,5 +1,8 @@
 <?php
 // Contact View
+$form_success = $_SESSION['form_success'] ?? null;
+$form_error = $_SESSION['form_error'] ?? null;
+unset($_SESSION['form_success'], $_SESSION['form_error']);
 ?>
 
 <div class="contact-page" style="background-color: #f8f9fa; padding: 4rem 0;">
@@ -33,24 +36,31 @@
 
             <div class="contact-form-wrapper" style="background: #FFFDF7; padding: 3rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left; border: 1px solid #f0e6d2; max-width: 600px; margin: 0 auto;">
                 <h3 style="margin-bottom: 2rem; color: var(--color-primary-navy); text-align: center; font-size: 1.5rem;">Get Expert Advice</h3>
-                <form>
+                <?php if ($form_success): ?>
+                    <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; text-align: center; font-weight: 600;"><?php echo htmlspecialchars($form_success); ?></div>
+                <?php elseif ($form_error): ?>
+                    <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; text-align: center; font-weight: 600;"><?php echo htmlspecialchars($form_error); ?></div>
+                <?php endif; ?>
+                <form action="/enquiry" method="POST">
+                    <input type="hidden" name="page" value="contact">
+                    <input type="hidden" name="redirect" value="/contact">
                     <div style="margin-bottom: 1.5rem;">
                         <label class="contact-form-label" for="contact-name">Your Name <span style="color: var(--color-error-red);">*</span></label>
-                        <input id="contact-name" class="contact-input" type="text" placeholder="Your Name*" style="width: 100%; padding: 1rem; border: 1px solid #eaeaea; border-radius: 4px; background: white; font-family: var(--font-body);">
+                        <input id="contact-name" name="name" class="contact-input" type="text" placeholder="Your Name*" required style="width: 100%; padding: 1rem; border: 1px solid #eaeaea; border-radius: 4px; background: white; font-family: var(--font-body);">
                     </div>
                     <div style="margin-bottom: 1.5rem;">
                         <label class="contact-form-label" for="contact-email">Email <span style="color: var(--color-error-red);">*</span></label>
-                        <input id="contact-email" class="contact-input" type="email" placeholder="Email*" style="width: 100%; padding: 1rem; border: 1px solid #eaeaea; border-radius: 4px; background: white; font-family: var(--font-body);">
+                        <input id="contact-email" name="email" class="contact-input" type="email" placeholder="Email*" required style="width: 100%; padding: 1rem; border: 1px solid #eaeaea; border-radius: 4px; background: white; font-family: var(--font-body);">
                     </div>
                     <div style="margin-bottom: 1.5rem;">
                         <label class="contact-form-label" for="contact-phone">Phone <span style="color: var(--color-error-red);">*</span></label>
-                        <input id="contact-phone" class="contact-input" type="tel" placeholder="Phone No*" style="width: 100%; padding: 1rem; border: 1px solid #eaeaea; border-radius: 4px; background: white; font-family: var(--font-body);">
+                        <input id="contact-phone" name="phone" class="contact-input" type="tel" placeholder="Phone No*" required style="width: 100%; padding: 1rem; border: 1px solid #eaeaea; border-radius: 4px; background: white; font-family: var(--font-body);">
                     </div>
                     <div style="margin-bottom: 2rem;">
                         <label class="contact-form-label" for="contact-course">Course Interest <span style="color: var(--color-error-red);">*</span></label>
-                        <input id="contact-course" class="contact-input" type="text" placeholder="Course Name You Are Interested?*" style="width: 100%; padding: 1rem; border: 1px solid #eaeaea; border-radius: 4px; background: white; font-family: var(--font-body);">
+                        <input id="contact-course" name="course_interest" class="contact-input" type="text" placeholder="Course Name You Are Interested?*" style="width: 100%; padding: 1rem; border: 1px solid #eaeaea; border-radius: 4px; background: white; font-family: var(--font-body);">
                     </div>
-                    <button class="btn contact-submit-btn" style="width: 100%; background-color: #FFD700; color: black; font-weight: 700; padding: 1rem; border: none; text-transform: uppercase; letter-spacing: 1px;">Enquire Today</button>
+                    <button type="submit" class="btn contact-submit-btn" style="width: 100%; background-color: #FFD700; color: black; font-weight: 700; padding: 1rem; border: none; text-transform: uppercase; letter-spacing: 1px;">Enquire Today</button>
                 </form>
             </div>
         </div>
