@@ -54,6 +54,193 @@ if ($uri === '/cart-remove') {
     exit;
 }
 
+// --- Stripe Payment: Create PaymentIntent ---
+if ($uri === '/checkout-process' && $requestMethod === 'POST') {
+    require_once __DIR__ . '/../src/Config/Stripe.php';
+    require_once __DIR__ . '/../src/Config/Supabase.php';
+    require_once __DIR__ . '/../src/Data/CourseData.php';
+
+    header('Content-Type: application/json');
+
+    $input = json_decode(file_get_contents('php://input'), true);
+    $pmId      = trim($input['payment_method_id'] ?? '');
+    $firstName = trim($input['first_name'] ?? '');
+    $lastName  = trim($input['last_name'] ?? '');
+    $email     = trim($input['email'] ?? '');
+    $phone     = trim($input['phone'] ?? '');
+
+    // Validate
+    if (!$pmId || !$firstName || !$lastName || !$email || !$phone) {
+        echo json_encode(['error' => 'All fields are required.']);
+        exit;
+    }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(['error' => 'Invalid email address.']);
+        exit;
+    }
+
+    // Recalculate total server-side from session cart
+    $cart = $_SESSION['cart'] ?? [];
+    if (empty($cart)) {
+        echo json_encode(['error' => 'Your cart is empty.']);
+        exit;
+    }
+
+    $total = 0;
+    $courseNames = [];
+    $courseIds = [];
+    foreach ($cart as $id => $qty) {
+        $course = getCourse($id);
+        if ($course) {
+            $total += $course['price'];
+            $courseNames[] = $course['title'];
+            $courseIds[] = $id;
+        }
+    }
+
+    if ($total <= 0) {
+        echo json_encode(['error' => 'Invalid cart total.']);
+        exit;
+    }
+
+    $amountPence = (int) round($total * 100);
+    $customerName = $firstName . ' ' . $lastName;
+
+    // Create PaymentIntent with manual confirmation
+    $result = stripeRequest('/v1/payment_intents', [
+        'amount'              => $amountPence,
+        'currency'            => 'gbp',
+        'payment_method'      => $pmId,
+        'confirm'             => 'true',
+        'confirmation_method' => 'manual',
+        'receipt_email'       => $email,
+        'description'         => 'Integer Training - ' . implode(', ', $courseNames),
+        'metadata[customer_name]'  => $customerName,
+        'metadata[customer_email]' => $email,
+        'metadata[customer_phone]' => $phone,
+        'metadata[course_ids]'     => implode(', ', $courseIds),
+    ]);
+
+    if (is_string($result)) {
+        echo json_encode(['error' => $result]);
+        exit;
+    }
+
+    $status = $result['status'] ?? '';
+
+    if ($status === 'succeeded') {
+        // Save order to Supabase
+        $orderNumber = 'INT-' . strtoupper(substr(md5(uniqid()), 0, 8));
+        supabaseInsert('orders', [
+            'order_number'     => $orderNumber,
+            'customer_name'    => $customerName,
+            'customer_email'   => $email,
+            'customer_phone'   => $phone,
+            'courses'          => implode(', ', $courseNames),
+            'course_ids'       => implode(', ', $courseIds),
+            'total'            => $total,
+            'stripe_payment_id'=> $result['id'],
+            'status'           => 'paid',
+        ]);
+
+        // Store for success page and clear cart
+        $_SESSION['last_order'] = [
+            'order_number' => $orderNumber,
+            'total'        => $total,
+            'courses'      => $courseNames,
+            'email'        => $email,
+            'name'         => $customerName,
+        ];
+        $_SESSION['cart'] = [];
+
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
+    if ($status === 'requires_action') {
+        echo json_encode([
+            'requires_action'             => true,
+            'payment_intent_client_secret' => $result['client_secret'],
+        ]);
+        exit;
+    }
+
+    echo json_encode(['error' => 'Payment failed. Please try again.']);
+    exit;
+}
+
+// --- Stripe Payment: Confirm after 3DS ---
+if ($uri === '/checkout-confirm' && $requestMethod === 'POST') {
+    require_once __DIR__ . '/../src/Config/Stripe.php';
+    require_once __DIR__ . '/../src/Config/Supabase.php';
+    require_once __DIR__ . '/../src/Data/CourseData.php';
+
+    header('Content-Type: application/json');
+
+    $input = json_decode(file_get_contents('php://input'), true);
+    $piId  = trim($input['payment_intent_id'] ?? '');
+
+    if (!$piId) {
+        echo json_encode(['error' => 'Missing payment intent ID.']);
+        exit;
+    }
+
+    $result = stripeRequest('/v1/payment_intents/' . $piId . '/confirm', []);
+
+    if (is_string($result)) {
+        echo json_encode(['error' => $result]);
+        exit;
+    }
+
+    if (($result['status'] ?? '') === 'succeeded') {
+        // Rebuild order data from cart + PI metadata
+        $cart = $_SESSION['cart'] ?? [];
+        $total = 0;
+        $courseNames = [];
+        $courseIds = [];
+        foreach ($cart as $id => $qty) {
+            $course = getCourse($id);
+            if ($course) {
+                $total += $course['price'];
+                $courseNames[] = $course['title'];
+                $courseIds[] = $id;
+            }
+        }
+
+        $customerName  = $result['metadata']['customer_name'] ?? 'Customer';
+        $customerEmail = $result['metadata']['customer_email'] ?? '';
+        $customerPhone = $result['metadata']['customer_phone'] ?? '';
+
+        $orderNumber = 'INT-' . strtoupper(substr(md5(uniqid()), 0, 8));
+        supabaseInsert('orders', [
+            'order_number'     => $orderNumber,
+            'customer_name'    => $customerName,
+            'customer_email'   => $customerEmail,
+            'customer_phone'   => $customerPhone,
+            'courses'          => implode(', ', $courseNames),
+            'course_ids'       => implode(', ', $courseIds),
+            'total'            => $total,
+            'stripe_payment_id'=> $result['id'],
+            'status'           => 'paid',
+        ]);
+
+        $_SESSION['last_order'] = [
+            'order_number' => $orderNumber,
+            'total'        => $total,
+            'courses'      => $courseNames,
+            'email'        => $customerEmail,
+            'name'         => $customerName,
+        ];
+        $_SESSION['cart'] = [];
+
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
+    echo json_encode(['error' => 'Payment could not be confirmed. Please try again.']);
+    exit;
+}
+
 // --- Enquiry Form Handler ---
 if ($uri === '/enquiry' && $requestMethod === 'POST') {
     require_once __DIR__ . '/../src/Config/Supabase.php';
@@ -122,6 +309,13 @@ elseif ($uri === '/checkout') {
         exit;
     }
     $view = 'checkout.php';
+}
+elseif ($uri === '/order-success') {
+    if (empty($_SESSION['last_order'])) {
+        header('Location: /');
+        exit;
+    }
+    $view = 'order-success.php';
 }
 elseif ($uri === '/login') {
     $view = 'student_login.php';

@@ -1,6 +1,7 @@
 <?php
-// Checkout View - Dynamic
+// Checkout View - Dynamic with Stripe Payment
 require_once __DIR__ . '/../Data/CourseData.php';
+require_once __DIR__ . '/../Config/Stripe.php';
 
 $cart = $_SESSION['cart'] ?? [];
 $cart_items = [];
@@ -33,7 +34,7 @@ unset($_SESSION['checkout_error']);
 
         <!-- Checkout Form -->
         <div class="checkout-form-col">
-            <form id="checkout-form" method="POST" action="/checkout-process">
+            <form id="checkout-form" data-stripe-key="<?php echo htmlspecialchars(STRIPE_PUBLISHABLE_KEY); ?>">
                 <div style="background: white; border: 1px solid #eee; border-radius: var(--radius-md); padding: 2rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
                     <h3 style="margin-top: 0; margin-bottom: 1.5rem; color: var(--color-primary-navy); display: flex; align-items: center; gap: 0.5rem;">
                         <span style="background: var(--color-primary-navy); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">1</span>
@@ -43,22 +44,22 @@ unset($_SESSION['checkout_error']);
                     <div class="checkout-name-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                         <div>
                             <label style="display: block; font-size: 0.9rem; margin-bottom: 0.4rem; font-weight: 500;">First Name <span style="color: var(--color-error-red);">*</span></label>
-                            <input type="text" name="first_name" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
+                            <input type="text" id="first_name" name="first_name" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
                         </div>
                         <div>
                             <label style="display: block; font-size: 0.9rem; margin-bottom: 0.4rem; font-weight: 500;">Last Name <span style="color: var(--color-error-red);">*</span></label>
-                            <input type="text" name="last_name" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
+                            <input type="text" id="last_name" name="last_name" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
                         </div>
                     </div>
 
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; font-size: 0.9rem; margin-bottom: 0.4rem; font-weight: 500;">Email Address <span style="color: var(--color-error-red);">*</span></label>
-                        <input type="email" name="email" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
+                        <input type="email" id="email" name="email" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
                     </div>
 
                     <div style="margin-bottom: 0;">
                         <label style="display: block; font-size: 0.9rem; margin-bottom: 0.4rem; font-weight: 500;">Phone Number <span style="color: var(--color-error-red);">*</span></label>
-                        <input type="tel" name="phone" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
+                        <input type="tel" id="phone" name="phone" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
                     </div>
                 </div>
 
@@ -68,13 +69,13 @@ unset($_SESSION['checkout_error']);
                         Payment Details
                     </h3>
 
-                    <!-- Stripe Elements placeholder -->
-                    <div id="stripe-card-element" style="background: #f8f9fa; border: 1px dashed #ccc; padding: 2rem; text-align: center; border-radius: 4px; color: #666;">
-                        [Stripe Elements Payment Form Will Load Here]
-                    </div>
+                    <!-- Stripe Card Element -->
+                    <div id="stripe-card-element" style="background: #fff; border: 1px solid #ddd; padding: 0.75rem; border-radius: 4px;"></div>
+                    <div id="stripe-card-errors" style="color: #e53e3e; font-size: 0.85rem; margin-top: 0.5rem; min-height: 1.2em;"></div>
 
-                    <button type="submit" class="btn btn-primary checkout-pay-btn" style="width: 100%; margin-top: 1.5rem; font-size: 1.1rem; padding: 1rem;">
-                        Pay &pound;<?php echo number_format($total, 2); ?>
+                    <button type="submit" id="submit-btn" class="btn btn-primary checkout-pay-btn" style="width: 100%; margin-top: 1.5rem; font-size: 1.1rem; padding: 1rem;">
+                        <span id="btn-text">Pay &pound;<?php echo number_format($total, 2); ?></span>
+                        <span id="btn-spinner" style="display: none;">Processing...</span>
                     </button>
                     <div style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #666;">
                         🔒 256-bit SSL Secure Encrypted Payment
@@ -116,3 +117,127 @@ unset($_SESSION['checkout_error']);
 
     </div>
 </div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+(function() {
+    var form = document.getElementById('checkout-form');
+    var stripeKey = form.getAttribute('data-stripe-key');
+    var stripe = Stripe(stripeKey);
+    var elements = stripe.elements();
+
+    var card = elements.create('card', {
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#1a1a1a',
+                fontFamily: '"Inter", sans-serif',
+                '::placeholder': { color: '#999' }
+            },
+            invalid: { color: '#e53e3e' }
+        }
+    });
+    card.mount('#stripe-card-element');
+
+    var errorEl = document.getElementById('stripe-card-errors');
+    card.on('change', function(event) {
+        errorEl.textContent = event.error ? event.error.message : '';
+    });
+
+    var isProcessing = false;
+    var submitBtn = document.getElementById('submit-btn');
+    var btnText = document.getElementById('btn-text');
+    var btnSpinner = document.getElementById('btn-spinner');
+
+    function setLoading(loading) {
+        isProcessing = loading;
+        submitBtn.disabled = loading;
+        btnText.style.display = loading ? 'none' : 'inline';
+        btnSpinner.style.display = loading ? 'inline' : 'none';
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (isProcessing) return;
+
+        var firstName = document.getElementById('first_name').value.trim();
+        var lastName = document.getElementById('last_name').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var phone = document.getElementById('phone').value.trim();
+
+        if (!firstName || !lastName || !email || !phone) {
+            errorEl.textContent = 'Please fill in all required fields.';
+            return;
+        }
+
+        errorEl.textContent = '';
+        setLoading(true);
+
+        stripe.createPaymentMethod({ type: 'card', card: card, billing_details: { name: firstName + ' ' + lastName, email: email, phone: phone } })
+        .then(function(result) {
+            if (result.error) {
+                errorEl.textContent = result.error.message;
+                setLoading(false);
+                return;
+            }
+            return fetch('/checkout-process', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    payment_method_id: result.paymentMethod.id,
+                    first_name: firstName,
+                    last_name: lastName,
+                    email: email,
+                    phone: phone
+                })
+            });
+        })
+        .then(function(response) {
+            if (!response) return;
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data) return;
+            if (data.success) {
+                window.location.href = '/order-success';
+                return;
+            }
+            if (data.requires_action) {
+                stripe.handleCardAction(data.payment_intent_client_secret)
+                .then(function(actionResult) {
+                    if (actionResult.error) {
+                        errorEl.textContent = actionResult.error.message;
+                        setLoading(false);
+                        return;
+                    }
+                    return fetch('/checkout-confirm', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ payment_intent_id: actionResult.paymentIntent.id })
+                    });
+                })
+                .then(function(response) {
+                    if (!response) return;
+                    return response.json();
+                })
+                .then(function(confirmData) {
+                    if (!confirmData) return;
+                    if (confirmData.success) {
+                        window.location.href = '/order-success';
+                    } else {
+                        errorEl.textContent = confirmData.error || 'Payment failed. Please try again.';
+                        setLoading(false);
+                    }
+                });
+                return;
+            }
+            errorEl.textContent = data.error || 'Payment failed. Please try again.';
+            setLoading(false);
+        })
+        .catch(function(err) {
+            errorEl.textContent = 'An error occurred. Please try again.';
+            setLoading(false);
+        });
+    });
+})();
+</script>
