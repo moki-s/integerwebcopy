@@ -18,7 +18,7 @@ $sidebarLinks = [
 ];
 ?>
 
-<div style="background-color: var(--color-primary-navy); color: white; padding: 4rem 0;">
+<div class="about-hero" style="background-color: var(--color-primary-navy); color: white; padding: 4rem 0;">
     <div class="container" style="text-align: center;">
         <h1 style="margin: 0; font-size: 2.5rem;"><?php echo $sidebarLinks[$section] ?? 'About Us'; ?></h1>
         <p style="opacity: 0.9; margin-top: 1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
@@ -27,11 +27,17 @@ $sidebarLinks = [
     </div>
 </div>
 
-<div class="container" style="padding: 4rem 1rem;">
-    <div style="display: grid; grid-template-columns: 280px 1fr; gap: 3rem; align-items: start;">
-        
+<div class="container about-layout" style="padding: 4rem 1rem;">
+    <div class="about-grid" style="display: grid; grid-template-columns: 280px 1fr; gap: 3rem; align-items: start;">
+
+        <!-- Mobile Menu Toggle (hidden on desktop) -->
+        <button class="mobile-filter-toggle" onclick="document.getElementById('aboutSidebar').classList.toggle('open')" style="grid-column: 1 / -1;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            Menu
+        </button>
+
         <!-- Sidebar Navigation -->
-        <aside style="background: white; border: 1px solid #eee; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-sm);">
+        <aside id="aboutSidebar" class="about-sidebar" style="background: white; border: 1px solid #eee; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-sm);">
             <div style="padding: 1rem 1.5rem; background: #f8f9fa; border-bottom: 1px solid #eee; font-weight: 600; color: var(--color-primary-navy);">
                 Menu
             </div>
