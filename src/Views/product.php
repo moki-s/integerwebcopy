@@ -249,12 +249,16 @@ endforeach; ?>
     <div class="product-sidebar" style="position: sticky; top: 100px; height: fit-content; align-self: start;">
         <div style="background: white; border: 1px solid #eee; box-shadow: var(--shadow-lg); border-radius: var(--radius-md); overflow: hidden;">
             
-            <!-- Video/Image Placeholder -->
-            <div style="height: 180px; background-color: #f0f4f8; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #eee;">
-                <div style="text-align: center;">
-                    <div style="font-size: 3rem; margin-bottom: 0.5rem;"><?php echo $course['icon']; ?></div>
-                    <div style="font-size: 0.8rem; color: #666;">Course Preview</div>
-                </div>
+            <!-- Course Image -->
+            <div style="height: 180px; background-color: #f0f4f8; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #eee; overflow: hidden;">
+                <?php if (!empty($course['image'])): ?>
+                    <img src="<?php echo $course['image']; ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                <?php else: ?>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;"><?php echo $course['icon']; ?></div>
+                        <div style="font-size: 0.8rem; color: #666;">Course Preview</div>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div style="padding: 1.5rem;">

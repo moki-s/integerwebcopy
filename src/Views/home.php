@@ -228,8 +228,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
             <!-- Category Card 1 -->
             <a href="/courses?category[]=Accounting" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
-                <div style="height: 200px; background-color: #e0e7ff; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--color-primary-navy);">
-                    📊
+                <div style="height: 200px; overflow: hidden;">
+                    <img src="/assets/images/courses/accounting/acc-thumb.png" alt="Accounting Courses" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div style="padding: 1.5rem;">
                     <h3 style="margin-bottom: 0.5rem;">Accounting</h3>
@@ -240,8 +240,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             <!-- Category Card 2 -->
             <a href="/courses?category[]=Health+%26+Social+Care" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
-                <div style="height: 200px; background-color: #d1fae5; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--color-accent-teal);">
-                    🩺
+                <div style="height: 200px; overflow: hidden;">
+                    <img src="/assets/images/courses/health-social/hs-thumb.png" alt="Health & Social Care Courses" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div style="padding: 1.5rem;">
                     <h3 style="margin-bottom: 0.5rem;">Health & Social Care</h3>
@@ -252,8 +252,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
              <!-- Category Card 3 -->
              <a href="/courses?category[]=Business+Studies" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
-                <div style="height: 200px; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--color-integer-yellow);">
-                    💼
+                <div style="height: 200px; overflow: hidden;">
+                    <img src="/assets/images/courses/business/team-leading-cert.png" alt="Business Studies Courses" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div style="padding: 1.5rem;">
                     <h3 style="margin-bottom: 0.5rem;">Business & Management</h3>

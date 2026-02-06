@@ -15,6 +15,7 @@ const COURSES_DATA = [
         'badge' => 'ENTRY LEVEL',
         'badge_color' => '#2F855A',
         'icon' => '📊',
+        'image' => '/assets/images/courses/accounting/aat-level-1-business-skills.png',
         'overview' => 'This entry-level qualification helps you support finance teams with everyday business activities, and understand sales and purchase processes. Perfect for school leavers or those returning to work.',
         'curriculum' => [
             'Working in the Business Environment',
@@ -34,6 +35,7 @@ const COURSES_DATA = [
         'badge' => 'ENTRY LEVEL',
         'badge_color' => '#2F855A',
         'icon' => '📒',
+        'image' => '/assets/images/courses/accounting/aat-level-1-bookkeeping.png',
         'overview' => 'An introductory course offering a solid foundation in manual bookkeeping skills, including double-entry bookkeeping and associated documents.',
         'curriculum' => [
             'Bookkeeping Fundamentals',
@@ -53,6 +55,7 @@ const COURSES_DATA = [
         'badge' => 'POPULAR',
         'badge_color' => '#2F855A',
         'icon' => '📊',
+        'image' => '/assets/images/courses/accounting/aat-level-2-accounting.png',
         'overview' => 'The AAT Level 2 Certificate in Accounting is your gateway to a career in finance. This practical course covers all the foundational aspects of accounting, from bookkeeping and costing to mastering software and understanding business environments. Designed with flexibility in mind, this qualification suits both beginners and those looking to refresh their financial knowledge.',
         'curriculum' => [
             'Introduction to Bookkeeping',
@@ -76,6 +79,7 @@ const COURSES_DATA = [
         'badge' => 'ENTRY LEVEL',
         'badge_color' => '#2F855A',
         'icon' => '📒',
+        'image' => '/assets/images/courses/accounting/aat-level-2-bookkeeping.png',
         'overview' => 'A short, sharp qualification that delivers the essential skills for manual and digital bookkeeping. Perfect for those who want to focus specifically on bookkeeping roles or run their own small business finances.',
         'curriculum' => [
             'Introduction to Bookkeeping',
@@ -94,6 +98,7 @@ const COURSES_DATA = [
         'badge' => 'ADVANCED',
         'badge_color' => '#D69E2E',
         'icon' => '📈',
+        'image' => '/assets/images/courses/accounting/aat-level-3-accounting.png',
         'overview' => 'Master complex financial processes, including final accounts, reports, and returns. This advanced diploma represents the next step for accounting professionals, covering indirect tax, management accounting, and financial accounting.',
         'curriculum' => [
             'Business Awareness',
@@ -114,6 +119,7 @@ const COURSES_DATA = [
         'badge' => 'ADVANCED',
         'badge_color' => '#D69E2E',
         'icon' => '📚',
+        'image' => '/assets/images/courses/accounting/aat-level-3-bookkeeping.png',
         'overview' => 'Develop advanced bookkeeping skills needed for senior roles. Learn to prepare financial statements for sole traders and partnerships, and understand the VAT system.',
         'curriculum' => [
             'Financial Accounting: Preparing Financial Statements',
@@ -132,6 +138,7 @@ const COURSES_DATA = [
         'badge' => 'PROFESSIONAL',
         'badge_color' => '#3182CE',
         'icon' => '🎓',
+        'image' => '/assets/images/courses/accounting/aat-level-4-accounting.png',
         'overview' => 'The highest level of AAT qualification. Become a fully qualified accounting technician. This course covers complex accounting tasks including drafting financial statements, managing budgets, and evaluating financial performance.',
         'curriculum' => [
             'Applied Management Accounting',
@@ -155,6 +162,7 @@ const COURSES_DATA = [
         'badge' => 'CARE',
         'badge_color' => '#38B2AC',
         'icon' => '🩺',
+        'image' => '/assets/images/courses/health-social/ncfe-level-2-care.png',
         'overview' => 'The NCFE CACHE Level 2 Diploma in Care is the standard qualification for those working in adult care settings in England. It confirms occupational competence for roles such as Adult Care Worker or Healthcare Assistant.',
         'curriculum' => [
             'Communication in care settings',
@@ -175,6 +183,7 @@ const COURSES_DATA = [
         'badge' => 'PRACTITIONER',
         'badge_color' => '#38B2AC',
         'icon' => '🧸',
+        'image' => '/assets/images/courses/health-social/ncfe-level-2-early-years.png',
         'overview' => 'Provides learners with the knowledge and skills required to work with children from birth to 5 years and up to 7 years. Ideal for those starting a career in nurseries or pre-schools.',
         'curriculum' => [
             'Roles and responsibilities of the early years practitioner',
@@ -195,6 +204,7 @@ const COURSES_DATA = [
         'badge' => 'ADVANCED',
         'badge_color' => '#D69E2E',
         'icon' => '🏥',
+        'image' => '/assets/images/courses/health-social/ncfe-level-3-adult-care.png',
         'overview' => 'For those working in lead adult care roles. This qualification develops the knowledge and skills required to work in a senior capacity, often supervising others.',
         'curriculum' => [
             'Promote personal development in care settings',
@@ -215,6 +225,7 @@ const COURSES_DATA = [
         'badge' => 'MANAGEMENT',
         'badge_color' => '#805AD5',
         'icon' => '👔',
+        'image' => '/assets/images/courses/health-social/ncfe-level-5-adult-care.png',
         'overview' => 'A comprehensive qualification for those managing an adult care service. Covers leadership, governance, regulatory compliance, and strategic management.',
         'curriculum' => [
             'Leadership and management in adult care',
@@ -235,6 +246,7 @@ const COURSES_DATA = [
         'badge' => 'MANAGEMENT',
         'badge_color' => '#805AD5',
         'icon' => '🏠',
+        'image' => '/assets/images/courses/health-social/level-5-residential-childcare.png',
         'overview' => 'Designed for those managing residential childcare settings. This qualification covers leading and managing a service, ensuring positive outcomes for children and young people.',
         'curriculum' => [
             'Leading and managing a residential childcare setting',
@@ -257,6 +269,7 @@ const COURSES_DATA = [
         'badge' => 'WORKPLACE',
         'badge_color' => '#319795',
         'icon' => '🛠️',
+        'image' => '/assets/images/courses/occupational/occ-studies-cert.png',
         'overview' => 'Intended to give learners a solid base from which to further develop their skills and learning. Prepares learners for work through real or simulated work situations.',
         'curriculum' => [
             'Building confidence for the workplace',
@@ -276,6 +289,7 @@ const COURSES_DATA = [
         'badge' => 'WORKPLACE',
         'badge_color' => '#319795',
         'icon' => '🏗️',
+        'image' => '/assets/images/courses/occupational/occ-studies-diploma.png',
         'overview' => 'A comprehensive qualification providing a range of practical skills and knowledge for the workplace. Ideal for learners seeking to enter a specific vocational area.',
         'curriculum' => [
             'Workplace Preparation',
@@ -296,6 +310,7 @@ const COURSES_DATA = [
         'badge' => 'LEVEL 2',
         'badge_color' => '#319795',
         'icon' => '⚒️',
+        'image' => '/assets/images/courses/occupational/level-2-occ-studies.png',
         'overview' => 'Progression from the Level 1 certificate, this course offers more in-depth knowledge and practical skills for the modern workplace.',
         'curriculum' => [
             'Advanced Workplace Skills',
@@ -315,6 +330,7 @@ const COURSES_DATA = [
         'badge' => 'EMPLOYABILITY',
         'badge_color' => '#ED8936',
         'icon' => '🚀',
+        'image' => '/assets/images/courses/occupational/personal-dev-cert.png',
         'overview' => 'Designed to help learners develop the personal and social skills needed for employment. Covers confidence building, job searching, and interview techniques.',
         'curriculum' => [
             'Self-Assessment',
@@ -335,6 +351,7 @@ const COURSES_DATA = [
         'badge' => 'EMPLOYABILITY',
         'badge_color' => '#ED8936',
         'icon' => '🌟',
+        'image' => '/assets/images/courses/occupational/personal-dev-diploma.png',
         'overview' => 'An extensive course covering personal development and employability skills. Included extended modules on workplace behaviors and communication.',
         'curriculum' => [
             'Effective Communication',
@@ -355,6 +372,7 @@ const COURSES_DATA = [
         'badge' => 'CUSTOMER SERVICE',
         'badge_color' => '#4299E1',
         'icon' => '📞',
+        'image' => '/assets/images/courses/occupational/work-related-cert.png',
         'overview' => 'Prepares learners for work in the customer service sector. Covers the basics of customer interactions and service delivery.',
         'curriculum' => [
             'Principles of Customer Service',
@@ -374,6 +392,7 @@ const COURSES_DATA = [
         'badge' => 'CUSTOMER SERVICE',
         'badge_color' => '#4299E1',
         'icon' => '🎧',
+        'image' => '/assets/images/courses/occupational/work-related-diploma.png',
         'overview' => 'A comprehensive qualification for those wishing to pursue a career in customer service. Includes advanced modules on service standards and customer relationship management.',
         'curriculum' => [
             'Delivering Reliable Customer Service',
@@ -394,6 +413,7 @@ const COURSES_DATA = [
         'badge' => 'SAFETY',
         'badge_color' => '#E53E3E',
         'icon' => '🦺',
+        'image' => '/assets/images/courses/occupational/health-safety-award.png',
         'overview' => 'Essential healthy and safety knowledge for any workplace. Covers risk assessment, manual handling, and legal responsibilities.',
         'curriculum' => [
             'Introduction to Health and Safety',
@@ -416,6 +436,7 @@ const COURSES_DATA = [
         'badge' => 'MATHS',
         'badge_color' => '#3182CE',
         'icon' => '➗',
+        'image' => '/assets/images/courses/functional-skills/functional-maths-level-1.png',
         'overview' => 'Develop practical, transferable skills in Mathematics to work confidently, effectively, and independently in life. Suitable for a wide range of learners.',
         'curriculum' => [
             'Using numbers and the number system',
@@ -435,6 +456,7 @@ const COURSES_DATA = [
         'badge' => 'MATHS',
         'badge_color' => '#3182CE',
         'icon' => '📐',
+        'image' => '/assets/images/courses/functional-skills/functional-maths-level-2.png',
         'overview' => 'Equivalent to a GCSE Grade 4 (C). This qualification provides the skills needed for further education and employment. Essential for many university applications and job roles.',
         'curriculum' => [
             'Data Handling and Statistics',
@@ -455,6 +477,7 @@ const COURSES_DATA = [
         'badge' => 'ENGLISH',
         'badge_color' => '#DD6B20',
         'icon' => '📖',
+        'image' => '/assets/images/courses/functional-skills/functional-english-level-1.png',
         'overview' => 'Improve your reading, writing, and communication skills. This course gives you the confidence to apply English skills in work and everyday life.',
         'curriculum' => [
             'Reading',
@@ -474,6 +497,7 @@ const COURSES_DATA = [
         'badge' => 'ENGLISH',
         'badge_color' => '#DD6B20',
         'icon' => '✍️',
+        'image' => '/assets/images/courses/functional-skills/functional-english-level-2.png',
         'overview' => 'Equivalent to a GCSE Grade 4 (C). Demonstrates the ability to read, write, speak, listen, and communicate in English. Required for many higher education courses.',
         'curriculum' => [
             'Reading for Information',
@@ -495,6 +519,7 @@ const COURSES_DATA = [
         'badge' => 'SAFETY',
         'badge_color' => '#E53E3E',
         'icon' => '🚑',
+        'image' => '/assets/images/courses/security/first-aid-level-3.png',
         'overview' => 'A one-day course covering the essentials of emergency first aid in the workplace. Meets HSE requirements for low-risk workplaces.',
         'curriculum' => [
             'Roles and responsibilities of a first aider',
@@ -515,6 +540,7 @@ const COURSES_DATA = [
         'badge' => 'LICENSE',
         'badge_color' => '#2A4365',
         'icon' => '🛡️',
+        'image' => '/assets/images/courses/security/door-supervisor-level-2.png',
         'overview' => 'The standard qualification required to apply for an SIA Door Supervisor license. Covers legal aspects, physical intervention, and conflict management.',
         'curriculum' => [
             'Working in the Private Security Industry',
@@ -535,6 +561,7 @@ const COURSES_DATA = [
         'badge' => 'STEWARDING',
         'badge_color' => '#2A4365',
         'icon' => '🏟️',
+        'image' => '/assets/images/courses/security/spectator-safety-level-2.png',
         'overview' => 'Required for working as a steward at sports grounds and events. Covers crowd control, health and safety, and dealing with accidents and emergencies.',
         'curriculum' => [
             'Prepare for spectator events',
@@ -555,6 +582,7 @@ const COURSES_DATA = [
         'badge' => 'MANAGEMENT',
         'badge_color' => '#2A4365',
         'icon' => '📋',
+        'image' => '/assets/images/courses/security/spectator-safety-level-4.png',
         'overview' => 'A qualification for Safety Officers and Senior Stewards. Focuses on the planning and management of spectator safety at events.',
         'curriculum' => [
             'Plan for the safety of people at a spectator event',
@@ -575,6 +603,7 @@ const COURSES_DATA = [
         'badge' => 'SECURITY',
         'badge_color' => '#2A4365',
         'icon' => '🎟️',
+        'image' => '/assets/images/courses/security/event-security-level-2.png',
         'overview' => 'Specific training for security operatives working at events and festivals. Covers searching, patrolling, and controlling entry/exit points.',
         'curriculum' => [
             'Event Security Guidelines',
@@ -597,6 +626,7 @@ const COURSES_DATA = [
         'badge' => 'LEADERSHIP',
         'badge_color' => '#D69E2E',
         'icon' => '💼',
+        'image' => '/assets/images/courses/business/team-leading-cert.png',
         'overview' => 'Ideal for new or aspiring team leaders. This course develops the skills needed to lead a team effectively, including communication, coaching, and managing performance.',
         'curriculum' => [
             'Principles of Team Leading',

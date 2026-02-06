@@ -159,12 +159,16 @@ endforeach; ?>
             <?php foreach ($filtered_courses as $c): ?>
             <!-- Course Card -->
             <div style="background: white; border: 1px solid #eee; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
-                <div style="height: 160px; background-color: #f8fafc; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
-                    <?php echo $c['icon']; ?>
+                <div style="height: 160px; background-color: #f8fafc; display: flex; align-items: center; justify-content: center; font-size: 3rem; overflow: hidden;">
+                    <?php if (!empty($c['image'])): ?>
+                        <img src="<?php echo $c['image']; ?>" alt="<?php echo htmlspecialchars($c['title']); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                    <?php else: ?>
+                        <?php echo $c['icon']; ?>
+                    <?php endif; ?>
                 </div>
                 <div style="padding: 1.5rem;">
                     <span style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px;"><?php echo $c['category']; ?></span>
-                    <h3 style="margin: 0.5rem 0; font-size: 1.1rem; min-height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    <h3 style="margin: 0.5rem 0; font-size: 1.05rem; min-height: 0;">
                         <a href="/product?id=<?php echo $c['id']; ?>"><?php echo $c['title']; ?></a>
                     </h3>
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
