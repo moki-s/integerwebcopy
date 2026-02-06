@@ -34,12 +34,12 @@ $total = $subtotal; // If inclusive
     <?php
 else: ?>
     
-    <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem; align-items: start;">
+    <div class="cart-layout" style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem; align-items: start;">
         
         <!-- Cart Items -->
         <div>
             <div style="background: white; border: 1px solid #eee; border-radius: var(--radius-md); overflow: hidden;">
-                <table style="width: 100%; border-collapse: collapse;">
+                <table class="cart-table" style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background: #f8f9fa; border-bottom: 1px solid #eee; text-align: left;">
                             <th style="padding: 1rem;">Course</th>
@@ -80,7 +80,7 @@ else: ?>
         </div>
         
         <!-- Order Summary -->
-        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid #eee;">
+        <div class="cart-summary" style="background: #f8f9fa; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid #eee;">
             <h3 style="margin-top: 0; margin-bottom: 1.5rem;">Order Summary</h3>
             
             <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; color: #555;">

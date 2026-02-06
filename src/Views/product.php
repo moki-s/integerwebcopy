@@ -13,7 +13,7 @@ if (!$course) {
 
 ?>
 
-<div style="background-color: #fff; border-bottom: 1px solid #eee; padding: 1rem 0;">
+<div class="product-header" style="background-color: #fff; border-bottom: 1px solid #eee; padding: 1rem 0;">
     <div class="container">
         <!-- Breadcrumbs -->
         <div style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">
@@ -25,7 +25,7 @@ if (!$course) {
             <?php echo $course['badge']; ?>
         </span>
         <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; line-height: 1.2;"><?php echo $course['title']; ?></h1>
-        <div style="display: flex; gap: 1rem; font-size: 0.9rem; color: #666;">
+        <div class="product-meta" style="display: flex; gap: 1rem; font-size: 0.9rem; color: #666;">
             <span>👥 <?php echo number_format($course['students']); ?> Students Enrolled</span>
             <span>💻 Online Course</span>
             <span>🚀 Start Immediately</span>
@@ -33,7 +33,7 @@ if (!$course) {
     </div>
 </div>
 
-<div class="container" style="padding-top: 2rem; display: grid; grid-template-columns: 1fr 350px; gap: 3rem; position: relative;">
+<div class="container product-layout" style="padding-top: 2rem; display: grid; grid-template-columns: 1fr 350px; gap: 3rem; position: relative;">
     
     <!-- Main Content (Left) -->
     <div>
@@ -57,7 +57,7 @@ if (!$course) {
             </p>
             
             <h4 style="margin-top: 2rem; color: var(--color-primary-navy);">Why study this course?</h4>
-            <ul style="list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+            <ul class="product-benefits-grid" style="list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
                 <li style="display: flex; gap: 0.5rem; color: #555;">
                     <span style="color: var(--color-success-green);">✓</span> Accredited qualification
                 </li>
@@ -246,7 +246,7 @@ endforeach; ?>
     </div>
     
     <!-- Sidebar (Right) - Sticky -->
-    <div style="position: sticky; top: 100px; height: fit-content; align-self: start;">
+    <div class="product-sidebar" style="position: sticky; top: 100px; height: fit-content; align-self: start;">
         <div style="background: white; border: 1px solid #eee; box-shadow: var(--shadow-lg); border-radius: var(--radius-md); overflow: hidden;">
             
             <!-- Video/Image Placeholder -->
@@ -307,7 +307,7 @@ else: ?>
                 <?php
 endif; ?>
                 <div style="text-align: center;">
-                    <a href="#" style="font-size: 0.9rem; color: #666; text-decoration: underline;">Speak to a Course Advisor</a>
+                    <a href="/contact" style="font-size: 0.9rem; color: #666; text-decoration: underline;">Speak to a Course Advisor</a>
                 </div>
             </div>
             
