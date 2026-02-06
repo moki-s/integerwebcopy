@@ -3,48 +3,83 @@
 require_once __DIR__ . '/../Data/CourseData.php';
 $all_courses = getAllCourses();
 
-// 2. Extract Categories for Sidebar & Calculate Counts
+// Helper: extract level number from course title
+function extractLevel($title) {
+    if (preg_match('/Level\s+(\d+)/i', $title, $m)) {
+        return (int)$m[1];
+    }
+    return 0; // entry-level / no level specified
+}
+
+// Extract Categories & Levels for Sidebar
 $categories = [];
+$levels = [];
 foreach ($all_courses as $course) {
     $cat = $course['category'];
-    if (!isset($categories[$cat])) {
-        $categories[$cat] = 0;
+    $categories[$cat] = ($categories[$cat] ?? 0) + 1;
+
+    $lvl = extractLevel($course['title']);
+    if ($lvl > 0) {
+        $levels[$lvl] = ($levels[$lvl] ?? 0) + 1;
     }
-    $categories[$cat]++;
 }
 ksort($categories);
+ksort($levels);
 
-// 3. Handle Filtering
+$level_labels = [
+    1 => 'Level 1 (Entry)',
+    2 => 'Level 2 (Beginner)',
+    3 => 'Level 3 (Advanced)',
+    4 => 'Level 4 (Higher)',
+    5 => 'Level 5 (Professional)',
+];
+
+// Handle Category Filter
 $selected_categories = $_GET['category'] ?? [];
-// If it's not an array (e.g. single query param), make it one
 if (!is_array($selected_categories) && $selected_categories) {
     $selected_categories = [$selected_categories];
 }
 
-$filtered_courses = [];
-if (empty($selected_categories)) {
-    $filtered_courses = $all_courses;
+// Handle Level Filter
+$selected_levels = $_GET['level'] ?? [];
+if (!is_array($selected_levels) && $selected_levels) {
+    $selected_levels = [$selected_levels];
 }
-else {
-    foreach ($all_courses as $course) {
-        if (in_array($course['category'], $selected_categories)) {
-            $filtered_courses[] = $course;
-        }
-    }
+$selected_levels = array_map('intval', $selected_levels);
+
+// Apply category filter
+$filtered_courses = $all_courses;
+if (!empty($selected_categories)) {
+    $filtered_courses = array_filter($filtered_courses, function($c) use ($selected_categories) {
+        return in_array($c['category'], $selected_categories);
+    });
 }
 
-// 4. Handle Search Query
+// Apply level filter
+if (!empty($selected_levels)) {
+    $filtered_courses = array_filter($filtered_courses, function($c) use ($selected_levels) {
+        return in_array(extractLevel($c['title']), $selected_levels);
+    });
+}
+
+// Handle Search Query
 $search_query = trim($_GET['search'] ?? '');
 if ($search_query) {
-    $temp_filtered = [];
-    foreach ($filtered_courses as $course) {
-        // Search in Title and Category (case-insensitive)
-        if (stripos($course['title'], $search_query) !== false || stripos($course['category'], $search_query) !== false) {
-            $temp_filtered[] = $course;
-        }
-    }
-    $filtered_courses = $temp_filtered;
+    $filtered_courses = array_filter($filtered_courses, function($c) use ($search_query) {
+        return stripos($c['title'], $search_query) !== false || stripos($c['category'], $search_query) !== false;
+    });
 }
+
+// Handle Sorting
+$sort = $_GET['sort'] ?? 'popular';
+$filtered_courses = array_values($filtered_courses);
+usort($filtered_courses, function($a, $b) use ($sort) {
+    switch ($sort) {
+        case 'price_asc':  return $a['price'] - $b['price'];
+        case 'price_desc': return $b['price'] - $a['price'];
+        default:           return ($b['students'] ?? 0) - ($a['students'] ?? 0); // popularity
+    }
+});
 ?>
 
 <div class="courses-hero" style="background-color: var(--color-primary-navy); color: white; padding: 3rem 0;">
@@ -65,6 +100,8 @@ if ($search_query) {
     <!-- Sidebar Filters -->
     <aside id="courseFilters" class="courses-sidebar">
         <form method="GET" action="/courses">
+        <?php if ($search_query): ?><input type="hidden" name="search" value="<?php echo htmlspecialchars($search_query); ?>"><?php endif; ?>
+        <?php if ($sort !== 'popular'): ?><input type="hidden" name="sort" value="<?php echo htmlspecialchars($sort); ?>"><?php endif; ?>
         <div style="background: white; padding: 1.5rem; border: 1px solid #eee; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
             <h4 style="margin-top: 0; margin-bottom: 1rem;">Categories</h4>
                 <ul style="margin-bottom: 2rem;">
@@ -84,9 +121,17 @@ endforeach; ?>
 
             <h4 style="margin-top: 0; margin-bottom: 1rem;">Level</h4>
             <ul>
-                <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox"> Level 2 (Beginner)</label></li>
-                <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox"> Level 3 (Advanced)</label></li>
-                <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox"> Level 5 (Professional)</label></li>
+                <?php foreach ($levels as $lvl => $count): ?>
+                    <li style="margin-bottom: 0.5rem;">
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: #555;">
+                            <input type="checkbox" name="level[]" value="<?php echo $lvl; ?>"
+                                <?php echo in_array($lvl, $selected_levels) ? 'checked' : ''; ?>
+                                onchange="this.form.submit()">
+                            <?php echo $level_labels[$lvl] ?? "Level $lvl"; ?>
+                            <span style="color: #999; font-size: 0.85rem;">(<?php echo $count; ?>)</span>
+                        </label>
+                    </li>
+                <?php endforeach; ?>
             </ul>
         </div>
         </form>
@@ -96,10 +141,14 @@ endforeach; ?>
     <div class="courses-main">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <div>Showing <strong><?php echo count($filtered_courses); ?></strong> courses</div>
-            <select style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
-                <option>Sort by: Popularity</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
+            <select style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;" onchange="
+                var url = new URL(window.location);
+                url.searchParams.set('sort', this.value);
+                window.location = url;
+            ">
+                <option value="popular" <?php echo $sort === 'popular' ? 'selected' : ''; ?>>Sort by: Popularity</option>
+                <option value="price_asc" <?php echo $sort === 'price_asc' ? 'selected' : ''; ?>>Price: Low to High</option>
+                <option value="price_desc" <?php echo $sort === 'price_desc' ? 'selected' : ''; ?>>Price: High to Low</option>
             </select>
         </div>
         
@@ -133,15 +182,6 @@ endforeach; ?>
             <?php
 endforeach; ?>
             
-        </div>
-        
-        <!-- Pagination -->
-        <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 0.5rem;">
-            <a href="#" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 4px; color: #666;">&laquo;</a>
-            <a href="#" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-primary-navy); color: white; border-radius: 4px;">1</a>
-            <a href="#" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 4px; color: #666;">2</a>
-            <a href="#" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 4px; color: #666;">3</a>
-            <a href="#" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 4px; color: #666;">&raquo;</a>
         </div>
     </div>
 </div>
