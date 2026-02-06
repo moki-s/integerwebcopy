@@ -54,6 +54,44 @@ if ($uri === '/cart-remove') {
     exit;
 }
 
+// --- Enquiry Form Handler ---
+if ($uri === '/enquiry' && $requestMethod === 'POST') {
+    require_once __DIR__ . '/../src/Config/Supabase.php';
+
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
+    $course = trim($_POST['course_interest'] ?? '');
+    $message = trim($_POST['message'] ?? '');
+    $page = trim($_POST['page'] ?? 'unknown');
+
+    // Basic validation
+    if (!$name || !$email || !$phone) {
+        $_SESSION['form_error'] = 'Please fill in all required fields.';
+        header('Location: ' . ($_POST['redirect'] ?? '/contact'));
+        exit;
+    }
+
+    $result = supabaseInsert('enquiries', [
+        'name' => $name,
+        'email' => $email,
+        'phone' => $phone,
+        'course_interest' => $course ?: null,
+        'message' => $message ?: null,
+        'page' => $page,
+        'source' => 'website',
+    ]);
+
+    if ($result === true) {
+        $_SESSION['form_success'] = 'Thank you! We\'ll be in touch shortly.';
+    } else {
+        $_SESSION['form_error'] = 'Something went wrong. Please try again.';
+    }
+
+    header('Location: ' . ($_POST['redirect'] ?? '/contact'));
+    exit;
+}
+
 // Simple Routing Table (will expand later)
 
 // Remove query string
