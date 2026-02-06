@@ -61,6 +61,34 @@ function renderStars($rating)
     </div>
 </section>
 
+<!-- Mobile Lead Capture Form (hidden on desktop, shown on mobile via CSS) -->
+<section class="home-mobile-form">
+    <div class="container" style="max-width: 600px;">
+        <div style="background: #FFFDF7; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); text-align: left; border: 1px solid #f0e6d2;">
+            <h3 style="margin-bottom: 1.5rem; color: var(--color-primary-navy); text-align: center; font-size: 1.35rem;">Get Expert Advice</h3>
+            <form>
+                <div style="margin-bottom: 1rem;">
+                    <label class="contact-form-label" for="home-name">Your Name <span style="color:var(--color-error-red);">*</span></label>
+                    <input id="home-name" class="contact-input" type="text" placeholder="Your Name*" style="width:100%;padding:0.85rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label class="contact-form-label" for="home-email">Email <span style="color:var(--color-error-red);">*</span></label>
+                    <input id="home-email" class="contact-input" type="email" placeholder="Email*" style="width:100%;padding:0.85rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label class="contact-form-label" for="home-phone">Phone <span style="color:var(--color-error-red);">*</span></label>
+                    <input id="home-phone" class="contact-input" type="tel" placeholder="Phone No*" style="width:100%;padding:0.85rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
+                </div>
+                <div style="margin-bottom: 1.25rem;">
+                    <label class="contact-form-label" for="home-course">Course Interest <span style="color:var(--color-error-red);">*</span></label>
+                    <input id="home-course" class="contact-input" type="text" placeholder="Course You're Interested In?*" style="width:100%;padding:0.85rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
+                </div>
+                <button class="btn contact-submit-btn" style="width:100%;background-color:#FFD700;color:black;font-weight:700;padding:0.85rem;border:none;text-transform:uppercase;letter-spacing:1px;">Enquire Today</button>
+            </form>
+        </div>
+    </div>
+</section>
+
 <!-- Stats Bar -->
 <section class="stats-bar" style="transform: translateY(-40px); position: relative; z-index: 10;">
     <div class="container">
@@ -140,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="container">
         <!-- Trustpilot & Main Review Score -->
         <div style="margin-bottom: 3rem;">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #333;">
+            <div class="trustpilot-bar" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #333; flex-wrap: wrap;">
                 Our customers say <span style="font-weight: 700;">Excellent</span>
                 <?php echo renderStars(4.7); ?>
                 4.7 out of 5 based on 12,494 reviews
@@ -245,13 +273,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     </style>
     <div class="container">
-        <h2 style="text-align: center; color: var(--color-primary-navy); margin-bottom: 0.5rem; font-size: 2rem;">Our students rate us 'Excellent' on <span style="font-weight: 800;">Trustpilot</span></h2>
-        <p style="text-align: center; color: #666; margin-bottom: 3rem;">Join thousands of ambitious professionals just like you.</p>
+        <h2 class="reviews-heading" style="text-align: center; color: var(--color-primary-navy); margin-bottom: 0.5rem; font-size: 2rem;">Our students rate us 'Excellent' on <span style="font-weight: 800;">Trustpilot</span></h2>
+        <p class="reviews-subheading" style="text-align: center; color: #666; margin-bottom: 3rem;">Join thousands of ambitious professionals just like you.</p>
         
-        <div style="display: flex; gap: 3rem; align-items: center;">
-            
+        <div class="reviews-wrapper" style="display: flex; gap: 3rem; align-items: center;">
+
             <!-- Overall Rating Box (Fixed on Left) -->
-            <div style="flex: 0 0 220px; text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
+            <div class="reviews-rating-box" style="flex: 0 0 220px; text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
                 <div style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Excellent</div>
                 <div style="display: flex; justify-content: center; margin-bottom: 0.75rem;">
                     <?php echo renderStars(4.7); ?>
@@ -301,8 +329,8 @@ endfor;
     </div>
 </section>
 <!-- Course Advisor CTA Section -->
-<section style="background: linear-gradient(90deg, #3FA9CB 0%, #1E3A8A 100%); padding: 3rem 0; position: relative; overflow: hidden; min-height: 300px; display: flex; align-items: center;">
-    <div class="container" style="display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 2;">
+<section class="cta-section" style="background: linear-gradient(90deg, #3FA9CB 0%, #1E3A8A 100%); padding: 3rem 0; position: relative; overflow: hidden; min-height: 300px; display: flex; align-items: center;">
+    <div class="container cta-inner" style="display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 2;">
         
         <!-- Text Content -->
         <div style="flex: 1; color: white; max-width: 600px;">
@@ -319,7 +347,7 @@ endfor;
         </div>
         
         <!-- Image (Right Side) -->
-        <div style="flex: 0 0 300px; display: flex; align-items: flex-end; justify-content: flex-end; position: absolute; right: 2rem; bottom: -3rem; pointer-events: none;">
+        <div class="cta-advisor-image" style="flex: 0 0 300px; display: flex; align-items: flex-end; justify-content: flex-end; position: absolute; right: 2rem; bottom: -3rem; pointer-events: none;">
              <!-- Fallback emoji expanded if image missing -->
             <img src="/assets/images/student-advisor.webp" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" alt="Course Advisor" style="height: 350px; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
             <div style="font-size: 15rem; line-height: 0.8; display: none; transform: translateY(20px);">👨‍💼</div>
