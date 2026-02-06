@@ -47,34 +47,41 @@ if ($search_query) {
 }
 ?>
 
-<div style="background-color: var(--color-primary-navy); color: white; padding: 3rem 0;">
+<div class="courses-hero" style="background-color: var(--color-primary-navy); color: white; padding: 3rem 0;">
     <div class="container">
         <h1 style="margin: 0;">All Courses</h1>
         <p style="opacity: 0.9; margin-top: 0.5rem;">Browse our accredited qualifications</p>
     </div>
 </div>
 
-<div class="container" style="padding: 3rem 1rem; display: grid; grid-template-columns: 250px 1fr; gap: 3rem;">
-    
+<div class="container courses-layout" style="padding: 3rem 1rem; display: grid; grid-template-columns: 250px 1fr; gap: 3rem;">
+
+    <!-- Mobile Filter Toggle (hidden on desktop) -->
+    <button class="mobile-filter-toggle" onclick="document.getElementById('courseFilters').classList.toggle('open')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        Filter Courses
+    </button>
+
     <!-- Sidebar Filters -->
-    <aside>
+    <aside id="courseFilters" class="courses-sidebar">
+        <form method="GET" action="/courses">
         <div style="background: white; padding: 1.5rem; border: 1px solid #eee; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
             <h4 style="margin-top: 0; margin-bottom: 1rem;">Categories</h4>
                 <ul style="margin-bottom: 2rem;">
                     <?php foreach ($categories as $cat => $count): ?>
                         <li style="margin-bottom: 0.5rem;">
                             <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: #555;">
-                                <input type="checkbox" name="category[]" value="<?php echo htmlspecialchars($cat); ?>" 
+                                <input type="checkbox" name="category[]" value="<?php echo htmlspecialchars($cat); ?>"
                                     <?php echo in_array($cat, $selected_categories) ? 'checked' : ''; ?>
-                                    onchange="this.form.submit()"> 
-                                <?php echo htmlspecialchars($cat); ?> 
+                                    onchange="this.form.submit()">
+                                <?php echo htmlspecialchars($cat); ?>
                                 <span style="color: #999; font-size: 0.85rem;">(<?php echo $count; ?>)</span>
                             </label>
                         </li>
                     <?php
 endforeach; ?>
                 </ul>
-            
+
             <h4 style="margin-top: 0; margin-bottom: 1rem;">Level</h4>
             <ul>
                 <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox"> Level 2 (Beginner)</label></li>
@@ -82,10 +89,11 @@ endforeach; ?>
                 <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox"> Level 5 (Professional)</label></li>
             </ul>
         </div>
+        </form>
     </aside>
-    
+
     <!-- Course Grid -->
-    <div>
+    <div class="courses-main">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <div>Showing <strong><?php echo count($filtered_courses); ?></strong> courses</div>
             <select style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
@@ -95,7 +103,7 @@ endforeach; ?>
             </select>
         </div>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+        <div class="courses-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
             
 
             
