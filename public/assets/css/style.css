@@ -1,0 +1,224 @@
+/* Reset & Base */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Container */
+.container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Typography Utilities */
+.text-navy {
+    color: var(--color-primary-navy);
+}
+
+.text-yellow {
+    color: var(--color-integer-yellow);
+}
+
+.text-teal {
+    color: var(--color-accent-teal);
+}
+
+.font-heading {
+    font-family: var(--font-heading);
+}
+
+.font-bold {
+    fontWeight: 700;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-family: var(--font-heading);
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--color-primary-navy);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #152a45;
+    /* Darker Navy */
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background-color: white;
+    border: 2px solid var(--color-primary-navy);
+    color: var(--color-primary-navy);
+}
+
+.btn-secondary:hover {
+    background-color: #f8f9fa;
+}
+
+.btn-accent {
+    background-color: var(--color-accent-teal);
+    color: white;
+}
+
+.btn-accent:hover {
+    background-color: #008f80;
+}
+
+.btn-highlight {
+    background-color: var(--color-integer-yellow);
+    color: var(--color-dark-text);
+}
+
+.btn-highlight:hover {
+    opacity: 0.9;
+}
+
+/* Header Styles */
+.site-header {
+    background: white;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.top-bar {
+    background-color: var(--color-primary-navy);
+    color: white;
+    font-size: 0.875rem;
+    padding: 0.5rem 0;
+}
+
+.header-main {
+    padding: 1rem 0;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary-navy);
+    font-family: var(--font-heading);
+}
+
+.logo span {
+    color: var(--color-integer-yellow);
+}
+
+.nav-menu {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--color-primary-navy);
+}
+
+.nav-link:hover {
+    color: var(--color-accent-teal);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Footer Styles */
+.site-footer {
+    background-color: var(--color-primary-navy);
+    color: white;
+    padding-top: 4rem;
+    padding-bottom: 2rem;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.footer-col h4 {
+    color: var(--color-integer-yellow);
+    margin-bottom: 1.5rem;
+    font-size: 1.125rem;
+}
+
+.footer-links li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+}
+
+.footer-links a:hover {
+    color: var(--color-integer-yellow);
+    padding-left: 4px;
+    /* subtle slide effect */
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 2rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #cbd5e0;
+}

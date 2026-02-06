@@ -1,0 +1,47 @@
+:root {
+    /* Brand Colors */
+    --color-primary-navy: #1E3A5F;
+    --color-integer-yellow: #F7D154;
+    --color-accent-teal: #00A896;
+    
+    /* Utility Colors */
+    --color-light-gray: #F5F5F5;
+    --color-dark-text: #333333;
+    --color-success-green: #28A745;
+    --color-error-red: #DC3545;
+    --color-white: #FFFFFF;
+    
+    /* Typography */
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-dark-text);
+    background-color: var(--color-light-gray);
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-primary-navy);
+}

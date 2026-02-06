@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integer Training - Courses</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="top-bar">
+            <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Train toward a career you'll love!</span>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="#">Contact: 01288 356263</a>
+                    <a href="#">Blog</a>
+                </div>
+            </div>
+        </div>
+        <div class="header-main">
+            <div class="container header-inner">
+                <a href="preview_home.html" class="logo">
+                    <img src="assets/images/logo.svg" alt="Integer Training" style="height: 60px;">
+                    Integer Training
+                </a>
+                <nav class="nav-menu">
+                    <a href="preview_courses.html" class="nav-link">Courses</a>
+                    <a href="#" class="nav-link">About Us</a>
+                    <a href="#" class="nav-link">Funding</a>
+                    <a href="#" class="nav-link">Contact</a>
+                </nav>
+                <div class="header-actions">
+                    <a href="#" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Course
+                        Finder</a>
+                    <a href="#" style="position: relative;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="text-navy">
+                            <circle cx="9" cy="21" r="1" />
+                            <circle cx="20" cy="21" r="1" />
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div style="background-color: var(--color-primary-navy); color: white; padding: 3rem 0;">
+            <div class="container">
+                <h1 style="margin: 0;">All Courses</h1>
+                <p style="opacity: 0.9; margin-top: 0.5rem;">Browse our accredited qualifications</p>
+            </div>
+        </div>
+
+        <div class="container" style="padding: 3rem 1rem; display: grid; grid-template-columns: 250px 1fr; gap: 3rem;">
+
+            <!-- Sidebar Filters -->
+            <aside>
+                <div
+                    style="background: white; padding: 1.5rem; border: 1px solid #eee; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+                    <h4 style="margin-top: 0; margin-bottom: 1rem;">Categories</h4>
+                    <ul style="margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox">
+                                Accounting (12)</label></li>
+                        <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox">
+                                Business (8)</label></li>
+                        <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox">
+                                Health Care (5)</label></li>
+                        <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox"> IT &
+                                Cyber (10)</label></li>
+                    </ul>
+
+                    <h4 style="margin-top: 0; margin-bottom: 1rem;">Level</h4>
+                    <ul>
+                        <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox"> Level
+                                2 (Beginner)</label></li>
+                        <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox"> Level
+                                3 (Advanced)</label></li>
+                        <li style="margin-bottom: 0.5rem;"><label style="cursor: pointer;"><input type="checkbox"> Level
+                                5 (Professional)</label></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Course Grid -->
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <div>Showing <strong>9</strong> courses</div>
+                    <select style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+                        <option>Sort by: Popularity</option>
+                        <option>Price: Low to High</option>
+                        <option>Price: High to Low</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+
+                    <!-- Course Card 1 -->
+                    <div
+                        style="background: white; border: 1px solid #eee; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+                        <div
+                            style="height: 160px; background-color: #e0e7ff; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+                            📊</div>
+                        <div style="padding: 1.5rem;">
+                            <span
+                                style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px;">Accounting</span>
+                            <h3 style="margin: 0.5rem 0; font-size: 1.1rem;"><a href="#">AAT Level 2 Certificate in
+                                    Accounting</a></h3>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                <span
+                                    style="font-size: 0.75rem; background: #e0f2f1; color: var(--color-accent-teal); padding: 2px 6px; border-radius: 4px;">Entry
+                                    Level</span>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem; margin-top: 1rem;">
+                                <span
+                                    style="font-weight: 700; color: var(--color-primary-navy); font-size: 1.25rem;">£295</span>
+                                <a href="#" class="text-teal font-bold" style="font-size: 0.9rem;">View &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course Card 2 -->
+                    <div
+                        style="background: white; border: 1px solid #eee; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+                        <div
+                            style="height: 160px; background-color: #d1fae5; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+                            📝</div>
+                        <div style="padding: 1.5rem;">
+                            <span
+                                style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px;">Project
+                                Management</span>
+                            <h3 style="margin: 0.5rem 0; font-size: 1.1rem;"><a href="#">PRINCE2® Foundation</a></h3>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                <span
+                                    style="font-size: 0.75rem; background: #e0f2f1; color: var(--color-accent-teal); padding: 2px 6px; border-radius: 4px;">Professional</span>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem; margin-top: 1rem;">
+                                <span
+                                    style="font-weight: 700; color: var(--color-primary-navy); font-size: 1.25rem;">£349</span>
+                                <a href="#" class="text-teal font-bold" style="font-size: 0.9rem;">View &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course Card 3 -->
+                    <div
+                        style="background: white; border: 1px solid #eee; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+                        <div
+                            style="height: 160px; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+                            💼</div>
+                        <div style="padding: 1.5rem;">
+                            <span
+                                style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px;">Business</span>
+                            <h3 style="margin: 0.5rem 0; font-size: 1.1rem;"><a href="#">Business Admin Level 3</a></h3>
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                                <span
+                                    style="font-size: 0.75rem; background: #e0f2f1; color: var(--color-accent-teal); padding: 2px 6px; border-radius: 4px;">Intermediate</span>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem; margin-top: 1rem;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <span
+                                        style="text-decoration: line-through; color: #999; font-size: 0.85rem;">£450</span>
+                                    <span style="font-weight: 700; color: #dc3545; font-size: 1.25rem;">£350</span>
+                                </div>
+                                <a href="#" class="text-teal font-bold" style="font-size: 0.9rem;">View &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Pagination -->
+                <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 0.5rem;">
+                    <a href="#"
+                        style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 4px; color: #666;">&laquo;</a>
+                    <a href="#"
+                        style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-primary-navy); color: white; border-radius: 4px;">1</a>
+                    <a href="#"
+                        style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 4px; color: #666;">2</a>
+                    <a href="#"
+                        style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 4px; color: #666;">3</a>
+                    <a href="#"
+                        style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 4px; color: #666;">&raquo;</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Integer Training</h4>
+                    <p style="font-size: 0.9rem; color: #e2e8f0; margin-bottom: 1rem;">
+                        Empowering careers through professional qualifications and training.
+                    </p>
+                    <div style="display: flex; gap: 1rem;">
+                        <!-- Social Placeholders -->
+                        <span>FB</span>
+                        <span>TW</span>
+                        <span>LI</span>
+                        <span>IG</span>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Popular Courses</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Accounting (AAT)</a></li>
+                        <li><a href="#">Project Management</a></li>
+                        <li><a href="#">Cyber Security</a></li>
+                        <li><a href="#">Health & Social Care</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Funding Options</a></li>
+                        <li><a href="#">Student Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">01288 356263</a></li>
+                        <li><a href="#">info@integertraining.com</a></li>
+                        <li><a href="#">Monday - Friday: 9am - 5pm</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Integer Training. All rights reserved. | <a href="#">Privacy Policy</a> | <a
+                        href="#">Terms & Conditions</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
