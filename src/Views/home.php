@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
             <!-- Category Card 1 -->
-            <a href="/courses?category=accounting" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+            <a href="/courses?category[]=Accounting" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
                 <div style="height: 200px; background-color: #e0e7ff; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--color-primary-navy);">
                     📊
                 </div>
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </a>
             
             <!-- Category Card 2 -->
-            <a href="/courses?category=healthcare" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+            <a href="/courses?category[]=Health+%26+Social+Care" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
                 <div style="height: 200px; background-color: #d1fae5; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--color-accent-teal);">
                     🩺
                 </div>
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </a>
             
              <!-- Category Card 3 -->
-             <a href="/courses?category=business" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+             <a href="/courses?category[]=Business+Studies" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
                 <div style="height: 200px; background-color: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--color-integer-yellow);">
                     💼
                 </div>
