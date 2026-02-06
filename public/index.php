@@ -115,6 +115,12 @@ elseif ($uri === '/cart') {
     $view = 'cart.php';
 }
 elseif ($uri === '/checkout') {
+    // Redirect to cart if empty
+    $cart = $_SESSION['cart'] ?? [];
+    if (empty($cart)) {
+        header('Location: /cart');
+        exit;
+    }
     $view = 'checkout.php';
 }
 elseif ($uri === '/login') {
