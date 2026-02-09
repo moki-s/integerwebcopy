@@ -10,7 +10,7 @@ $sidebarLinks = [
     'history' => 'Our History',
     'beliefs' => 'Our Beliefs',
     'accreditations' => 'Our Accreditations',
-    // 'policies' => 'Policies', // Skipped by user request
+    'policies' => 'Policies',
     'iag' => 'Information Advice and Guidance',
     'learner-support' => 'Learner Support',
     'privacy' => 'Privacy Policy',
@@ -151,6 +151,94 @@ elseif ($section === 'accreditations'): ?>
                         <span style="font-weight: 800; font-size: 1.5rem; background: linear-gradient(to right, #0099cc, #cc3399); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">athe</span>
                         <div style="font-size: 0.6rem; color: #666; text-transform: uppercase;">Awards for Training<br>and Higher Education</div>
                     </div>
+                </div>
+
+            <?php
+elseif ($section === 'policies'): ?>
+                <h2 style="color: var(--color-primary-navy); margin-top: 0;">Policies</h2>
+                <p style="line-height: 1.7; color: #555; margin-bottom: 2rem;">
+                    Integer Training is committed to maintaining the highest standards across all areas of our operation. Our policies are available below for your reference.
+                </p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">Equality, Diversity & Inclusion Policy</h4>
+                        </div>
+                        <a href="/assets/policies/equality-diversity-inclusion.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Policy</a>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">Complaints & Appeals Policy</h4>
+                        </div>
+                        <a href="/assets/policies/complaints-appeals.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Policy</a>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">PI, EL & PL Certificate</h4>
+                        </div>
+                        <a href="/assets/policies/pi-el-pl-certificate.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Certificate</a>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">Business Continuity Policy</h4>
+                        </div>
+                        <a href="/assets/policies/business-continuity.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Policy</a>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">Data Protection & Procedure Policy</h4>
+                        </div>
+                        <a href="/assets/policies/data-protection.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Policy</a>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">Carbon Reduction Plan</h4>
+                        </div>
+                        <a href="/assets/policies/carbon-reduction-plan.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Policy</a>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">Grievance & Disciplinary Procedure</h4>
+                        </div>
+                        <a href="/assets/policies/grievance-disciplinary.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Policy</a>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">Health & Safety Policy</h4>
+                        </div>
+                        <a href="/assets/policies/health-safety.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Policy</a>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">Whistle Blowing Policy</h4>
+                        </div>
+                        <a href="/assets/policies/whistle-blowing.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Policy</a>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">Safeguarding of Children & Vulnerable Adults Protection Policy</h4>
+                        </div>
+                        <a href="/assets/policies/safeguarding.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Policy</a>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0 0 0.25rem 0; color: var(--color-primary-navy); font-size: 0.95rem;">Integer Training 2024 Matrix Certificate</h4>
+                        </div>
+                        <a href="/assets/policies/matrix-certificate-2024.pdf" target="_blank" style="background: var(--color-accent-teal); color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap;">View Policy</a>
+                    </div>
+
                 </div>
 
             <?php
