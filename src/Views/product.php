@@ -17,14 +17,14 @@ if (!$course) {
     <div class="container">
         <!-- Breadcrumbs -->
         <div style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">
-            <a href="/">Home</a> > <a href="/courses">Courses</a> > <span class="text-navy"><?php echo $course['category']; ?></span>
+            <a href="/">Home</a> > <a href="/courses">Courses</a> > <span class="text-navy"><?php echo htmlspecialchars($course['category']); ?></span>
         </div>
         
         <!-- Header Info -->
         <span style="background-color: <?php echo $course['badge_color']; ?>; color: white; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 0.5rem; text-transform: uppercase;">
-            <?php echo $course['badge']; ?>
+            <?php echo htmlspecialchars($course['badge']); ?>
         </span>
-        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; line-height: 1.2;"><?php echo $course['title']; ?></h1>
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; line-height: 1.2;"><?php echo htmlspecialchars($course['title']); ?></h1>
         <div class="product-meta" style="display: flex; gap: 1rem; font-size: 0.9rem; color: #666;">
             <span>👥 <?php echo number_format($course['students']); ?> Students Enrolled</span>
             <span>💻 Online Course</span>
@@ -53,7 +53,7 @@ if (!$course) {
         <div id="tab-overview" class="tab-content active">
             <h3 style="color: var(--color-primary-navy); margin-bottom: 1rem;">Course Overview</h3>
             <p style="font-size: 1.1rem; color: #555; line-height: 1.7; margin-bottom: 2rem;">
-                <?php echo $course['overview']; ?>
+                <?php echo htmlspecialchars($course['overview']); ?>
             </p>
             
             <h4 style="margin-top: 2rem; color: var(--color-primary-navy);">Why study this course?</h4>
@@ -134,7 +134,7 @@ if (!$course) {
 
             <!-- CTA Section -->
             <div style="text-align: center; margin: 3rem 0;">
-                <a href="#" class="btn btn-highlight" style="font-size: 1.1rem; padding: 1rem 2rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <a href="/checkout" class="btn btn-highlight" style="font-size: 1.1rem; padding: 1rem 2rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                     Your Career Awaits – Let's Get Started →
                 </a>
                 <p style="color: #3182CE; font-weight: 600; margin-top: 1rem; font-size: 0.9rem;">
@@ -180,12 +180,12 @@ if (!function_exists('renderStarsSmall')) {
                         <div style="display: flex; width: 100%; align-items: flex-start; animation: simple-swap 14s infinite;">
                             <?php foreach ($course_reviews as $review): ?>
                             <div style="flex: 0 0 100%; width: 100%;">
-                                 <h4 style="color: #4a5568; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 600;"><?php echo $review['title']; ?></h4>
+                                 <h4 style="color: #4a5568; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 600;"><?php echo htmlspecialchars($review['title']); ?></h4>
                                 <p style="color: #4a5568; line-height: 1.8; margin-bottom: 2rem; font-size: 1.05rem; padding: 0 1rem;">
-                                    <?php echo $review['text']; ?>
+                                    <?php echo htmlspecialchars($review['text']); ?>
                                 </p>
                                 <div style="margin-bottom: 1rem;"><?php echo renderStarsSmall($review['rating']); ?></div>
-                                <div style="font-weight: 700; color: #1E3A8A; font-size: 1.1rem;"><?php echo $review['author']; ?></div>
+                                <div style="font-weight: 700; color: #1E3A8A; font-size: 1.1rem;"><?php echo htmlspecialchars($review['author']); ?></div>
                             </div>
                             <?php
 endforeach; ?>
@@ -202,11 +202,11 @@ endforeach; ?>
             <?php foreach ($course['curriculum'] as $index => $module): ?>
             <details style="margin-bottom: 1rem; border: 1px solid #eee; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); background: white;">
                 <summary style="padding: 1rem; background: #f8f9fa; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; color: var(--color-primary-navy);">
-                    <span>Unit <?php echo $index + 1; ?>: <?php echo $module; ?></span>
+                    <span>Unit <?php echo $index + 1; ?>: <?php echo htmlspecialchars($module); ?></span>
                     <span style="font-size: 1.25rem;">+</span>
                 </summary>
                 <div style="padding: 1.5rem; border-top: 1px solid #eee; color: #555;">
-                    In this unit, you will learn the fundamental concepts of <?php echo strtolower($module); ?>. 
+                    In this unit, you will learn the fundamental concepts of <?php echo htmlspecialchars(strtolower($module)); ?>. 
                     (This is placeholder text for the module content description).
                 </div>
             </details>

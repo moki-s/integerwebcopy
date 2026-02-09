@@ -18,7 +18,12 @@ spl_autoload_register(function ($class) {
     }
 });
 
-session_start(); // Enable Sessions for Cart
+session_set_cookie_params([
+    'httponly' => true,
+    'secure'   => !empty($_SERVER['HTTPS']),
+    'samesite' => 'Lax',
+]);
+session_start();
 
 use App\Database;
 
@@ -32,16 +37,13 @@ $uri = strtok($requestUri, '?');
 // --- Simple Cart Controller Logic ---
 if ($uri === '/cart-add' && $requestMethod === 'POST') {
     $courseId = $_POST['course_id'] ?? null;
-    if ($courseId) {
-        // Initialize cart if not exists
+    if ($courseId && preg_match('/^[a-z0-9\-]+$/', $courseId)) {
         if (!isset($_SESSION['cart'])) {
             $_SESSION['cart'] = [];
         }
-        // Add item (using ID as key, quantity as value)
         $_SESSION['cart'][$courseId] = 1;
     }
-    // Redirect back to product page
-    header("Location: /product?id=$courseId");
+    header('Location: /product?id=' . urlencode($courseId ?? ''));
     exit;
 }
 
@@ -252,10 +254,21 @@ if ($uri === '/enquiry' && $requestMethod === 'POST') {
     $message = trim($_POST['message'] ?? '');
     $page = trim($_POST['page'] ?? 'unknown');
 
+    // Sanitise redirect (only allow relative paths on this site)
+    $redirect = $_POST['redirect'] ?? '/contact';
+    if (!preg_match('#^/[a-z]#i', $redirect) || strpos($redirect, '//') !== false) {
+        $redirect = '/contact';
+    }
+
     // Basic validation
     if (!$name || !$email || !$phone) {
         $_SESSION['form_error'] = 'Please fill in all required fields.';
-        header('Location: ' . ($_POST['redirect'] ?? '/contact'));
+        header('Location: ' . $redirect);
+        exit;
+    }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['form_error'] = 'Please enter a valid email address.';
+        header('Location: ' . $redirect);
         exit;
     }
 
@@ -275,18 +288,11 @@ if ($uri === '/enquiry' && $requestMethod === 'POST') {
         $_SESSION['form_error'] = 'Something went wrong. Please try again.';
     }
 
-    header('Location: ' . ($_POST['redirect'] ?? '/contact'));
+    header('Location: ' . $redirect);
     exit;
 }
 
-// Simple Routing Table (will expand later)
-
-// Remove query string
-$uri = strtok($requestUri, '?');
-
-// Simple Routing Table (will expand later)
-// For now, just serve specific views based on URI
-// This is a temporary router until we implement a real Controller structure in Phase 2/3.
+// Simple Routing Table
 $view = null;
 
 if ($uri === '/' || $uri === '/index.php') {
@@ -330,11 +336,9 @@ elseif (strpos($uri, '/about') === 0) {
     $section = $_GET['section'] ?? 'history';
     $view = 'about.php';
 }
-elseif ($uri === '/branches') {
-    $view = 'branches.php';
-}
 else {
-// 404
+    http_response_code(404);
+    $view = null;
 }
 
 ?>
@@ -379,15 +383,10 @@ if ($view && file_exists(__DIR__ . '/../src/Views/' . $view)) {
     include __DIR__ . '/../src/Views/' . $view;
 }
 else {
-    echo '<div class="container" style="padding: 4rem 1rem;">';
-    echo '<h1>Integer Training</h1>';
-    echo '<p>Welcome to the new platform.</p>';
-    if (isset($dbError)) {
-        echo '<div style="color: red; padding: 1rem; background: #fee; border-radius: 4px;">Database Connection Failed: ' . htmlspecialchars($dbError) . '</div>';
-    }
-    else {
-        echo '<div style="color: green; padding: 1rem; background: #eef; border-radius: 4px;">Database Connection Successful</div>';
-    }
+    echo '<div class="container" style="padding: 6rem 1rem; text-align: center; max-width: 600px; margin: 0 auto;">';
+    echo '<h1 style="font-size: 4rem; color: var(--color-primary-navy); margin-bottom: 0.5rem;">404</h1>';
+    echo '<p style="font-size: 1.2rem; color: #555; margin-bottom: 2rem;">Sorry, the page you\'re looking for doesn\'t exist.</p>';
+    echo '<a href="/" class="btn btn-primary" style="display: inline-block; padding: 0.75rem 2rem;">Back to Home</a>';
     echo '</div>';
 }
 ?>

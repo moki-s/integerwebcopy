@@ -167,9 +167,9 @@ endforeach; ?>
                     <?php endif; ?>
                 </div>
                 <div style="padding: 1.5rem;">
-                    <span style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px;"><?php echo $c['category']; ?></span>
+                    <span style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px;"><?php echo htmlspecialchars($c['category']); ?></span>
                     <h3 style="margin: 0.5rem 0; font-size: 1.05rem; min-height: 0;">
-                        <a href="/product?id=<?php echo $c['id']; ?>"><?php echo $c['title']; ?></a>
+                        <a href="/product?id=<?php echo htmlspecialchars($c['id']); ?>"><?php echo htmlspecialchars($c['title']); ?></a>
                     </h3>
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
                          <span style="font-size: 0.75rem; background: <?php echo $c['badge_color']; ?>20; color: <?php echo $c['badge_color']; ?>; padding: 2px 6px; border-radius: 4px; font-weight: 600;"><?php echo $c['badge']; ?></span>

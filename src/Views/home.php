@@ -320,12 +320,12 @@ for ($k = 0; $k < 2; $k++):
                             <div style="display: flex; gap: 2px; margin-bottom: 0.75rem;">
                                 <?php echo renderStars($review['rating']); ?>
                             </div>
-                            <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem; color: #333; font-weight: 700;"><?php echo $review['title']; ?></h4>
+                            <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem; color: #333; font-weight: 700;"><?php echo htmlspecialchars($review['title']); ?></h4>
                             <p style="font-size: 0.9rem; color: #555; line-height: 1.5; margin-bottom: 1rem; height: 4.5em; overflow: hidden;">
-                                <?php echo $review['body']; ?>
+                                <?php echo htmlspecialchars($review['body']); ?>
                             </p>
                             <div style="font-size: 0.8rem; color: #888;">
-                                <span style="font-weight: 600; color: #333;"><?php echo $review['author']; ?></span>, <?php echo $review['time']; ?>
+                                <span style="font-weight: 600; color: #333;"><?php echo htmlspecialchars($review['author']); ?></span>, <?php echo htmlspecialchars($review['time']); ?>
                             </div>
                         </div>
                     <?php

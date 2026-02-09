@@ -57,8 +57,8 @@ else: ?>
                                         <?php echo $item['icon']; ?>
                                     </div>
                                     <div>
-                                        <div style="font-weight: 600; color: var(--color-primary-navy);"><?php echo $item['title']; ?></div>
-                                        <div style="font-size: 0.85rem; color: #666;"><?php echo $item['category']; ?> | Online</div>
+                                        <div style="font-weight: 600; color: var(--color-primary-navy);"><?php echo htmlspecialchars($item['title']); ?></div>
+                                        <div style="font-size: 0.85rem; color: #666;"><?php echo htmlspecialchars($item['category']); ?> | Online</div>
                                     </div>
                                 </div>
                             </td>

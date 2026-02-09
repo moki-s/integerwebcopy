@@ -10,20 +10,9 @@
             <h2 style="color: var(--color-primary-navy);">Student Login</h2>
             <p style="color: #666; margin-bottom: 2rem;">Welcome back! Please access your course material below.</p>
             
-            <form>
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email Address</label>
-                    <input type="email" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 4px;">
-                </div>
-                <div style="margin-bottom: 1.5rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <label style="font-weight: 500;">Password</label>
-                        <a href="#" style="font-size: 0.85rem; color: #666;">Forgot?</a>
-                    </div>
-                    <input type="password" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 4px;">
-                </div>
-                <button class="btn btn-primary" style="width: 100%;">Log In</button>
-            </form>
+            <div style="background: #f0f4f8; border: 1px solid #ddd; border-radius: 8px; padding: 2rem; text-align: center;">
+                <p style="color: #555; font-size: 1.05rem; margin: 0;">Student login is coming soon. Please contact us at <a href="mailto:info@integer.co.uk" style="color: var(--color-accent-teal); font-weight: 600;">info@integer.co.uk</a> for course access.</p>
+            </div>
         </div>
         
         <!-- Register Column (Divider) -->
@@ -37,7 +26,7 @@
                 <li style="margin-bottom: 0.5rem;">✓ Download certificates</li>
             </ul>
             
-            <a href="#" class="btn btn-secondary" style="width: 100%; text-align: center;">Create Account</a>
+            <a href="/courses" class="btn btn-secondary" style="width: 100%; text-align: center;">Browse Courses</a>
         </div>
         
     </div>
