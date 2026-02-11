@@ -39,6 +39,32 @@ function renderStars($rating)
     $html .= '</div>';
     return $html;
 }
+
+// Google-style stars (gold filled, no background box)
+function renderGoogleStars($rating)
+{
+    $fullStars = floor($rating);
+    $decimal = $rating - $fullStars;
+
+    $html = '<div style="display: flex; gap: 2px; align-items: center;">';
+
+    for ($i = 1; $i <= 5; $i++) {
+        if ($i <= $fullStars) {
+            $html .= '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#FBBC04"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+        } elseif ($i == $fullStars + 1 && $decimal > 0) {
+            $id = 'gg' . $i;
+            $pct = round($decimal * 100);
+            $html .= '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                        <defs><linearGradient id="' . $id . '"><stop offset="' . $pct . '%" stop-color="#FBBC04"/><stop offset="' . $pct . '%" stop-color="#dadce0"/></linearGradient></defs>
+                        <path fill="url(#' . $id . ')" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+        } else {
+            $html .= '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#dadce0"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+        }
+    }
+
+    $html .= '</div>';
+    return $html;
+}
 ?>
 
 <!-- Hero Section -->
@@ -368,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span style="font-size: 1.35rem; font-weight: 700; color: #333;"><?php echo REVIEW_STATS['google_rating']; ?></span>
                     </div>
                     <div style="display: flex; justify-content: center; margin-bottom: 0.35rem;">
-                        <?php echo renderStars(REVIEW_STATS['google_rating']); ?>
+                        <?php echo renderGoogleStars(REVIEW_STATS['google_rating']); ?>
                     </div>
                     <div style="font-size: 0.8rem; color: #666;">Google Reviews</div>
                 </div>
