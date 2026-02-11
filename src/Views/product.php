@@ -1,6 +1,7 @@
 <?php
 // Product Page View - Dynamic based on ID
 require_once __DIR__ . '/../Data/CourseData.php';
+require_once __DIR__ . '/../Data/ReviewData.php';
 
 // Get Course ID from URL or default to first one
 $courseId = $_GET['id'] ?? 'aat-level-2-accounting';
@@ -142,18 +143,28 @@ if (!$course) {
                 </p>
             </div>
 
-            <!-- Single Featured Review Card (Carousel) -->
-            <div style="background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 3rem 2rem; border: 1px solid #eee; margin-top: 3rem; text-align: center; overflow: hidden; position: relative;">
-                
-                <div style="font-size: 4rem; color: #FFC107; line-height: 1; margin-bottom: 1.5rem; font-family: serif;">“</div>
-                
-                <div style="overflow: hidden;">
-                     <?php
-// Using specific mock data to match the requested design perfectly for now
-$course_reviews = [
-    ['author' => 'Isabella N.', 'rating' => 5, 'title' => 'Flexible payment options made it easier!', 'text' => 'I was initially hesitant about enrolling because of the payment, but the team explained their flexible options clearly and patiently. They made the whole process so simple, and I’m glad I didn’t let my fear stop me.'],
-    ['author' => 'Amelia S.', 'rating' => 5, 'title' => 'Helped me overcome my doubts!', 'text' => 'I was nervous about starting the Access to HE Diploma (Midwifery) because I hadn\'t studied in years. The staff reassured me, explained everything step by step, and made me feel confident about taking this leap.'],
-];
+            <!-- Reviews Section with Trustpilot + Google Badges -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 3rem 2rem; border: 1px solid #eee; margin-top: 3rem; overflow: hidden; position: relative;">
+
+                <!-- Review Platform Badges -->
+                <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="color: #00b67a; font-weight: 700; font-size: 1.1rem;">★ Trustpilot</span>
+                        <span style="font-weight: 700; color: #333;"><?php echo REVIEW_STATS['trustpilot_rating']; ?>/5</span>
+                        <span style="color: #666; font-size: 0.85rem;">(<?php echo REVIEW_STATS['trustpilot_count']; ?> reviews)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0124 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.001-.001 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+                        <span style="font-weight: 700; color: #333;"><?php echo REVIEW_STATS['google_rating']; ?>/5</span>
+                        <span style="color: #666; font-size: 0.85rem;">Google Reviews</span>
+                    </div>
+                </div>
+
+                <div style="font-size: 4rem; color: #FFC107; line-height: 1; margin-bottom: 1.5rem; font-family: serif; text-align: center;">"</div>
+
+                <?php
+// Use real reviews from ReviewData, pick 3 varied ones for product carousel
+$product_reviews = array_slice(TRUSTPILOT_REVIEWS, 0, 3);
 
 if (!function_exists('renderStarsSmall')) {
     function renderStarsSmall($rating)
@@ -168,28 +179,27 @@ if (!function_exists('renderStarsSmall')) {
     }
 }
 ?>
-                    
-                    <div style="display: flex; width: 100%;"> 
-                        <style>
-                            @keyframes simple-swap {
-                                0%, 45% { transform: translateX(0); opacity: 1; }
-                                50%, 95% { transform: translateX(-100%); opacity: 1; }
-                                100% { transform: translateX(0); }
-                            }
-                        </style>
-                        <div style="display: flex; width: 100%; align-items: flex-start; animation: simple-swap 14s infinite;">
-                            <?php foreach ($course_reviews as $review): ?>
-                            <div style="flex: 0 0 100%; width: 100%;">
-                                 <h4 style="color: #4a5568; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 600;"><?php echo htmlspecialchars($review['title']); ?></h4>
-                                <p style="color: #4a5568; line-height: 1.8; margin-bottom: 2rem; font-size: 1.05rem; padding: 0 1rem;">
-                                    <?php echo htmlspecialchars($review['text']); ?>
-                                </p>
-                                <div style="margin-bottom: 1rem;"><?php echo renderStarsSmall($review['rating']); ?></div>
-                                <div style="font-weight: 700; color: #1E3A8A; font-size: 1.1rem;"><?php echo htmlspecialchars($review['author']); ?></div>
-                            </div>
-                            <?php
-endforeach; ?>
+                <div style="overflow: hidden; text-align: center;">
+                    <style>
+                        @keyframes product-review-swap {
+                            0%, 30% { transform: translateX(0); }
+                            33.33%, 63.33% { transform: translateX(-100%); }
+                            66.66%, 96.66% { transform: translateX(-200%); }
+                            100% { transform: translateX(0); }
+                        }
+                    </style>
+                    <div style="display: flex; width: 100%; align-items: flex-start; animation: product-review-swap 18s infinite;">
+                        <?php foreach ($product_reviews as $review): ?>
+                        <div style="flex: 0 0 100%; width: 100%;">
+                            <h4 style="color: #4a5568; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 600;"><?php echo htmlspecialchars($review['title']); ?></h4>
+                            <p style="color: #4a5568; line-height: 1.8; margin-bottom: 2rem; font-size: 1.05rem; padding: 0 1rem;">
+                                <?php echo htmlspecialchars($review['body']); ?>
+                            </p>
+                            <div style="margin-bottom: 1rem;"><?php echo renderStarsSmall($review['rating']); ?></div>
+                            <div style="font-weight: 700; color: #1E3A8A; font-size: 1.1rem;"><?php echo htmlspecialchars($review['author']); ?></div>
+                            <div style="font-size: 0.8rem; color: #888; margin-top: 0.25rem;"><?php echo htmlspecialchars($review['date']); ?> — <?php echo htmlspecialchars($review['source']); ?></div>
                         </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>

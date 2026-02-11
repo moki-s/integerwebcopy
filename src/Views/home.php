@@ -1,5 +1,7 @@
 <?php
 // Homepage View
+require_once __DIR__ . '/../Data/ReviewData.php';
+
 $form_success = $_SESSION['form_success'] ?? null;
 $form_error = $_SESSION['form_error'] ?? null;
 unset($_SESSION['form_success'], $_SESSION['form_error']);
@@ -180,8 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <div style="margin-bottom: 3rem;">
             <div class="trustpilot-bar" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #333; flex-wrap: wrap;">
                 Our customers say <span style="font-weight: 700;">Excellent</span>
-                <?php echo renderStars(4.7); ?>
-                4.7 out of 5 based on 12,494 reviews
+                <?php echo renderStars(REVIEW_STATS['trustpilot_rating']); ?>
+                <?php echo REVIEW_STATS['trustpilot_rating']; ?> out of 5 based on <?php echo REVIEW_STATS['trustpilot_count']; ?> reviews
                 <span style="color: #00b67a;">★ Trustpilot</span>
             </div>
         </div>
@@ -220,13 +222,35 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 </section>
 
+<!-- Partners & Accreditations Banner -->
+<section class="partners-section" style="background: #f8f9fa; padding: 3rem 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; overflow: hidden;">
+    <div class="container">
+        <h2 style="text-align: center; color: var(--color-primary-navy); margin-bottom: 0.5rem; font-size: 1.75rem;">Our Partners & Accreditations</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem; font-size: 0.95rem;">Trusted by leading awarding bodies and organisations</p>
+    </div>
+    <div class="partner-carousel" style="overflow: hidden; mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);">
+        <div class="partner-track">
+            <?php
+            // Loop twice for seamless infinite scroll
+            for ($loop = 0; $loop < 2; $loop++):
+                foreach (PARTNER_LOGOS as $partner):
+            ?>
+                <img src="<?php echo $partner['src']; ?>" alt="<?php echo htmlspecialchars($partner['alt']); ?>" class="partner-logo" loading="lazy">
+            <?php
+                endforeach;
+            endfor;
+            ?>
+        </div>
+    </div>
+</section>
+
 <!-- Explore Courses -->
 <section style="padding: 4rem 0;">
     <div class="container">
         <h2 style="text-align: center; margin-bottom: 3rem;">Explore Our Courses</h2>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
-            <!-- Category Card 1 -->
+            <!-- Accounting -->
             <a href="/courses?category[]=Accounting" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
                 <div style="height: 200px; overflow: hidden;">
                     <img src="/assets/images/courses/accounting/acc-thumb.png" alt="Accounting Courses" style="width: 100%; height: 100%; object-fit: cover;">
@@ -237,8 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="text-teal font-bold" style="font-size: 0.9rem;">View Courses &rarr;</span>
                 </div>
             </a>
-            
-            <!-- Category Card 2 -->
+
+            <!-- Health & Social Care -->
             <a href="/courses?category[]=Health+%26+Social+Care" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
                 <div style="height: 200px; overflow: hidden;">
                     <img src="/assets/images/courses/health-social/hs-thumb.png" alt="Health & Social Care Courses" style="width: 100%; height: 100%; object-fit: cover;">
@@ -249,9 +273,45 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="text-teal font-bold" style="font-size: 0.9rem;">View Courses &rarr;</span>
                 </div>
             </a>
-            
-             <!-- Category Card 3 -->
-             <a href="/courses?category[]=Business+Studies" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+
+            <!-- Occupational Studies -->
+            <a href="/courses?category[]=Occupational+Studies" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+                <div style="height: 200px; overflow: hidden;">
+                    <img src="/assets/images/courses/occupational/occ-thumb.png" alt="Occupational Studies Courses" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="padding: 1.5rem;">
+                    <h3 style="margin-bottom: 0.5rem;">Occupational Studies</h3>
+                    <p style="color: #666;">Workplace skills, employability and customer service.</p>
+                    <span class="text-teal font-bold" style="font-size: 0.9rem;">View Courses &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Functional Skills -->
+            <a href="/courses?category[]=Functional+Skills" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+                <div style="height: 200px; overflow: hidden;">
+                    <img src="/assets/images/courses/functional-skills/func-thumb.png" alt="Functional Skills Courses" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="padding: 1.5rem;">
+                    <h3 style="margin-bottom: 0.5rem;">Functional Skills</h3>
+                    <p style="color: #666;">Maths and English qualifications (GCSE equivalent).</p>
+                    <span class="text-teal font-bold" style="font-size: 0.9rem;">View Courses &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Security & Stewarding -->
+            <a href="/courses?category[]=Security+%26+Stewarding" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+                <div style="height: 200px; overflow: hidden;">
+                    <img src="/assets/images/courses/security/sec-thumb.png" alt="Security & Stewarding Courses" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="padding: 1.5rem;">
+                    <h3 style="margin-bottom: 0.5rem;">Security & Stewarding</h3>
+                    <p style="color: #666;">SIA Door Supervisor, First Aid and Event Security.</p>
+                    <span class="text-teal font-bold" style="font-size: 0.9rem;">View Courses &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Business Studies -->
+            <a href="/courses?category[]=Business+Studies" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
                 <div style="height: 200px; overflow: hidden;">
                     <img src="/assets/images/courses/business/team-leading-cert.png" alt="Business Studies Courses" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
@@ -265,17 +325,17 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 </section> 
 
-<!-- Trustpilot Reviews Section -->
+<!-- Reviews Section -->
 <section style="background-color: white; padding: 4rem 0; border-top: 1px solid #eee; overflow: hidden;">
     <style>
         @keyframes scroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-280px * 5 - 1.5rem * 5)); } /* Width of card + gap * number of unique cards */
+            100% { transform: translateX(calc(-280px * 20 - 1.5rem * 20)); }
         }
         .reviews-track {
             display: flex;
             gap: 1.5rem;
-            animation: scroll 30s linear infinite;
+            animation: scroll 60s linear infinite;
             width: max-content;
         }
         .reviews-track:hover {
@@ -283,38 +343,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     </style>
     <div class="container">
-        <h2 class="reviews-heading" style="text-align: center; color: var(--color-primary-navy); margin-bottom: 0.5rem; font-size: 2rem;">Our students rate us 'Excellent' on <span style="font-weight: 800;">Trustpilot</span></h2>
+        <h2 class="reviews-heading" style="text-align: center; color: var(--color-primary-navy); margin-bottom: 0.5rem; font-size: 2rem;">What Our Students Say</h2>
         <p class="reviews-subheading" style="text-align: center; color: #666; margin-bottom: 3rem;">Join thousands of ambitious professionals just like you.</p>
-        
+
         <div class="reviews-wrapper" style="display: flex; gap: 3rem; align-items: center;">
 
             <!-- Overall Rating Box (Fixed on Left) -->
-            <div class="reviews-rating-box" style="flex: 0 0 220px; text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
-                <div style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Excellent</div>
-                <div style="display: flex; justify-content: center; margin-bottom: 0.75rem;">
-                    <?php echo renderStars(4.7); ?>
+            <div class="reviews-rating-box" style="flex: 0 0 240px; text-align: center; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;">
+                <!-- Trustpilot Rating -->
+                <div style="margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #eee;">
+                    <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Excellent</div>
+                    <div style="display: flex; justify-content: center; margin-bottom: 0.5rem;">
+                        <?php echo renderStars(REVIEW_STATS['trustpilot_rating']); ?>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #666; margin-bottom: 0.35rem;">
+                        Based on <u style="font-weight: 600;"><?php echo REVIEW_STATS['trustpilot_count']; ?> reviews</u>
+                    </div>
+                    <div style="color: #00b67a; font-weight: 600; font-size: 0.95rem;">★ Trustpilot</div>
                 </div>
-                <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.5rem;">
-                    Based on <u style="font-weight: 600;">12,494 reviews</u>
+                <!-- Google Rating Badge -->
+                <div class="google-rating-badge">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0124 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.001-.001 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+                        <span style="font-size: 1.35rem; font-weight: 700; color: #333;"><?php echo REVIEW_STATS['google_rating']; ?></span>
+                    </div>
+                    <div style="display: flex; justify-content: center; margin-bottom: 0.35rem;">
+                        <?php echo renderStars(REVIEW_STATS['google_rating']); ?>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #666;">Google Reviews</div>
                 </div>
-                <div style="color: #00b67a; font-weight: 600; font-size: 1rem;">★ Trustpilot</div>
             </div>
 
             <!-- Scrolling Window -->
             <div style="flex: 1; overflow: hidden; mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);">
                 <div class="reviews-track">
                     <?php
-$reviews = [
-    ['title' => 'Accredited international qualification', 'body' => 'I am thrilled to learn with Integer that gives me the possibility to get...', 'author' => 'Customer', 'time' => '1 day ago', 'rating' => 5],
-    ['title' => 'Smooth registration process', 'body' => 'I had a smooth registration process as my course advisor, Michelle took care...', 'author' => 'D Ahmad', 'time' => '2 days ago', 'rating' => 5],
-    ['title' => 'Great Guidance and Support', 'body' => 'I had a really positive experience with my Integer course advisor. She...', 'author' => 'Khim', 'time' => '2 days ago', 'rating' => 4.5],
-    ['title' => 'When I first enquired it wasn\'t pushy', 'body' => 'When I first enquired it wasn\'t pushy, Eva was able to answer my queries...', 'author' => 'Ms Z Williams', 'time' => '3 days ago', 'rating' => 5],
-    ['title' => 'Excellent course material', 'body' => 'The course material is very easy to understand and the support is amazing...', 'author' => 'John Doe', 'time' => '4 days ago', 'rating' => 4],
-];
-
-// Loop twice to create seamless infinite scroll effect
+// Loop twice for seamless infinite scroll using real Trustpilot reviews
 for ($k = 0; $k < 2; $k++):
-    foreach ($reviews as $review):
+    foreach (TRUSTPILOT_REVIEWS as $review):
 ?>
                         <div style="width: 280px; text-align: left; background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #eee; flex-shrink: 0;">
                             <div style="display: flex; gap: 2px; margin-bottom: 0.75rem;">
@@ -325,7 +391,7 @@ for ($k = 0; $k < 2; $k++):
                                 <?php echo htmlspecialchars($review['body']); ?>
                             </p>
                             <div style="font-size: 0.8rem; color: #888;">
-                                <span style="font-weight: 600; color: #333;"><?php echo htmlspecialchars($review['author']); ?></span>, <?php echo htmlspecialchars($review['time']); ?>
+                                <span style="font-weight: 600; color: #333;"><?php echo htmlspecialchars($review['author']); ?></span>, <?php echo htmlspecialchars($review['date']); ?>
                             </div>
                         </div>
                     <?php
@@ -334,7 +400,7 @@ endfor;
 ?>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </section>
