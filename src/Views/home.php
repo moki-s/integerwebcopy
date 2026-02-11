@@ -68,23 +68,22 @@ function renderGoogleStars($rating)
 ?>
 
 <!-- Hero Section -->
-<section class="hero-section" style="background: linear-gradient(135deg, var(--color-primary-navy) 0%, #152a45 100%); color: white; padding: 4rem 0 6rem 0; position: relative; overflow: hidden;">
-    <!-- Diagonal Graphic Effect -->
-    <div style="position: absolute; right: 0; top: 0; width: 50%; height: 100%; background: var(--color-integer-yellow); clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%); opacity: 0.1;"></div>
-    
+<section class="hero-section" style="background: url('/assets/images/hero-banner.png') center center / cover no-repeat; color: white; padding: 4rem 0 6rem 0; position: relative; overflow: hidden;">
+    <!-- Dark overlay for text readability -->
+    <div style="position: absolute; inset: 0; background: rgba(15, 30, 55, 0.8);"></div>
+
     <div class="container" style="position: relative; z-index: 2;">
         <div style="max-width: 600px;">
             <p style="text-transform: uppercase; letter-spacing: 1px; font-weight: 600; color: var(--color-integer-yellow); margin-bottom: 1rem;">Career Training Experts</p>
             <h1 style="font-size: 3.5rem; line-height: 1.1; margin-bottom: 1.5rem; color: white;">Train toward a career you'll love!</h1>
             <p style="font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9;">Join over 50,000 students achieving their career goals with our accredited online courses.</p>
-            
+
             <form action="/courses" method="GET" style="background: white; padding: 0.5rem; border-radius: var(--radius-md); display: flex; gap: 0.5rem; max-width: 500px;">
                 <input type="text" name="search" placeholder="What do you want to study?" style="flex: 1; border: none; padding: 0.75rem; outline: none; font-family: var(--font-body);">
                 <button type="submit" class="btn btn-highlight">Search</button>
             </form>
-            
+
             <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center;">
-                <!-- Trust Badges -->
                 <span style="font-size: 0.9rem; opacity: 0.8;">Excellent on Trustpilot</span>
                 <?php echo renderStars(4.7); ?>
             </div>
