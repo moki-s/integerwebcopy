@@ -5,8 +5,12 @@
 **Integer Training** — A PHP website for a UK-based career training company offering accredited qualifications across 6 categories. No framework, no build system — vanilla PHP with a simple router.
 
 - **Live Dev**: `php -S localhost:8000 -t public` (XAMPP PHP at `/c/xampp/php/php.exe`)
-- **Repo**: `https://github.com/Integer-Training/web-main-hub.git`
-- **Stack**: PHP 8.2, HTML/CSS (no JS framework), Supabase (form storage), Stripe (payment — pending)
+- **Repos**:
+  - `origin` → `https://github.com/Integer-Training/INTEGERweb.git`
+  - `web-main-hub` → `https://github.com/Integer-Training/web-main-hub.git`
+  - `personal` → `https://github.com/moki-s/integerwebcopy.git` (DigitalOcean deployment source)
+- **Stack**: PHP 8.2, HTML/CSS (no JS framework), Supabase (form storage), Stripe (payments with 3DS)
+- **Deployment**: DigitalOcean App Platform (auto-deploys from `personal` remote)
 
 ---
 
@@ -15,13 +19,19 @@
 ```
 INTEGERweb/
 ├── public/                          # Web root (document root for server)
-│   ├── index.php                    # Main router + HTML shell
+│   ├── index.php                    # Main router + HTML shell (CSS has ?v=N cache-busting)
 │   └── assets/
 │       ├── css/
 │       │   ├── variables.css        # CSS custom properties
-│       │   └── style.css            # All styles (~750 lines, mobile styles in @media)
+│       │   └── style.css            # All styles (~870 lines, mobile styles in @media)
 │       └── images/
 │           ├── logo.webp            # Site logo
+│           ├── hero-banner.png      # Hero section background image
+│           ├── student-advisor.webp # CTA section advisor image
+│           ├── partners/            # 12 partner/accreditation logos
+│           │   ├── habc.webp, ncfe.png, aat.webp, mindful-education.webp
+│           │   ├── pearson.webp, athe.webp, national-careers.webp, htq.webp
+│           │   ├── esfa.png, all.png, matrix.avif, mayor-of-london.png
 │           └── courses/             # Course images (30 courses + thumbnails)
 │               ├── accounting/      # 7 course images + acc-thumb.png
 │               ├── health-social/   # 5 course images + hs-thumb.png
@@ -31,25 +41,30 @@ INTEGERweb/
 │               └── business/        # 1 course image
 ├── src/
 │   ├── Config/
-│   │   └── Supabase.php            # Supabase URL, anon key, supabaseInsert() helper
+│   │   ├── Supabase.php            # Supabase URL, anon key, supabaseInsert() helper
+│   │   └── Stripe.php              # Stripe secret key, stripeRequest() helper
 │   ├── Data/
-│   │   └── CourseData.php           # 30 courses as PHP constant array, getCourse()/getAllCourses()
+│   │   ├── CourseData.php           # 30 courses as PHP constant array, getCourse()/getAllCourses()
+│   │   └── ReviewData.php           # 20 real Trustpilot reviews, review stats, 12 partner logos
 │   ├── Database.php                 # PDO database singleton (MySQL — not actively used)
 │   ├── Templates/
-│   │   ├── Header.php               # Site header (desktop nav + mobile hamburger menu)
+│   │   ├── Header.php               # Site header (WhatsApp + phone + cart, mobile hamburger menu)
 │   │   └── Footer.php               # Site footer
 │   └── Views/
-│       ├── home.php                 # Homepage (hero, mobile lead form, stats, courses, reviews, CTA)
+│       ├── home.php                 # Homepage (hero bg image, stats, partners banner, 6 course categories, real reviews, CTA)
 │       ├── courses.php              # Course listing (filters, sort, search, grid)
-│       ├── product.php              # Product detail (tabs, sidebar, reviews, FAQ)
+│       ├── product.php              # Product detail (tabs, sidebar, real reviews with Trustpilot+Google badges)
 │       ├── cart.php                 # Shopping cart (session-based)
-│       ├── checkout.php             # Checkout (dynamic, reads cart, Stripe placeholder)
+│       ├── checkout.php             # Checkout (Stripe with 3DS support)
 │       ├── contact.php              # Contact page (form submits to Supabase)
-│       ├── about.php                # About page (tabbed sections)
+│       ├── about.php                # About page (tabbed sections, policies)
 │       ├── branches.php             # Branch locations
+│       ├── order-success.php        # Order confirmation page
 │       └── student_login.php        # Student login (placeholder)
 ├── database/                        # SQL migration files
 ├── composer.json
+├── apache.conf                      # Apache config for DigitalOcean
+├── Procfile                         # DigitalOcean App Platform process file
 └── start_server.bat
 ```
 
@@ -66,6 +81,7 @@ Simple URI-based router. No framework.
 | `/product?id=xxx` | GET | product.php |
 | `/cart` | GET | cart.php |
 | `/checkout` | GET | checkout.php (redirects to /cart if empty) |
+| `/order-success` | GET | order-success.php (redirects to / if no order) |
 | `/contact` | GET | contact.php |
 | `/about` | GET | about.php |
 | `/branches` | GET | branches.php |
@@ -73,6 +89,22 @@ Simple URI-based router. No framework.
 | `/cart-add` | POST | Add to session cart, redirect to product |
 | `/cart-remove?id=xxx` | GET | Remove from cart, redirect to /cart |
 | `/enquiry` | POST | Validate + insert to Supabase, redirect with flash message |
+| `/checkout-process` | POST | Create Stripe PaymentIntent (JSON API) |
+| `/checkout-confirm` | POST | Confirm Stripe 3DS payment (JSON API) |
+
+---
+
+## Review Data (src/Data/ReviewData.php)
+
+Centralized data file with three constants:
+
+- **`TRUSTPILOT_REVIEWS`** — 20 real Trustpilot reviews (author, rating, title, body, date, source)
+- **`REVIEW_STATS`** — Aggregated ratings: `trustpilot_rating`, `trustpilot_count`, `google_rating`, `google_count`
+- **`PARTNER_LOGOS`** — 12 partner logos (src path + alt text), rendered dynamically on homepage
+
+Used by: `home.php` (scrolling carousel + rating box + partner banner), `product.php` (review carousel + badges)
+
+To add/remove partners or reviews, edit the arrays in this file.
 
 ---
 
@@ -95,13 +127,49 @@ Helper functions: `getCourse($id)`, `getAllCourses()`
 
 ---
 
+## Homepage Sections (src/Views/home.php)
+
+| # | Section | Description |
+|---|---------|-------------|
+| 1 | Hero | Background image with dark overlay, search bar, Trustpilot stars |
+| 2 | Mobile Lead Form | Hidden on desktop, shown on mobile |
+| 3 | Stats Bar | Animated counters (25+ years, 50,000+ students, 93% pass rate) |
+| 4 | Features | Trustpilot bar + 3 feature icons (Expert tutors, Self-paced, Interest-free) |
+| 5 | Partners Banner | 12 logos in infinite scroll, dynamic from `PARTNER_LOGOS` |
+| 6 | Explore Courses | All 6 categories with thumbnails, links to filtered /courses page |
+| 7 | Reviews Carousel | 20 real Trustpilot reviews + Trustpilot & Google rating badges |
+| 8 | CTA | Course advisor contact section with email/call buttons |
+
+---
+
+## Header (src/Templates/Header.php)
+
+### Desktop
+- Top bar: "Train toward a career you'll love!" + phone number
+- Main: Logo | Nav (Courses, About Us, Branches, Contact) | WhatsApp icon + Phone pill + Cart
+
+### Mobile
+- WhatsApp icon + Phone number pill + Hamburger menu
+- Slide-out menu: Nav links + WhatsApp Us + Phone + Email + Basket + Close
+
+**WhatsApp**: Links to `https://wa.me/447828924057` (opens new tab)
+
+---
+
 ## Supabase Integration (src/Config/Supabase.php)
 
 - **URL**: `https://diaxecxqisioooacucbg.supabase.co`
-- **Table**: `enquiries`
-- **Fields**: `name`, `email`, `phone`, `course_interest`, `message`, `page`, `source`
+- **Tables**: `enquiries`, `orders`
 - **Function**: `supabaseInsert(string $table, array $data)` — cURL POST to Supabase REST API
 - **Forms wired**: Homepage mobile lead form + Contact page form → both POST to `/enquiry`
+
+---
+
+## Stripe Integration (src/Config/Stripe.php)
+
+- **Function**: `stripeRequest(string $endpoint, array $params)` — cURL POST to Stripe API
+- **Flow**: Create PaymentIntent → 3DS challenge if needed → Confirm → Save order to Supabase
+- **Routes**: `/checkout-process` (create), `/checkout-confirm` (3DS confirm)
 
 ---
 
@@ -109,18 +177,21 @@ Helper functions: `getCourse($id)`, `getAllCourses()`
 
 **Critical rule**: Desktop layout must NEVER change. All mobile styles live inside `@media (max-width: 768px)`.
 
+**Cache-busting**: CSS links in `index.php` use `?v=N` query strings. Increment when deploying CSS changes.
+
 ### Base (desktop) styles:
 - Reset, container (max-width: 1280px), typography utilities
 - Buttons: `.btn-primary`, `.btn-secondary`, `.btn-accent`, `.btn-highlight`
-- Header: `.site-header` (sticky, z-index: 1000), `.top-bar`, `.nav-menu`, `.header-actions`, `.header-phone-link`
+- Header: `.site-header` (sticky, z-index: 1000), `.top-bar`, `.nav-menu`, `.header-actions`, `.header-phone-link`, `.header-whatsapp-link`
 - Footer: `.footer-grid`, `.footer-col`, `.footer-links`
+- Partners: `.partner-track` (infinite scroll animation), `.partner-logo` (full colour, hover scale)
 - Contact: `.contact-form-label` (hidden on desktop, shown on mobile)
-- Hidden on desktop: `.home-mobile-form`, `.mobile-hamburger`, `.mobile-header-phone`, `.mobile-menu-overlay`, `.mobile-filter-toggle`
+- Hidden on desktop: `.home-mobile-form`, `.mobile-hamburger`, `.mobile-header-phone`, `.mobile-header-whatsapp`, `.mobile-menu-overlay`, `.mobile-filter-toggle`
 
 ### Mobile (`@media max-width: 768px`) sections:
+- **Mobile header**: Hide desktop nav, show WhatsApp icon + hamburger + phone number pill, slide-out menu
+- **Homepage**: Show lead form, compact hero, stack stats, trustpilot wrap, smaller partner logos, CTA stacking
 - **Contact page**: Form-first order, visible labels, 16px inputs
-- **Mobile header**: Hide desktop nav, show hamburger + phone number pill, slide-out menu panel
-- **Homepage**: Show lead form, compact hero, stack stats, trustpilot wrap, CTA stacking
 - **Courses page**: Compact hero, filter toggle, collapsible sidebar, single-column cards
 - **About page**: Compact hero, collapsible sidebar, single-column layout
 - **Product page**: Single column, sidebar first (pricing visible), benefits stack
@@ -128,14 +199,6 @@ Helper functions: `getCourse($id)`, `getAllCourses()`
 - **Checkout page**: Order summary first, stacked name fields
 - **Footer**: Single column
 - **Global**: `overflow-x: hidden` on `html` only (NOT body — breaks sticky header)
-
-### Key CSS classes added for mobile targeting:
-- Homepage: `.home-mobile-form`, `.trustpilot-bar`, `.reviews-wrapper`, `.reviews-rating-box`, `.cta-section`, `.cta-inner`, `.cta-advisor-image`
-- Courses: `.courses-hero`, `.courses-layout`, `.courses-sidebar`, `.courses-main`, `.courses-grid`
-- About: `.about-hero`, `.about-layout`, `.about-grid`, `.about-sidebar`
-- Product: `.product-header`, `.product-layout`, `.product-sidebar`, `.product-meta`, `.product-benefits-grid`
-- Cart: `.cart-layout`, `.cart-table`, `.cart-summary`
-- Checkout: `.checkout-container`, `.checkout-layout`, `.checkout-form-col`, `.checkout-summary`, `.checkout-name-row`
 
 ---
 
@@ -148,19 +211,26 @@ Helper functions: `getCourse($id)`, `getAllCourses()`
 
 ---
 
-## Pending / Next Steps
+## Deployment
 
-1. **Stripe Integration** — Checkout page has `id="stripe-card-element"` placeholder and form with `action="/checkout-process"`. Need to:
-   - Add Stripe JS SDK
-   - Create payment intent on server
-   - Handle `/checkout-process` POST route
-   - Save order to Supabase
+### DigitalOcean App Platform
+- **Source repo**: `personal` remote (`moki-s/integerwebcopy`)
+- **Auto-deploy**: On push to main
+- **Manual deploy**: DigitalOcean dashboard → Actions → Force Rebuild and Deploy
+- **Important**: When deploying CSS changes, increment `?v=N` in `index.php` CSS links
 
-2. **Course images for remaining categories** — All 30 courses now have images
+### Git Remotes
 
-3. **SEO** — Dynamic `<title>` tags per page, meta descriptions
+| Name | URL | Purpose |
+|------|-----|---------|
+| `origin` | `https://github.com/Integer-Training/INTEGERweb.git` | Primary repo |
+| `web-main-hub` | `https://github.com/Integer-Training/web-main-hub.git` | Secondary repo |
+| `personal` | `https://github.com/moki-s/integerwebcopy.git` | DigitalOcean deployment |
 
-4. **Admin panel** — `src/Views/admin/` exists but is placeholder
+### Push to all remotes
+```bash
+git push origin main && git push web-main-hub main && git push personal main
+```
 
 ---
 
@@ -172,48 +242,11 @@ Helper functions: `getCourse($id)`, `getAllCourses()`
 
 # Or from project root
 php -S localhost:8000 -t public
-
-# Git push to main repo
-git push origin main
-
-# Git push to web-main-hub
-git push web-main-hub main
 ```
 
 ---
 
-## Git Remotes
+## Pending / Next Steps
 
-| Name | URL |
-|------|-----|
-| `origin` | `https://github.com/Integer-Training/INTEGERweb.git` |
-| `web-main-hub` | `https://github.com/Integer-Training/web-main-hub.git` |
-
----
-
-## Commit History (recent → oldest)
-
-| Hash | Description |
-|------|-------------|
-| `f9e8bcc` | chore: trigger Lovable rebuild with latest codebase |
-| `e0776f3` | feat: display real course images instead of emojis across all pages |
-| `ee17764` | feat: add course images for all 30 courses across 6 categories |
-| `a25945d` | feat: add prominent sticky phone number to header on desktop and mobile |
-| `f4178fa` | feat: add mobile responsive CSS for product, cart, and checkout pages |
-| `8f2a99c` | fix: add CSS classes to cart and product pages for mobile targeting |
-| `d0fff25` | feat: rewrite checkout page to be dynamic with real cart data |
-| `d0f500e` | feat: wire homepage lead capture form to Supabase backend |
-| `a8a59d7` | feat: wire contact page form to Supabase backend |
-| `b3133d6` | feat: add POST /enquiry route for form submissions |
-| `6bbd8c3` | feat: add Supabase config and REST API helper |
-| `725350a` | fix: correct category links in Explore Our Courses section |
-| `5fae873` | feat: implement working filters, sorting, and remove fake pagination |
-| `ee2a898` | feat: migrate full course data from integer.co.uk |
-| `79377ff` | feat: add comprehensive mobile-only CSS for all pages |
-| `3604a5e` | feat: add mobile menu toggle and responsive layout to about page |
-| `d4fc97a` | feat: add mobile filter toggle and responsive layout to courses page |
-| `f607ed3` | feat: add mobile hamburger menu and slide-out navigation |
-| `bb9af1d` | feat: add mobile lead capture form and responsive classes to homepage |
-| `e8f3b7f` | feat: add mobile-responsive contact page layout |
-| `153e1c1` | Frontend polish: Product page, Homepage, and Search updates |
-| `843d886` | Initial setup |
+1. **SEO** — Dynamic `<title>` tags per page, meta descriptions
+2. **Admin panel** — `src/Views/admin/` exists but is placeholder
