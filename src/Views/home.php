@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <!-- Accounting -->
             <a href="/courses?category[]=Accounting" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
                 <div style="height: 200px; overflow: hidden;">
-                    <img src="/assets/images/courses/accounting/acc-thumb.png" alt="Accounting Courses" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="/assets/images/courses/accounting/acc-thumb.png?v=2" alt="Accounting Courses" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div style="padding: 1.5rem;">
                     <h3 style="margin-bottom: 0.5rem;">Accounting</h3>
