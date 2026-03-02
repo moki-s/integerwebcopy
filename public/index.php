@@ -43,7 +43,7 @@ if ($uri === '/cart-add' && $requestMethod === 'POST') {
         }
         $_SESSION['cart'][$courseId] = 1;
     }
-    header('Location: /product?id=' . urlencode($courseId ?? ''));
+    header('Location: /cart');
     exit;
 }
 
@@ -355,8 +355,8 @@ else {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="/assets/css/variables.css?v=2">
-    <link rel="stylesheet" href="/assets/css/style.css?v=2">
+    <link rel="stylesheet" href="/assets/css/variables.css?v=3">
+    <link rel="stylesheet" href="/assets/css/style.css?v=3">
 </head>
 <body>
 

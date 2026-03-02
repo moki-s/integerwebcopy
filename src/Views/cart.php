@@ -26,7 +26,9 @@ $total = $subtotal; // If inclusive
     
     <?php if (empty($cart_items)): ?>
         <div style="text-align: center; padding: 4rem; background: #f8f9fa; border-radius: 8px;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">🛒</div>
+            <div style="margin-bottom: 1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            </div>
             <h3>Your cart is empty</h3>
             <p style="color: #666; margin-bottom: 2rem;">Looks like you haven't added any courses yet.</p>
             <a href="/courses" class="btn btn-primary">Browse Courses</a>

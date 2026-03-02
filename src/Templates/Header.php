@@ -1,5 +1,6 @@
 <?php
 // Header Template
+$cartCount = count($_SESSION['cart'] ?? []);
 ?>
 <header class="site-header">
     <div class="top-bar">
@@ -34,6 +35,9 @@
                 </a>
                 <a href="/cart" style="position: relative;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-navy"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <?php if ($cartCount > 0): ?>
+                        <span class="cart-badge"><?php echo $cartCount; ?></span>
+                    <?php endif; ?>
                 </a>
             </div>
 
@@ -53,7 +57,7 @@
 </header>
 
 <!-- Mobile Menu Overlay (hidden on desktop) -->
-<div id="mobileMenu" class="mobile-menu-overlay">
+<div id="mobileMenu" class="mobile-menu-overlay" onclick="if(event.target===this)this.classList.remove('open')"
     <div class="mobile-menu-panel">
         <div class="mobile-menu-top">
             <span style="font-size: 1.25rem; font-weight: 700; color: var(--color-primary-navy);">Main Menu</span>
@@ -80,7 +84,7 @@
             </a>
             <a href="/cart" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 0; color: var(--color-primary-navy); font-weight: 600; border-top: 1px solid #eee;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-                Basket
+                Basket<?php if ($cartCount > 0): ?> (<?php echo $cartCount; ?>)<?php endif; ?>
             </a>
         </div>
         <div style="padding: 1rem 1.5rem; border-top: 1px solid #eee;">

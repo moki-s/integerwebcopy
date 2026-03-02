@@ -85,7 +85,7 @@ function renderGoogleStars($rating)
 
             <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center;">
                 <span style="font-size: 0.9rem; opacity: 0.8;">Excellent on Trustpilot</span>
-                <?php echo renderStars(4.7); ?>
+                <?php echo renderStars(REVIEW_STATS['trustpilot_rating']); ?>
             </div>
         </div>
     </div>
@@ -125,80 +125,6 @@ function renderGoogleStars($rating)
         </div>
     </div>
 </section>
-
-<!-- Stats Bar -->
-<section class="stats-bar" style="transform: translateY(-40px); position: relative; z-index: 10;">
-    <div class="container">
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; background: white; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden;">
-            
-            <div style="text-align: center; padding: 2.5rem 2rem; border-right: 1px solid #f0f0f0; transition: background 0.3s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
-                <div class="counter" data-target="25" data-suffix="+" style="font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, var(--color-primary-navy) 0%, #3FA9CB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; line-height: 1;">0</div>
-                <p style="margin: 0; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Years Experience</p>
-            </div>
-            
-            <div style="text-align: center; padding: 2.5rem 2rem; border-right: 1px solid #f0f0f0; transition: background 0.3s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
-                <div class="counter" data-target="50000" data-suffix="+" style="font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, var(--color-primary-navy) 0%, #3FA9CB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; line-height: 1;">0</div>
-                <p style="margin: 0; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Students Trained</p>
-            </div>
-            
-            <div style="text-align: center; padding: 2.5rem 2rem; transition: background 0.3s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
-                <div class="counter" data-target="93" data-suffix="%" style="font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, var(--color-primary-navy) 0%, #3FA9CB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; line-height: 1;">0</div>
-                <p style="margin: 0; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Pass Rate</p>
-            </div>
-            
-        </div>
-    </div>
-</section>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const counters = document.querySelectorAll('.counter');
-    const speed = 50; // 50 steps × 20ms = 1 second
-
-    const animateCounters = () => {
-        counters.forEach(counter => {
-            const updateCount = () => {
-                const target = +counter.getAttribute('data-target');
-                const count = +counter.innerText.replace(/[^\d]/g, ''); // remove non-digits if any
-                
-                // Lower increment to count faster
-                const inc = target / speed;
-
-                if (count < target) {
-                    // Check if target is large (like 50,000) to add commas
-                    let currentVal = Math.ceil(count + inc);
-                    if(target > 1000) {
-                         counter.innerText = currentVal.toLocaleString() + (counter.getAttribute('data-suffix') || '');
-                    } else {
-                         counter.innerText = currentVal + (counter.getAttribute('data-suffix') || '');
-                    }
-                    setTimeout(updateCount, 20);
-                } else {
-                    if(target > 1000) {
-                        counter.innerText = target.toLocaleString() + (counter.getAttribute('data-suffix') || '');
-                    } else {
-                        counter.innerText = target + (counter.getAttribute('data-suffix') || '');
-                    }
-                }
-            };
-            updateCount();
-        });
-    }
-
-    // Use Intersection Observer to trigger animation when in view
-    let observer = new IntersectionObserver((entries, observer) => { 
-        entries.forEach(entry => {
-            if(entry.isIntersecting){
-                animateCounters();
-                observer.disconnect(); // Run once
-            }
-        });
-    }, { threshold: 0.5 });
-
-    const statsSection = document.querySelector('.stats-bar');
-    if(statsSection) observer.observe(statsSection);
-});
-</script>
 
 <!-- Trustpilot Bar -->
 <section style="padding: 1.5rem 0; text-align: center;">
@@ -293,12 +219,80 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 </section>
 
+<!-- Stats Bar -->
+<section class="stats-bar" style="position: relative; z-index: 10;">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; background: white; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden;">
+
+            <div style="text-align: center; padding: 2.5rem 2rem; border-right: 1px solid #f0f0f0; transition: background 0.3s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                <div class="counter" data-target="25" data-suffix="+" style="font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, var(--color-primary-navy) 0%, #3FA9CB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; line-height: 1;">0</div>
+                <p style="margin: 0; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Years Experience</p>
+            </div>
+
+            <div style="text-align: center; padding: 2.5rem 2rem; border-right: 1px solid #f0f0f0; transition: background 0.3s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                <div class="counter" data-target="50000" data-suffix="+" style="font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, var(--color-primary-navy) 0%, #3FA9CB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; line-height: 1;">0</div>
+                <p style="margin: 0; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Students Trained</p>
+            </div>
+
+            <div style="text-align: center; padding: 2.5rem 2rem; transition: background 0.3s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                <div class="counter" data-target="93" data-suffix="%" style="font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, var(--color-primary-navy) 0%, #3FA9CB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; line-height: 1;">0</div>
+                <p style="margin: 0; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Pass Rate</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const counters = document.querySelectorAll('.counter');
+    const duration = 800; // All 3 counters finish in exactly 800ms
+
+    const animateCounters = () => {
+        const startTime = performance.now();
+
+        function animate(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // easeOutQuad for smooth deceleration at the end
+            const eased = 1 - (1 - progress) * (1 - progress);
+
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const suffix = counter.getAttribute('data-suffix') || '';
+                const current = Math.round(eased * target);
+                counter.innerText = (target > 1000 ? current.toLocaleString() : current) + suffix;
+            });
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
+        }
+
+        requestAnimationFrame(animate);
+    };
+
+    // Use Intersection Observer to trigger animation when in view
+    let observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounters();
+                observer.disconnect(); // Run once
+            }
+        });
+    }, { threshold: 0.5 });
+
+    const statsSection = document.querySelector('.stats-bar');
+    if (statsSection) observer.observe(statsSection);
+});
+</script>
+
 <!-- Features Section (Benefits Icons) -->
 <section style="padding: 4rem 0; text-align: center;">
     <div class="container">
         <!-- 3 Column Features Grid -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem;">
-            
+
             <!-- Feature 1 -->
             <div>
                 <div style="font-size: 4rem; margin: 0 auto 1rem auto; line-height: 1;">👨‍🏫</div>
@@ -425,7 +419,7 @@ endfor;
 <!-- Course Advisor CTA Section -->
 <section class="cta-section" style="background: linear-gradient(90deg, #3FA9CB 0%, #1E3A8A 100%); padding: 3rem 0; position: relative; overflow: hidden; min-height: 300px; display: flex; align-items: center;">
     <div class="container cta-inner" style="display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 2;">
-        
+
         <!-- Text Content -->
         <div style="flex: 1; color: white; max-width: 600px;">
             <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: white; font-weight: 700; line-height: 1.2;">Questions about your course?</h2>
@@ -439,16 +433,16 @@ endfor;
                 </a>
             </div>
         </div>
-        
+
         <!-- Image (Right Side) -->
         <div class="cta-advisor-image" style="flex: 0 0 300px; display: flex; align-items: flex-end; justify-content: flex-end; position: absolute; right: 2rem; bottom: -3rem; pointer-events: none;">
              <!-- Fallback emoji expanded if image missing -->
             <img src="/assets/images/student-advisor.webp" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" alt="Course Advisor" style="height: 350px; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
             <div style="font-size: 15rem; line-height: 0.8; display: none; transform: translateY(20px);">👨‍💼</div>
         </div>
-        
+
     </div>
-    
+
     <!-- Light Overlay Effect -->
     <div style="position: absolute; right: 0; bottom: 0; width: 50%; height: 100%; background: radial-gradient(circle at bottom right, rgba(255,255,255,0.1) 0%, transparent 60%); pointer-events: none;"></div>
 </section>
