@@ -399,34 +399,39 @@ endif; ?>
         </div>
 
         <!-- Enquiry Form -->
-        <div class="product-enquiry-form" style="background: #FFFDF7; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid #f0e6d2; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-top: 1.5rem;">
-            <h3 style="margin: 0 0 1.25rem 0; color: var(--color-primary-navy); text-align: center; font-size: 1.2rem;">Get Expert Advice</h3>
-            <?php if ($form_success): ?>
-                <div style="background: #d4edda; color: #155724; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; text-align: center; font-weight: 600; font-size: 0.9rem;"><?php echo htmlspecialchars($form_success); ?></div>
-            <?php elseif ($form_error): ?>
-                <div style="background: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; text-align: center; font-weight: 600; font-size: 0.9rem;"><?php echo htmlspecialchars($form_error); ?></div>
-            <?php endif; ?>
-            <form action="/enquiry" method="POST">
-                <input type="hidden" name="page" value="product">
-                <input type="hidden" name="redirect" value="/product?id=<?php echo htmlspecialchars($courseId); ?>">
-                <div style="margin-bottom: 0.85rem;">
-                    <label class="contact-form-label" for="product-name">Your Name <span style="color:var(--color-error-red);">*</span></label>
-                    <input id="product-name" name="name" class="contact-input" type="text" placeholder="Your Name*" required style="width:100%;padding:0.7rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
-                </div>
-                <div style="margin-bottom: 0.85rem;">
-                    <label class="contact-form-label" for="product-email">Email <span style="color:var(--color-error-red);">*</span></label>
-                    <input id="product-email" name="email" class="contact-input" type="email" placeholder="Email*" required style="width:100%;padding:0.7rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
-                </div>
-                <div style="margin-bottom: 0.85rem;">
-                    <label class="contact-form-label" for="product-phone">Phone <span style="color:var(--color-error-red);">*</span></label>
-                    <input id="product-phone" name="phone" class="contact-input" type="tel" placeholder="Phone No*" required style="width:100%;padding:0.7rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
-                </div>
-                <div style="margin-bottom: 1rem;">
-                    <label class="contact-form-label" for="product-course">Course Interest</label>
-                    <input id="product-course" name="course_interest" class="contact-input" type="text" value="<?php echo htmlspecialchars($course['title']); ?>" style="width:100%;padding:0.7rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
-                </div>
-                <button type="submit" class="btn contact-submit-btn" style="width:100%;background-color:#FFD700;color:black;font-weight:700;padding:0.75rem;border:none;text-transform:uppercase;letter-spacing:1px;font-size:0.9rem;">Enquire Today</button>
-            </form>
+        <div class="product-enquiry-form" style="background: white; border: 1px solid #eee; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); overflow: hidden; margin-top: 1.5rem;">
+            <div style="background: var(--color-primary-navy); padding: 0.85rem 1.5rem; text-align: center;">
+                <h3 style="margin: 0; color: white; font-size: 1.05rem; font-weight: 600;">Get Expert Advice</h3>
+            </div>
+            <div style="padding: 1.25rem 1.5rem;">
+                <?php if ($form_success): ?>
+                    <div style="background: #d4edda; color: #155724; padding: 0.6rem; border-radius: 4px; margin-bottom: 0.85rem; text-align: center; font-weight: 600; font-size: 0.85rem;"><?php echo htmlspecialchars($form_success); ?></div>
+                <?php elseif ($form_error): ?>
+                    <div style="background: #f8d7da; color: #721c24; padding: 0.6rem; border-radius: 4px; margin-bottom: 0.85rem; text-align: center; font-weight: 600; font-size: 0.85rem;"><?php echo htmlspecialchars($form_error); ?></div>
+                <?php endif; ?>
+                <form action="/enquiry" method="POST">
+                    <input type="hidden" name="page" value="product">
+                    <input type="hidden" name="redirect" value="/product?id=<?php echo htmlspecialchars($courseId); ?>">
+                    <div style="margin-bottom: 0.65rem;">
+                        <label class="contact-form-label" for="product-name" style="font-size: 0.8rem; margin-bottom: 0.3rem;">Your Name <span style="color:var(--color-error-red);">*</span></label>
+                        <input id="product-name" name="name" class="contact-input" type="text" placeholder="Full name" required style="width:100%;padding:0.55rem 0.7rem;border:1px solid #ddd;border-radius:4px;background:#f8f9fa;font-family:var(--font-body);font-size:0.9rem;">
+                    </div>
+                    <div style="margin-bottom: 0.65rem;">
+                        <label class="contact-form-label" for="product-email" style="font-size: 0.8rem; margin-bottom: 0.3rem;">Email <span style="color:var(--color-error-red);">*</span></label>
+                        <input id="product-email" name="email" class="contact-input" type="email" placeholder="you@email.com" required style="width:100%;padding:0.55rem 0.7rem;border:1px solid #ddd;border-radius:4px;background:#f8f9fa;font-family:var(--font-body);font-size:0.9rem;">
+                    </div>
+                    <div style="margin-bottom: 0.65rem;">
+                        <label class="contact-form-label" for="product-phone" style="font-size: 0.8rem; margin-bottom: 0.3rem;">Phone <span style="color:var(--color-error-red);">*</span></label>
+                        <input id="product-phone" name="phone" class="contact-input" type="tel" placeholder="07xxx xxxxxx" required style="width:100%;padding:0.55rem 0.7rem;border:1px solid #ddd;border-radius:4px;background:#f8f9fa;font-family:var(--font-body);font-size:0.9rem;">
+                    </div>
+                    <div style="margin-bottom: 0.85rem;">
+                        <label class="contact-form-label" for="product-course" style="font-size: 0.8rem; margin-bottom: 0.3rem;">Course Interest</label>
+                        <input id="product-course" name="course_interest" class="contact-input" type="text" value="<?php echo htmlspecialchars($course['title']); ?>" style="width:100%;padding:0.55rem 0.7rem;border:1px solid #ddd;border-radius:4px;background:#f8f9fa;font-family:var(--font-body);font-size:0.9rem;">
+                    </div>
+                    <button type="submit" class="btn" style="width:100%;background-color:var(--color-primary-navy);color:white;font-weight:600;padding:0.7rem;border:none;font-size:0.9rem;border-radius:var(--radius-md);">Send Enquiry</button>
+                </form>
+                <p style="margin: 0.65rem 0 0 0; text-align: center; font-size: 0.75rem; color: #999;">We'll get back to you within 24 hours</p>
+            </div>
         </div>
     </div>
 </div>

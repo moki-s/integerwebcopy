@@ -837,20 +837,21 @@ img {
         width: 100% !important;
     }
 
-    /* Show mobile-only enquiry form */
+    /* Show mobile-only enquiry form, hide sidebar one */
     .product-mobile-form {
         display: block !important;
         padding: 1.5rem 0;
         background: #f8f9fa;
     }
-    .product-mobile-form .contact-input,
-    .product-enquiry-form .contact-input {
+    .product-enquiry-form {
+        display: none !important;
+    }
+    .product-mobile-form .contact-input {
         font-size: 16px !important;
         border: 1.5px solid #ddd !important;
         border-radius: 6px !important;
     }
-    .product-mobile-form .contact-input:focus,
-    .product-enquiry-form .contact-input:focus {
+    .product-mobile-form .contact-input:focus {
         border-color: var(--color-accent-teal) !important;
         outline: none;
         box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.15);
