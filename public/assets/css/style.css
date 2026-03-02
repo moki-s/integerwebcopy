@@ -236,10 +236,7 @@ img {
     line-height: 1;
 }
 
-/* Product enquiry form — visible on both desktop and mobile */
-.product-enquiry-form {
-    display: block;
-}
+/* Product enquiry form labels always visible */
 .product-enquiry-form .contact-form-label {
     display: block;
 }
@@ -832,11 +829,7 @@ img {
         width: 100% !important;
     }
 
-    /* Enquiry form: mobile tweaks */
-    .product-enquiry-form {
-        padding: 1.5rem 0;
-        background: #f8f9fa;
-    }
+    /* Enquiry form: mobile input tweaks */
     .product-enquiry-form .contact-input {
         font-size: 16px !important;
         border: 1.5px solid #ddd !important;
