@@ -46,6 +46,41 @@ unset($_SESSION['form_success'], $_SESSION['form_error']);
     </div>
 </div>
 
+<!-- Enquiry Form: mobile only (above product layout) -->
+<div class="product-mobile-form">
+    <div class="container" style="max-width: 600px;">
+        <div style="background: #FFFDF7; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); text-align: left; border: 1px solid #f0e6d2;">
+            <h3 style="margin: 0 0 1.25rem 0; color: var(--color-primary-navy); text-align: center; font-size: 1.35rem;">Get Expert Advice</h3>
+            <?php if ($form_success): ?>
+                <div style="background: #d4edda; color: #155724; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; text-align: center; font-weight: 600; font-size: 0.9rem;"><?php echo htmlspecialchars($form_success); ?></div>
+            <?php elseif ($form_error): ?>
+                <div style="background: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 6px; margin-bottom: 1rem; text-align: center; font-weight: 600; font-size: 0.9rem;"><?php echo htmlspecialchars($form_error); ?></div>
+            <?php endif; ?>
+            <form action="/enquiry" method="POST">
+                <input type="hidden" name="page" value="product">
+                <input type="hidden" name="redirect" value="/product?id=<?php echo htmlspecialchars($courseId); ?>">
+                <div style="margin-bottom: 1rem;">
+                    <label class="contact-form-label" for="pm-name">Your Name <span style="color:var(--color-error-red);">*</span></label>
+                    <input id="pm-name" name="name" class="contact-input" type="text" placeholder="Your Name*" required style="width:100%;padding:0.85rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label class="contact-form-label" for="pm-email">Email <span style="color:var(--color-error-red);">*</span></label>
+                    <input id="pm-email" name="email" class="contact-input" type="email" placeholder="Email*" required style="width:100%;padding:0.85rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label class="contact-form-label" for="pm-phone">Phone <span style="color:var(--color-error-red);">*</span></label>
+                    <input id="pm-phone" name="phone" class="contact-input" type="tel" placeholder="Phone No*" required style="width:100%;padding:0.85rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
+                </div>
+                <div style="margin-bottom: 1.25rem;">
+                    <label class="contact-form-label" for="pm-course">Course Interest</label>
+                    <input id="pm-course" name="course_interest" class="contact-input" type="text" value="<?php echo htmlspecialchars($course['title']); ?>" style="width:100%;padding:0.85rem;border:1px solid #eaeaea;border-radius:4px;background:white;font-family:var(--font-body);">
+                </div>
+                <button type="submit" class="btn contact-submit-btn" style="width:100%;background-color:#FFD700;color:black;font-weight:700;padding:0.85rem;border:none;text-transform:uppercase;letter-spacing:1px;">Enquire Today</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="container product-layout" style="padding-top: 2rem; display: grid; grid-template-columns: 1fr 350px; gap: 3rem; position: relative;">
 
     <!-- Main Content (Left) -->
