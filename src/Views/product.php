@@ -46,7 +46,7 @@ unset($_SESSION['form_success'], $_SESSION['form_error']);
     </div>
 </div>
 
-<!-- Enquiry Form (mobile: shown first, desktop: hidden) -->
+<!-- Enquiry Form -->
 <div class="product-enquiry-form">
     <div class="container" style="max-width: 600px;">
         <div style="background: #FFFDF7; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); text-align: left; border: 1px solid #f0e6d2;">

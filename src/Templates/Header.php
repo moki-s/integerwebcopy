@@ -57,7 +57,7 @@ $cartCount = count($_SESSION['cart'] ?? []);
 </header>
 
 <!-- Mobile Menu Overlay (hidden on desktop) -->
-<div id="mobileMenu" class="mobile-menu-overlay" onclick="if(event.target===this)this.classList.remove('open')"
+<div id="mobileMenu" class="mobile-menu-overlay" onclick="if(event.target===this)this.classList.remove('open')">
     <div class="mobile-menu-panel">
         <div class="mobile-menu-top">
             <span style="font-size: 1.25rem; font-weight: 700; color: var(--color-primary-navy);">Main Menu</span>
