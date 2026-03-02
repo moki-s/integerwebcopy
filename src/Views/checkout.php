@@ -73,12 +73,25 @@ unset($_SESSION['checkout_error']);
                     <div id="stripe-card-element" style="background: #fff; border: 1px solid #ddd; padding: 0.75rem; border-radius: 4px;"></div>
                     <div id="stripe-card-errors" style="color: #e53e3e; font-size: 0.85rem; margin-top: 0.5rem; min-height: 1.2em;"></div>
 
-                    <button type="submit" id="submit-btn" class="btn btn-primary checkout-pay-btn" style="width: 100%; margin-top: 1.5rem; font-size: 1.1rem; padding: 1rem;">
+                    <div style="margin-top: 1.5rem; margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: #333; margin-bottom: 0.75rem;">
+                            <input type="checkbox" id="terms-agree" style="width: 18px; height: 18px; flex-shrink: 0;">
+                            I agree to all <a href="/terms" target="_blank" style="color: var(--color-primary-navy); text-decoration: underline; font-weight: 600;">Terms and Conditions</a>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: #333;">
+                            <input type="checkbox" id="privacy-agree" style="width: 18px; height: 18px; flex-shrink: 0;">
+                            I agree to all <a href="/privacy-policy" target="_blank" style="color: var(--color-primary-navy); text-decoration: underline; font-weight: 600;">Privacy Policies</a>
+                        </label>
+                        <div id="terms-error" style="color: #e53e3e; font-size: 0.8rem; margin-top: 0.5rem; display: none;">You must agree to both policies to proceed.</div>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="btn btn-primary checkout-pay-btn" style="width: 100%; font-size: 1.1rem; padding: 1rem;">
                         <span id="btn-text">Pay &pound;<?php echo number_format($total, 2); ?></span>
                         <span id="btn-spinner" style="display: none;">Processing...</span>
                     </button>
-                    <div style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #666;">
-                        🔒 256-bit SSL Secure Encrypted Payment
+                    <div style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: #666; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                        256-bit SSL Secure Encrypted Payment
                     </div>
                 </div>
             </form>
@@ -169,6 +182,17 @@ unset($_SESSION['checkout_error']);
             errorEl.textContent = 'Please fill in all required fields.';
             return;
         }
+
+        var termsBox = document.getElementById('terms-agree');
+        var privacyBox = document.getElementById('privacy-agree');
+        var termsErr = document.getElementById('terms-error');
+        if (!termsBox.checked || !privacyBox.checked) {
+            termsErr.style.display = 'block';
+            if (!termsBox.checked) termsBox.focus();
+            else privacyBox.focus();
+            return;
+        }
+        termsErr.style.display = 'none';
 
         errorEl.textContent = '';
         setLoading(true);

@@ -336,6 +336,12 @@ elseif (strpos($uri, '/about') === 0) {
     $section = $_GET['section'] ?? 'history';
     $view = 'about.php';
 }
+elseif ($uri === '/terms') {
+    $view = 'terms.php';
+}
+elseif ($uri === '/privacy-policy') {
+    $view = 'privacy-policy.php';
+}
 else {
     http_response_code(404);
     $view = null;
