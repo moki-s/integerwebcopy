@@ -39,3 +39,38 @@ function supabaseInsert(string $table, array $data)
     }
     return 'Supabase error (' . $httpCode . '): ' . $response;
 }
+
+/**
+ * Select rows from a Supabase table via REST API.
+ * Returns array on success, error string on failure.
+ */
+function supabaseSelect(string $table, string $select = '*', string $order = 'created_at.desc', int $limit = 1000)
+{
+    $url = SUPABASE_URL . '/rest/v1/' . $table
+         . '?select=' . urlencode($select)
+         . '&order=' . urlencode($order)
+         . '&limit=' . $limit;
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'apikey: ' . SUPABASE_ANON_KEY,
+            'Authorization: Bearer ' . SUPABASE_ANON_KEY,
+        ],
+        CURLOPT_TIMEOUT => 10,
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+
+    if ($error) {
+        return 'Connection error: ' . $error;
+    }
+    if ($httpCode >= 200 && $httpCode < 300) {
+        return json_decode($response, true) ?? [];
+    }
+    return 'Supabase error (' . $httpCode . '): ' . $response;
+}

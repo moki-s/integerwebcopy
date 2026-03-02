@@ -23,11 +23,10 @@
             Integer Admin
         </div>
         <nav class="admin-nav">
-            <a href="/admin.php?action=dashboard" class="<?php echo($_GET['action'] ?? '') == 'dashboard' ? 'active' : ''; ?>">Dashboard</a>
-            <a href="/admin.php?action=courses" class="<?php echo($_GET['action'] ?? '') == 'courses' ? 'active' : ''; ?>">Courses</a>
-            <a href="/admin.php?action=orders">Orders</a>
-            <a href="/admin.php?action=users">Users</a>
-            <a href="/admin.php?action=settings">Settings</a>
+            <a href="/admin.php?action=dashboard" class="<?php echo ($_GET['action'] ?? '') === 'dashboard' ? 'active' : ''; ?>">Dashboard</a>
+            <a href="/admin.php?action=enquiries" class="<?php echo ($_GET['action'] ?? '') === 'enquiries' ? 'active' : ''; ?>">Enquiries</a>
+            <a href="/admin.php?action=orders" class="<?php echo ($_GET['action'] ?? '') === 'orders' ? 'active' : ''; ?>">Orders</a>
+            <a href="/admin.php?action=courses_prices" class="<?php echo in_array($_GET['action'] ?? '', ['courses_prices', 'csv_download', 'csv_upload']) ? 'active' : ''; ?>">Course Prices</a>
             <a href="/admin.php?action=logout" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);">Logout</a>
         </nav>
     </div>
