@@ -153,7 +153,7 @@ function renderGoogleStars($rating)
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const counters = document.querySelectorAll('.counter');
-    const speed = 200; // The lower the slower
+    const speed = 50; // 50 steps × 20ms = 1 second
 
     const animateCounters = () => {
         counters.forEach(counter => {
@@ -200,71 +200,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- Features Section (Trustpilot & Benefits) -->
-<section style="padding: 4rem 0; text-align: center;">
+<!-- Trustpilot Bar -->
+<section style="padding: 1.5rem 0; text-align: center;">
     <div class="container">
-        <!-- Trustpilot & Main Review Score -->
-        <div style="margin-bottom: 3rem;">
-            <div class="trustpilot-bar" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #333; flex-wrap: wrap;">
-                Our customers say <span style="font-weight: 700;">Excellent</span>
-                <?php echo renderStars(REVIEW_STATS['trustpilot_rating']); ?>
-                <?php echo REVIEW_STATS['trustpilot_rating']; ?> out of 5 based on <?php echo REVIEW_STATS['trustpilot_count']; ?> reviews
-                <span style="color: #00b67a;">★ Trustpilot</span>
-            </div>
-        </div>
-
-        <!-- 3 Column Features Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem;">
-            
-            <!-- Feature 1 -->
-            <div>
-                <div style="height: 80px; width: 80px; background: linear-gradient(135deg, #4fd1c5 0%, #38b2ac 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; color: white; font-size: 2.5rem; box-shadow: 0 10px 15px -3px rgba(56, 178, 172, 0.3);">
-                    👨‍🏫
-                </div>
-                <h3 style="font-size: 1.5rem; color: var(--color-primary-navy); margin-bottom: 0.5rem;">Expert tutors</h3>
-                <p style="color: #666; margin: 0;">To help you achieve your career goals.</p>
-            </div>
-
-            <!-- Feature 2 -->
-            <div>
-                <div style="height: 80px; width: 80px; background: linear-gradient(135deg, #63b3ed 0%, #4299e1 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; color: white; font-size: 2.5rem; box-shadow: 0 10px 15px -3px rgba(66, 153, 225, 0.3);">
-                    ⏱️
-                </div>
-                <h3 style="font-size: 1.5rem; color: var(--color-primary-navy); margin-bottom: 0.5rem;">Self-paced study</h3>
-                <p style="color: #666; margin: 0;">Learn on your terms, as and when it suits you.</p>
-            </div>
-
-            <!-- Feature 3 -->
-            <div>
-                <div style="height: 80px; width: 80px; background: linear-gradient(135deg, #7f9cf5 0%, #5a67d8 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; color: white; font-size: 2.5rem; box-shadow: 0 10px 15px -3px rgba(90, 103, 216, 0.3);">
-                    💳
-                </div>
-                <h3 style="font-size: 1.5rem; color: var(--color-primary-navy); margin-bottom: 0.5rem;">Interest-free* plans</h3>
-                <p style="color: #666; margin: 0;">Affordable monthly payments at no extra cost.</p>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-<!-- Partners & Accreditations Banner -->
-<section class="partners-section" style="background: #f8f9fa; padding: 3rem 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; overflow: hidden;">
-    <div class="container">
-        <h2 style="text-align: center; color: var(--color-primary-navy); margin-bottom: 0.5rem; font-size: 1.75rem;">Our Partners & Accreditations</h2>
-        <p style="text-align: center; color: #666; margin-bottom: 2rem; font-size: 0.95rem;">Trusted by leading awarding bodies and organisations</p>
-    </div>
-    <div class="partner-carousel" style="overflow: hidden; mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);">
-        <div class="partner-track">
-            <?php
-            // Loop twice for seamless infinite scroll
-            for ($loop = 0; $loop < 2; $loop++):
-                foreach (PARTNER_LOGOS as $partner):
-            ?>
-                <img src="<?php echo $partner['src']; ?>" alt="<?php echo htmlspecialchars($partner['alt']); ?>" class="partner-logo" loading="lazy">
-            <?php
-                endforeach;
-            endfor;
-            ?>
+        <div class="trustpilot-bar" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #333; flex-wrap: wrap;">
+            Our customers say <span style="font-weight: 700;">Excellent</span>
+            <?php echo renderStars(REVIEW_STATS['trustpilot_rating']); ?>
+            <?php echo REVIEW_STATS['trustpilot_rating']; ?> out of 5
+            <span style="color: #00b67a;">★ Trustpilot</span>
         </div>
     </div>
 </section>
@@ -273,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <section style="padding: 4rem 0;">
     <div class="container">
         <h2 style="text-align: center; margin-bottom: 3rem;">Explore Our Courses</h2>
-        
+
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
             <!-- Accounting -->
             <a href="/courses?category[]=Accounting" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
@@ -335,10 +278,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </a>
 
-            <!-- Business Studies -->
-            <a href="/courses?category[]=Business+Studies" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
+            <!-- Business & Management -->
+            <a href="/courses?category[]=Business+%26+Management" class="course-card" style="display: block; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform 0.2s;">
                 <div style="height: 200px; overflow: hidden;">
-                    <img src="/assets/images/courses/business/team-leading-cert.png" alt="Business Studies Courses" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="/assets/images/courses/business/bus-thumb.png" alt="Business & Management Courses" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div style="padding: 1.5rem;">
                     <h3 style="margin-bottom: 0.5rem;">Business & Management</h3>
@@ -348,7 +291,60 @@ document.addEventListener('DOMContentLoaded', () => {
             </a>
         </div>
     </div>
-</section> 
+</section>
+
+<!-- Features Section (Benefits Icons) -->
+<section style="padding: 4rem 0; text-align: center;">
+    <div class="container">
+        <!-- 3 Column Features Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem;">
+            
+            <!-- Feature 1 -->
+            <div>
+                <div style="font-size: 4rem; margin: 0 auto 1rem auto; line-height: 1;">👨‍🏫</div>
+                <h3 style="font-size: 1.5rem; color: var(--color-primary-navy); margin-bottom: 0.5rem;">Expert tutors</h3>
+                <p style="color: #666; margin: 0;">To help you achieve your career goals.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div>
+                <div style="font-size: 4rem; margin: 0 auto 1rem auto; line-height: 1;">⏱️</div>
+                <h3 style="font-size: 1.5rem; color: var(--color-primary-navy); margin-bottom: 0.5rem;">Self-paced study</h3>
+                <p style="color: #666; margin: 0;">Learn on your terms, as and when it suits you.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div>
+                <div style="font-size: 4rem; margin: 0 auto 1rem auto; line-height: 1;">💳</div>
+                <h3 style="font-size: 1.5rem; color: var(--color-primary-navy); margin-bottom: 0.5rem;">Interest-free* plans</h3>
+                <p style="color: #666; margin: 0;">Affordable monthly payments at no extra cost.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Partners & Accreditations Banner -->
+<section class="partners-section" style="background: #f8f9fa; padding: 3rem 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; overflow: hidden;">
+    <div class="container">
+        <h2 style="text-align: center; color: var(--color-primary-navy); margin-bottom: 0.5rem; font-size: 1.75rem;">Our Partners & Accreditations</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem; font-size: 0.95rem;">Trusted by leading awarding bodies and organisations</p>
+    </div>
+    <div class="partner-carousel" style="overflow: hidden; mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);">
+        <div class="partner-track">
+            <?php
+            // Loop twice for seamless infinite scroll
+            for ($loop = 0; $loop < 2; $loop++):
+                foreach (PARTNER_LOGOS as $partner):
+            ?>
+                <img src="<?php echo $partner['src']; ?>" alt="<?php echo htmlspecialchars($partner['alt']); ?>" class="partner-logo" loading="lazy">
+            <?php
+                endforeach;
+            endfor;
+            ?>
+        </div>
+    </div>
+</section>
 
 <!-- Reviews Section -->
 <section style="background-color: white; padding: 4rem 0; border-top: 1px solid #eee; overflow: hidden;">
@@ -380,9 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #333;">Excellent</div>
                     <div style="display: flex; justify-content: center; margin-bottom: 0.5rem;">
                         <?php echo renderStars(REVIEW_STATS['trustpilot_rating']); ?>
-                    </div>
-                    <div style="font-size: 0.8rem; color: #666; margin-bottom: 0.35rem;">
-                        Based on <u style="font-weight: 600;"><?php echo REVIEW_STATS['trustpilot_count']; ?> reviews</u>
                     </div>
                     <div style="color: #00b67a; font-weight: 600; font-size: 0.95rem;">★ Trustpilot</div>
                 </div>
@@ -439,10 +432,10 @@ endfor;
             <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 1; color: rgba(255,255,255,0.9);">Our Course Advisors are happy to help.</p>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                 <a href="mailto:info@integertraining.com" class="btn" style="background: white; color: var(--color-primary-navy); padding: 0.8rem 2.5rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 4px; border: 2px solid white; transition: all 0.2s;">
-                    ✉️ Email Us
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email Us
                 </a>
                 <a href="tel:01288356263" class="btn" style="background: transparent; color: white; padding: 0.8rem 2.5rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 4px; border: 2px solid white; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">
-                    📞 Call Us
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Call Us
                 </a>
             </div>
         </div>
