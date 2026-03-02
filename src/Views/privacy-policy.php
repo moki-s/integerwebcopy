@@ -3,7 +3,7 @@
 <div style="background-color: var(--color-primary-navy); color: white; padding: 3rem 0;">
     <div class="container" style="text-align: center;">
         <h1 style="margin: 0; font-size: 2.5rem;">Privacy Policy</h1>
-        <p style="opacity: 0.9; margin-top: 0.75rem;">Last updated: February 2026</p>
+        <p style="opacity: 0.9; margin-top: 0.75rem;">Last updated: March 2026</p>
     </div>
 </div>
 
