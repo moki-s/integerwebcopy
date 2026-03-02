@@ -361,8 +361,8 @@ else {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="/assets/css/variables.css?v=4">
-    <link rel="stylesheet" href="/assets/css/style.css?v=4">
+    <link rel="stylesheet" href="/assets/css/variables.css?v=5">
+    <link rel="stylesheet" href="/assets/css/style.css?v=5">
 </head>
 <body>
 

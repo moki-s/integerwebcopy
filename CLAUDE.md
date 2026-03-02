@@ -53,12 +53,14 @@ INTEGERweb/
 │   └── Views/
 │       ├── home.php                 # Homepage (hero bg image, stats, partners banner, 6 course categories, real reviews, CTA)
 │       ├── courses.php              # Course listing (filters, sort, search, grid)
-│       ├── product.php              # Product detail (tabs, sidebar, real reviews with Trustpilot+Google badges)
+│       ├── product.php              # Product detail (tabs, sidebar with enquiry form, mobile-only top form, reviews)
 │       ├── cart.php                 # Shopping cart (session-based)
-│       ├── checkout.php             # Checkout (Stripe with 3DS support)
+│       ├── checkout.php             # Checkout (Stripe 3DS, T&C + Privacy checkboxes required)
 │       ├── contact.php              # Contact page (form submits to Supabase)
 │       ├── about.php                # About page (tabbed sections, policies)
 │       ├── branches.php             # Branch locations
+│       ├── terms.php                # Terms and Conditions (March 2026)
+│       ├── privacy-policy.php       # Privacy Policy inc. cookies (March 2026)
 │       ├── order-success.php        # Order confirmation page
 │       └── student_login.php        # Student login (placeholder)
 ├── database/                        # SQL migration files
@@ -86,7 +88,9 @@ Simple URI-based router. No framework.
 | `/about` | GET | about.php |
 | `/branches` | GET | branches.php |
 | `/login` | GET | student_login.php |
-| `/cart-add` | POST | Add to session cart, redirect to product |
+| `/terms` | GET | terms.php |
+| `/privacy-policy` | GET | privacy-policy.php |
+| `/cart-add` | POST | Add to session cart, redirect to /cart |
 | `/cart-remove?id=xxx` | GET | Remove from cart, redirect to /cart |
 | `/enquiry` | POST | Validate + insert to Supabase, redirect with flash message |
 | `/checkout-process` | POST | Create Stripe PaymentIntent (JSON API) |
@@ -98,8 +102,8 @@ Simple URI-based router. No framework.
 
 Centralized data file with three constants:
 
-- **`TRUSTPILOT_REVIEWS`** — 20 real Trustpilot reviews (author, rating, title, body, date, source)
-- **`REVIEW_STATS`** — Aggregated ratings: `trustpilot_rating`, `trustpilot_count`, `google_rating`, `google_count`
+- **`TRUSTPILOT_REVIEWS`** — 20 real Trustpilot reviews (author, rating, title, body, date, source) — last updated Mar 2026
+- **`REVIEW_STATS`** — `trustpilot_rating: 4.8`, `trustpilot_count: 50`, `google_rating: 4.7`, `google_count: 30`
 - **`PARTNER_LOGOS`** — 12 partner logos (src path + alt text), rendered dynamically on homepage
 
 Used by: `home.php` (scrolling carousel + rating box + partner banner), `product.php` (review carousel + badges)
@@ -119,9 +123,9 @@ To add/remove partners or reviews, edit the arrays in this file.
 | Occupational Studies | 9 | `occ-*`, `personal-dev-*`, `work-related-*`, `health-safety-*` |
 | Functional Skills | 4 | `functional-maths-*`, `functional-english-*` |
 | Security & Stewarding | 5 | `first-aid-*`, `door-supervisor-*`, `spectator-safety-*`, `event-security-*` |
-| Business Studies | 1 | `team-leading-cert` |
+| Business & Management | 1 | `team-leading-cert` |
 
-Each course has: `id`, `title`, `category`, `price`, `old_price`, `monthly_price`, `students`, `badge`, `badge_color`, `icon`, `image`, `overview`, `curriculum[]`, `reviews[]`
+Each course has: `id`, `title`, `category`, `price`, `old_price`, `monthly_price`, `old_monthly_price`, `students`, `badge`, `badge_color`, `icon`, `image`, `overview`, `curriculum[]`, `reviews[]`
 
 Helper functions: `getCourse($id)`, `getAllCourses()`
 
@@ -133,12 +137,13 @@ Helper functions: `getCourse($id)`, `getAllCourses()`
 |---|---------|-------------|
 | 1 | Hero | Background image with dark overlay, search bar, Trustpilot stars |
 | 2 | Mobile Lead Form | Hidden on desktop, shown on mobile |
-| 3 | Stats Bar | Animated counters (25+ years, 50,000+ students, 93% pass rate) |
-| 4 | Features | Trustpilot bar + 3 feature icons (Expert tutors, Self-paced, Interest-free) |
-| 5 | Partners Banner | 12 logos in infinite scroll, dynamic from `PARTNER_LOGOS` |
-| 6 | Explore Courses | All 6 categories with thumbnails, links to filtered /courses page |
-| 7 | Reviews Carousel | 20 real Trustpilot reviews + Trustpilot & Google rating badges |
-| 8 | CTA | Course advisor contact section with email/call buttons |
+| 3 | Trustpilot Bar | Rating bar with stars (shown before Explore) |
+| 4 | Features | 3 feature icons with SVGs (Expert tutors, Self-paced, Interest-free) |
+| 5 | Explore Courses | All 6 categories with thumbnails, links to filtered /courses page |
+| 6 | Stats Bar | Animated counters (25+ years, 50,000+ students, 93% pass rate) — all 3 finish simultaneously in 800ms |
+| 7 | Partners Banner | 12 logos in infinite scroll, dynamic from `PARTNER_LOGOS` |
+| 8 | Reviews Carousel | 20 real Trustpilot reviews + Trustpilot & Google rating badges |
+| 9 | CTA | Course advisor contact section with email/call buttons |
 
 ---
 
@@ -146,13 +151,15 @@ Helper functions: `getCourse($id)`, `getAllCourses()`
 
 ### Desktop
 - Top bar: "Train toward a career you'll love!" + phone number
-- Main: Logo | Nav (Courses, About Us, Branches, Contact) | WhatsApp icon + Phone pill + Cart
+- Main: Logo | Nav (Courses, About Us, Branches, Contact) | WhatsApp icon + Phone pill + Cart (with red badge count)
 
 ### Mobile
 - WhatsApp icon + Phone number pill + Hamburger menu
-- Slide-out menu: Nav links + WhatsApp Us + Phone + Email + Basket + Close
+- Slide-out menu: Nav links + WhatsApp Us + Phone + Email + Basket (with count) + Close
+- **Close on outside click**: Overlay has `onclick` handler — clicking outside the panel closes the menu
 
 **WhatsApp**: Links to `https://wa.me/447828924057` (opens new tab)
+**Cart badge**: `.cart-badge` — red circle (absolute positioned) showing item count when > 0
 
 ---
 
@@ -182,11 +189,12 @@ Helper functions: `getCourse($id)`, `getAllCourses()`
 ### Base (desktop) styles:
 - Reset, container (max-width: 1280px), typography utilities
 - Buttons: `.btn-primary`, `.btn-secondary`, `.btn-accent`, `.btn-highlight`
-- Header: `.site-header` (sticky, z-index: 1000), `.top-bar`, `.nav-menu`, `.header-actions`, `.header-phone-link`, `.header-whatsapp-link`
+- Header: `.site-header` (sticky, z-index: 1000), `.top-bar`, `.nav-menu`, `.header-actions`, `.header-phone-link`, `.header-whatsapp-link`, `.cart-badge`
 - Footer: `.footer-grid`, `.footer-col`, `.footer-links`
 - Partners: `.partner-track` (infinite scroll animation), `.partner-logo` (full colour, hover scale)
 - Contact: `.contact-form-label` (hidden on desktop, shown on mobile)
-- Hidden on desktop: `.home-mobile-form`, `.mobile-hamburger`, `.mobile-header-phone`, `.mobile-header-whatsapp`, `.mobile-menu-overlay`, `.mobile-filter-toggle`
+- Product: `.product-enquiry-form` (sidebar form, hidden on mobile), `.product-mobile-form` (top form, hidden on desktop)
+- Hidden on desktop: `.home-mobile-form`, `.product-mobile-form`, `.mobile-hamburger`, `.mobile-header-phone`, `.mobile-header-whatsapp`, `.mobile-menu-overlay`, `.mobile-filter-toggle`
 
 ### Mobile (`@media max-width: 768px`) sections:
 - **Mobile header**: Hide desktop nav, show WhatsApp icon + hamburger + phone number pill, slide-out menu
@@ -194,7 +202,7 @@ Helper functions: `getCourse($id)`, `getAllCourses()`
 - **Contact page**: Form-first order, visible labels, 16px inputs
 - **Courses page**: Compact hero, filter toggle, collapsible sidebar, single-column cards
 - **About page**: Compact hero, collapsible sidebar, single-column layout
-- **Product page**: Single column, sidebar first (pricing visible), benefits stack
+- **Product page**: Single column, sidebar first (pricing visible), benefits stack, sidebar enquiry form hidden, mobile-only top form shown
 - **Cart page**: Table becomes card layout, single column
 - **Checkout page**: Order summary first, stacked name fields
 - **Footer**: Single column
@@ -246,7 +254,31 @@ php -S localhost:8000 -t public
 
 ---
 
+## Design Notes
+
+- **No emojis**: All icons use inline SVGs (phone, email, map, cart, lock, users, clock, credit-card, etc.)
+- **CSS cache**: Currently at `?v=4` — increment when deploying CSS changes
+- **Enquiry forms**: Contact page, product page (sidebar on desktop + separate mobile-only top form), home mobile form — all POST to `/enquiry` → Supabase `enquiries` table
+
+---
+
+## Company Details (for legal pages)
+
+- **Company**: INTEGER TRAINING LIMITED, Company Number 03791017
+- **Address**: 9 Bude Business Centre, Kings Hill Industrial Estate, Bude, England, EX23 8QN
+- **Emails**: info@integertraining.com, support@integertraining.com
+- **Phone**: 01288 356263
+- **VAT**: Prices inclusive
+- **Payments**: Stripe only, instalment plans provided by Integer directly (not third-party)
+- **Refunds**: Full refund within 14-day cooling-off. After that: no refund, cancellation fee calculated at time of drop-off
+- **Course delivery**: 100% online, student portal login, no max enrolment duration
+- **Course materials**: Created by Integer (IP owned by Integer)
+- **Marketing pixels**: Yes. No Google Analytics. No marketing emails. No data shared with third parties.
+
+---
+
 ## Pending / Next Steps
 
 1. **SEO** — Dynamic `<title>` tags per page, meta descriptions
 2. **Admin panel** — `src/Views/admin/` exists but is placeholder
+3. **Footer links** — Add T&C and Privacy Policy links to footer

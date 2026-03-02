@@ -129,6 +129,10 @@ img {
     position: sticky;
     top: 0;
     z-index: 1000;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .top-bar {
