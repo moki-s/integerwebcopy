@@ -77,7 +77,23 @@ class AdminController
 
             case 'dashboard':
             default:
-                $this->render('dashboard');
+                require_once __DIR__ . '/../Config/Supabase.php';
+                $ordersResult = supabaseSelect('orders');
+                $enquiriesResult = supabaseSelect('enquiries');
+                $data = [];
+                if (is_string($ordersResult)) {
+                    $data['orders'] = [];
+                    $data['orders_error'] = $ordersResult;
+                } else {
+                    $data['orders'] = $ordersResult;
+                }
+                if (is_string($enquiriesResult)) {
+                    $data['enquiries'] = [];
+                    $data['enquiries_error'] = $enquiriesResult;
+                } else {
+                    $data['enquiries'] = $enquiriesResult;
+                }
+                $this->render('dashboard', $data);
                 break;
         }
     }
