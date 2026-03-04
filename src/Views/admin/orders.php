@@ -33,19 +33,19 @@
                             <?php echo htmlspecialchars($row['order_number'] ?? $row['id'] ?? ''); ?>
                         </td>
                         <td style="padding: 0.75rem 0.5rem;">
-                            <?php echo htmlspecialchars(($row['first_name'] ?? '') . ' ' . ($row['last_name'] ?? '')); ?>
+                            <?php echo htmlspecialchars($row['customer_name'] ?? ''); ?>
                         </td>
                         <td style="padding: 0.75rem 0.5rem;">
-                            <?php if (!empty($row['email'])): ?>
-                                <a href="mailto:<?php echo htmlspecialchars($row['email']); ?>" style="color: #3182CE;">
-                                    <?php echo htmlspecialchars($row['email']); ?>
+                            <?php if (!empty($row['customer_email'])): ?>
+                                <a href="mailto:<?php echo htmlspecialchars($row['customer_email']); ?>" style="color: #3182CE;">
+                                    <?php echo htmlspecialchars($row['customer_email']); ?>
                                 </a>
                             <?php endif; ?>
                         </td>
                         <td style="padding: 0.75rem 0.5rem; white-space: nowrap;">
-                            <?php if (!empty($row['phone'])): ?>
-                                <a href="tel:<?php echo htmlspecialchars($row['phone']); ?>" style="color: #3182CE;">
-                                    <?php echo htmlspecialchars($row['phone']); ?>
+                            <?php if (!empty($row['customer_phone'])): ?>
+                                <a href="tel:<?php echo htmlspecialchars($row['customer_phone']); ?>" style="color: #3182CE;">
+                                    <?php echo htmlspecialchars($row['customer_phone']); ?>
                                 </a>
                             <?php endif; ?>
                         </td>
