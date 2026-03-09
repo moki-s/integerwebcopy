@@ -1,0 +1,236 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Order Confirmed | Integer Training"
+  description="Your course enrolment is confirmed. Welcome to Integer Training."
+>
+  <!-- Step Indicator -->
+  <div class="bg-white border-b border-neutral-100">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <!-- Step 1: Basket -->
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+          </div>
+          <span class="hidden sm:inline text-sm font-medium text-green-600">Basket</span>
+        </div>
+        <div class="flex-1 h-0.5 bg-green-500 mx-2 sm:mx-4"></div>
+        <!-- Step 2: Details -->
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+          </div>
+          <span class="hidden sm:inline text-sm font-medium text-green-600">Details</span>
+        </div>
+        <div class="flex-1 h-0.5 bg-green-500 mx-2 sm:mx-4"></div>
+        <!-- Step 3: Payment -->
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+          </div>
+          <span class="hidden sm:inline text-sm font-medium text-green-600">Payment</span>
+        </div>
+        <div class="flex-1 h-0.5 bg-green-500 mx-2 sm:mx-4"></div>
+        <!-- Step 4: Complete (active) -->
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold ring-4 ring-green-100">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+          </div>
+          <span class="hidden sm:inline text-sm font-bold text-green-700">Complete</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="py-16 lg:py-24">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <!-- Success checkmark -->
+      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-green-500 mx-auto mb-6 flex items-center justify-center shadow-lg animate-bounce-once">
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+      </div>
+
+      <h1 class="font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-2">Order Confirmed!</h1>
+
+      <!-- Order number -->
+      <p id="order-number-display" class="text-lg text-neutral-500 mb-2 font-mono font-semibold"></p>
+
+      <!-- Thank you message -->
+      <p id="thank-you-msg" class="text-lg text-neutral-600 mb-1"></p>
+
+      <!-- Email confirmation -->
+      <p id="email-confirm-msg" class="text-sm text-neutral-500 mb-8"></p>
+
+      <!-- Payment info card -->
+      <div id="order-details" class="bg-white rounded-2xl p-6 text-left mb-6 border border-neutral-100 shadow-brand-sm">
+        <!-- One-time payment info -->
+        <div id="onetime-info" class="hidden">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div>
+              <p class="text-sm text-neutral-500 font-medium">Payment Received</p>
+              <p id="onetime-total" class="text-lg font-bold text-neutral-900"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subscription payment info -->
+        <div id="subscription-info" class="hidden">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            </div>
+            <div>
+              <p class="text-sm text-neutral-500 font-medium">Monthly Plan Set Up</p>
+              <p id="subscription-monthly" class="text-lg font-bold text-neutral-900"></p>
+            </div>
+          </div>
+          <div class="bg-primary-50/50 rounded-xl p-4 mb-3">
+            <p class="text-sm text-neutral-700">Your first payment has been taken. Future payments will be charged automatically each month.</p>
+          </div>
+          <p id="subscription-duration" class="text-sm text-neutral-500 flex items-center gap-2">
+            <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            <span></span>
+          </p>
+        </div>
+
+        <!-- Enrolled courses (shared) -->
+        <div class="mt-4 pt-4 border-t border-neutral-100">
+          <p class="text-sm font-semibold text-neutral-900 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+            Enrolled Courses
+          </p>
+          <ul id="order-courses" class="space-y-2"></ul>
+        </div>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="bg-primary-50 rounded-2xl p-6 mb-8 text-left">
+        <h3 class="font-display font-bold text-neutral-900 mb-4 flex items-center gap-2">
+          <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+          Next Steps
+        </h3>
+        <ol class="space-y-3">
+          <li class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-white text-primary-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 border border-primary-200">1</span>
+            <span class="text-sm text-neutral-700">Check your email for login credentials</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-white text-primary-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 border border-primary-200">2</span>
+            <span class="text-sm text-neutral-700">Access your course materials at any time</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-white text-primary-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 border border-primary-200">3</span>
+            <span class="text-sm text-neutral-700">Your dedicated tutor will be in touch within 24 hours</span>
+          </li>
+        </ol>
+      </div>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/courses" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl font-semibold shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 transition-all duration-300">
+          Browse More Courses
+        </a>
+        <a href="/contact" class="inline-flex items-center justify-center gap-2 bg-white text-neutral-700 px-6 py-3 rounded-xl font-semibold border border-neutral-200 hover:border-primary-200 hover:text-primary-600 transition-all duration-300">
+          Contact Support
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  @keyframes bounce-once {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.15); }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .animate-bounce-once {
+    animation: bounce-once 0.6s ease-out forwards;
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const raw = sessionStorage.getItem('last_order');
+    if (!raw) {
+      window.location.href = '/courses';
+      return;
+    }
+
+    try {
+      const order = JSON.parse(raw);
+
+      // Order number
+      const orderNumEl = document.getElementById('order-number-display');
+      if (orderNumEl) {
+        orderNumEl.textContent = `Order #${order.order_number || 'N/A'}`;
+      }
+
+      // Thank you message
+      const thankEl = document.getElementById('thank-you-msg');
+      if (thankEl && order.customer_name) {
+        thankEl.textContent = `Thank you, ${order.customer_name}!`;
+      }
+
+      // Email confirmation
+      const emailEl = document.getElementById('email-confirm-msg');
+      if (emailEl && order.customer_email) {
+        emailEl.textContent = `A confirmation email has been sent to ${order.customer_email}`;
+      }
+
+      // Determine payment type
+      const isSubscription = order.payment_type === 'monthly';
+
+      if (isSubscription) {
+        // Subscription display
+        const subInfo = document.getElementById('subscription-info');
+        if (subInfo) subInfo.classList.remove('hidden');
+
+        const monthlyEl = document.getElementById('subscription-monthly');
+        if (monthlyEl) {
+          monthlyEl.textContent = `\u00A3${Number(order.monthly_amount).toFixed(2)}/mo`;
+        }
+
+        const durationEl = document.getElementById('subscription-duration');
+        const durationSpan = durationEl?.querySelector('span');
+        if (durationSpan && order.subscription_months) {
+          durationSpan.textContent = `Plan duration: ${order.subscription_months} months`;
+        }
+      } else {
+        // One-time payment display
+        const oneInfo = document.getElementById('onetime-info');
+        if (oneInfo) oneInfo.classList.remove('hidden');
+
+        const totalEl = document.getElementById('onetime-total');
+        if (totalEl) {
+          totalEl.textContent = `Payment of \u00A3${Number(order.total).toFixed(2)} received`;
+        }
+      }
+
+      // Courses list
+      const coursesList = document.getElementById('order-courses');
+      if (coursesList && order.courses && Array.isArray(order.courses)) {
+        coursesList.innerHTML = order.courses
+          .map(
+            (c: string) => `
+            <li class="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-neutral-100">
+              <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+              <span class="text-sm text-neutral-700 font-medium">${c}</span>
+            </li>`
+          )
+          .join('');
+      }
+
+      // Clear after rendering (one-time display)
+      sessionStorage.removeItem('last_order');
+    } catch {
+      window.location.href = '/courses';
+    }
+  });
+</script>

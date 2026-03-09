@@ -1,0 +1,32 @@
+---
+interface Props {
+  fillColor?: string;
+  variant?: 'wave' | 'curve' | 'diagonal' | 'zigzag';
+  flip?: boolean;
+}
+
+const { fillColor = '#ffffff', variant = 'wave', flip = false } = Astro.props;
+
+const paths: Record<string, string> = {
+  wave: 'M0,64 C320,100 640,20 960,64 C1280,108 1600,20 1920,64 L1920,128 L0,128 Z',
+  curve: 'M0,96 Q960,0 1920,96 L1920,128 L0,128 Z',
+  diagonal: 'M0,128 L1920,0 L1920,128 Z',
+  zigzag: 'M0,64 L240,96 L480,32 L720,96 L960,32 L1200,96 L1440,32 L1680,96 L1920,64 L1920,128 L0,128 Z',
+};
+---
+
+<div
+  class="-mt-1 relative w-full overflow-hidden leading-[0]"
+  style={flip ? 'transform: scaleY(-1)' : ''}
+  aria-hidden="true"
+>
+  <svg
+    class="relative block w-full"
+    style="height: 70px;"
+    viewBox="0 0 1920 128"
+    preserveAspectRatio="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d={paths[variant]} fill={fillColor} />
+  </svg>
+</div>

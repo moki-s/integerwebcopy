@@ -1,0 +1,193 @@
+---
+import { getCollection } from 'astro:content';
+import LocationLayout from '../../layouts/LocationLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import Testimonials from '../../components/Testimonials.astro';
+import CTA from '../../components/CTA.astro';
+import FAQ from '../../components/FAQ.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+import LocalBusinessSchema from '../../components/schemas/LocalBusinessSchema.astro';
+import { siteConfig } from '../../data/site-config';
+
+export async function getStaticPaths() {
+  const locations = await getCollection('locations');
+  return locations.map((location) => ({
+    params: { slug: location.data.slug },
+    props: { location },
+  }));
+}
+
+const { location } = Astro.props;
+const { data } = location;
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Locations', href: '/locations' },
+  { label: data.city, href: `/locations/${data.slug}` },
+];
+
+const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }> = {
+  'health-social-care': { thumbnail: '/images/courses/health-social/hs-thumb.png', thumbnailAlt: 'Care worker supporting elderly resident in UK care home' },
+  'accounting': { thumbnail: '/images/courses/accounting/acc-thumb.png', thumbnailAlt: 'Student studying AAT accounting course with financial documents' },
+  'occupational-studies': { thumbnail: '/images/courses/occupational/occ-thumb.png', thumbnailAlt: 'Professional completing workplace skills training online' },
+  'functional-skills': { thumbnail: '/images/courses/functional-skills/func-thumb.png', thumbnailAlt: 'Adult learner studying Functional Skills Maths on tablet device' },
+  'security-stewarding': { thumbnail: '/images/courses/security/sec-thumb.png', thumbnailAlt: 'Door supervisor in high-visibility vest at venue entrance' },
+  'business-management': { thumbnail: '/images/courses/business/bus-thumb.png', thumbnailAlt: 'Team leader facilitating a workplace meeting with colleagues' },
+};
+
+// Map service names to slugs
+const serviceNameToSlug: Record<string, string> = {
+  'Health & Social Care': 'health-social-care',
+  'Accounting': 'accounting',
+  'Occupational Studies': 'occupational-studies',
+  'Functional Skills': 'functional-skills',
+  'Security & Stewarding': 'security-stewarding',
+  'Business & Management': 'business-management',
+};
+---
+
+<LocationLayout title={data.metaTitle} description={data.metaDescription}>
+  <LocalBusinessSchema city={data.city} address={data.address} />
+
+  <Breadcrumb items={breadcrumbs} />
+
+  <Hero
+    heading={data.heroHeading}
+    subheading={data.heroSubheading || data.intro.slice(0, 160) + '...'}
+    variant="inner"
+    image="/images/hero-banner.png"
+    imageAlt={`Integer Training ${data.city} centre`}
+  />
+
+  <!-- Intro -->
+  <section class="py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
+        <div class="lg:col-span-3">
+          <h2 class="section-heading font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-8">
+            Training in <span class="text-primary-500">{data.city}</span>
+          </h2>
+          <p class="text-lg text-neutral-600 leading-relaxed mb-8">
+            {data.intro}
+          </p>
+
+          <!-- Address and contact -->
+          <div class="bg-neutral-50 rounded-2xl p-6 space-y-4">
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              <div>
+                <p class="text-sm text-neutral-400 font-medium mb-1">Address</p>
+                <p class="text-neutral-700">{data.address}</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+              <div>
+                <p class="text-sm text-neutral-400 font-medium mb-1">Phone</p>
+                <a href="tel:01216909563" class="text-neutral-700 hover:text-primary-500 transition-colors duration-300">{data.phone}</a>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-primary-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <div>
+                <p class="text-sm text-neutral-400 font-medium mb-1">Office Hours</p>
+                <p class="text-neutral-700">Monday - Friday, 9:00am - 5:00pm</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Map placeholder -->
+        <div class="lg:col-span-2">
+          <div class="sticky top-28">
+            <div class="bg-neutral-100 rounded-3xl h-80 flex items-center justify-center">
+              <div class="text-center">
+                <svg class="w-12 h-12 text-neutral-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <p class="text-neutral-400 text-sm">{data.city} Centre</p>
+                <a
+                  href={`https://maps.google.com/?q=${encodeURIComponent(data.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 text-primary-500 font-semibold text-sm mt-2 hover:text-primary-600 transition-colors duration-300"
+                >
+                  Open in Google Maps
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Courses available -->
+  <section class="py-24 lg:py-32 bg-neutral-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="section-heading font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-12 text-center">
+        Courses Available in <span class="text-primary-500">{data.city}</span>
+      </h2>
+      <div class="services-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {data.servicesOffered.map((serviceName) => {
+          const slug = serviceNameToSlug[serviceName];
+          const serviceConfig = siteConfig.services.find((s) => s.slug === slug);
+          const images = slug ? serviceImages[slug] : undefined;
+
+          return slug && serviceConfig ? (
+            <ServiceCard
+              name={serviceName}
+              slug={slug}
+              description={serviceConfig.shortDescription}
+              thumbnail={images?.thumbnail || '/images/hero-banner.png'}
+              thumbnailAlt={images?.thumbnailAlt || serviceName}
+            />
+          ) : null;
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <Testimonials title="Student Reviews" />
+
+  <!-- FAQs -->
+  {data.faqs && data.faqs.length > 0 && (
+    <FAQ faqs={data.faqs} title={`${data.city} FAQs`} accentWord="FAQs" />
+  )}
+
+  <CTA
+    heading={`Start Learning in ${data.city}`}
+    subheading={`Contact our ${data.city} team to discuss your course options and get started on your learning journey.`}
+    ctaText="Contact Us"
+    ctaHref="/contact"
+    variant="dramatic"
+  />
+
+  <SectionDivider fillColor="#0f172a" variant="curve" />
+</LocationLayout>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    // @ts-ignore
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    // @ts-ignore
+    gsap.registerPlugin(ScrollTrigger);
+
+    // @ts-ignore
+    gsap.fromTo('.services-grid .service-card',
+      { y: 40, opacity: 0 },
+      { // @ts-ignore
+        scrollTrigger: { trigger: '.services-grid', start: 'top 85%' },
+        y: 0, opacity: 1,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: 'power2.out',
+      }
+    );
+  });
+</script>

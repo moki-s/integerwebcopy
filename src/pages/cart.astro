@@ -1,0 +1,490 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { siteConfig } from '../data/site-config';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Cart', href: '/cart' },
+];
+---
+
+<BaseLayout
+  title="Shopping Cart | Integer Training"
+  description="Review your selected courses before proceeding to secure checkout."
+>
+  <Breadcrumb items={breadcrumbs} />
+
+  <!-- Step Indicator -->
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+    <div class="flex items-center justify-center">
+      <!-- Step 1: Basket (active) -->
+      <div class="flex items-center">
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold text-sm shadow-brand-sm">1</div>
+          <span class="text-xs font-semibold text-primary-600 mt-1.5">Basket</span>
+        </div>
+      </div>
+      <!-- Connector -->
+      <div class="w-12 sm:w-20 h-0.5 bg-neutral-200 mx-2 sm:mx-3 mt-[-1rem]"></div>
+      <!-- Step 2: Details -->
+      <div class="flex items-center">
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-neutral-200 text-neutral-400 flex items-center justify-center font-bold text-sm">2</div>
+          <span class="text-xs font-medium text-neutral-400 mt-1.5">Details</span>
+        </div>
+      </div>
+      <!-- Connector -->
+      <div class="w-12 sm:w-20 h-0.5 bg-neutral-200 mx-2 sm:mx-3 mt-[-1rem]"></div>
+      <!-- Step 3: Payment -->
+      <div class="flex items-center">
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-neutral-200 text-neutral-400 flex items-center justify-center font-bold text-sm">3</div>
+          <span class="text-xs font-medium text-neutral-400 mt-1.5">Payment</span>
+        </div>
+      </div>
+      <!-- Connector -->
+      <div class="w-12 sm:w-20 h-0.5 bg-neutral-200 mx-2 sm:mx-3 mt-[-1rem]"></div>
+      <!-- Step 4: Complete -->
+      <div class="flex items-center">
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-neutral-200 text-neutral-400 flex items-center justify-center font-bold text-sm">4</div>
+          <span class="text-xs font-medium text-neutral-400 mt-1.5">Complete</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="py-8 lg:py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-2">Your Basket</h1>
+      <p id="cart-item-count" class="text-neutral-500 mb-8 text-sm"></p>
+
+      <!-- Empty state -->
+      <div id="cart-empty" class="hidden text-center py-20 bg-neutral-50 rounded-2xl border border-neutral-100">
+        <div class="w-20 h-20 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-6">
+          <svg class="w-10 h-10 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="9" cy="21" r="1"/>
+            <circle cx="20" cy="21" r="1"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-bold text-xl text-neutral-700 mb-2">Your basket is empty</h3>
+        <p class="text-neutral-500 mb-8 max-w-md mx-auto">Browse our range of accredited online courses and start your learning journey today.</p>
+        <a href="/courses" class="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white px-8 py-3.5 rounded-xl font-semibold shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 transition-all duration-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          Browse Courses
+        </a>
+      </div>
+
+      <!-- Cart content -->
+      <div id="cart-content" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Left Column: Items + Payment Toggle + Monthly Table -->
+          <div class="lg:col-span-2 space-y-6">
+
+            <!-- Pay Monthly / Pay in Full Toggle -->
+            <div class="bg-white rounded-2xl border border-neutral-100 shadow-brand-sm p-4 sm:p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <svg class="w-5 h-5 text-primary-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <h2 class="font-display font-bold text-lg text-neutral-900">Choose Payment Option</h2>
+              </div>
+              <div class="flex gap-3">
+                <button
+                  id="mode-full"
+                  class="payment-mode-btn flex-1 py-3 px-4 rounded-xl font-semibold text-sm border-2 transition-all duration-200 text-center"
+                >
+                  <span class="block text-base">Pay in Full</span>
+                  <span class="block text-xs mt-0.5 opacity-70">One-time payment</span>
+                </button>
+                <button
+                  id="mode-monthly"
+                  class="payment-mode-btn flex-1 py-3 px-4 rounded-xl font-semibold text-sm border-2 transition-all duration-200 text-center"
+                >
+                  <span class="block text-base">Pay Monthly</span>
+                  <span class="block text-xs mt-0.5 opacity-70">Spread the cost</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Cart Items -->
+            <div class="bg-white rounded-2xl border border-neutral-100 shadow-brand-sm overflow-hidden">
+              <div class="px-4 sm:px-6 py-4 border-b border-neutral-100 bg-neutral-50/50">
+                <h2 class="font-display font-semibold text-neutral-800 text-sm uppercase tracking-wide">Your Courses</h2>
+              </div>
+              <div id="cart-items" class="divide-y divide-neutral-100"></div>
+            </div>
+
+            <!-- Monthly Payment Breakdown Table (visible when Pay Monthly selected) -->
+            <div id="monthly-table-wrapper" class="hidden">
+              <div class="bg-white rounded-2xl border border-neutral-100 shadow-brand-sm overflow-hidden">
+                <div class="px-4 sm:px-6 py-4 border-b border-neutral-100 bg-accent-50/50">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    <h3 class="font-display font-semibold text-neutral-800 text-sm uppercase tracking-wide">Monthly Payment Breakdown</h3>
+                  </div>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="text-left text-neutral-500 border-b border-neutral-100">
+                        <th class="px-4 sm:px-6 py-3 font-medium">Course</th>
+                        <th class="px-4 sm:px-6 py-3 font-medium text-right">Monthly</th>
+                        <th class="px-4 sm:px-6 py-3 font-medium text-right">Duration</th>
+                        <th class="px-4 sm:px-6 py-3 font-medium text-right">Total Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody id="monthly-table-body" class="divide-y divide-neutral-50"></tbody>
+                    <tfoot>
+                      <tr class="bg-neutral-50 font-semibold text-neutral-900 border-t border-neutral-200">
+                        <td class="px-4 sm:px-6 py-3">Total</td>
+                        <td class="px-4 sm:px-6 py-3 text-right" id="monthly-table-total-monthly"></td>
+                        <td class="px-4 sm:px-6 py-3 text-right">12 months</td>
+                        <td class="px-4 sm:px-6 py-3 text-right" id="monthly-table-total-cost"></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Discount Code -->
+            <div class="bg-white rounded-2xl border border-neutral-100 shadow-brand-sm p-4 sm:p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"/></svg>
+                <h3 class="font-semibold text-neutral-800 text-sm">Discount Code</h3>
+              </div>
+              <div class="flex gap-2">
+                <input
+                  type="text"
+                  id="discount-input"
+                  placeholder="Enter discount code"
+                  class="flex-1 px-4 py-2.5 border border-neutral-200 rounded-xl text-sm text-neutral-700 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                />
+                <button
+                  id="apply-discount-btn"
+                  class="px-5 py-2.5 bg-neutral-900 text-white rounded-xl text-sm font-semibold hover:bg-neutral-800 transition-colors"
+                >
+                  Apply
+                </button>
+              </div>
+              <p id="discount-message" class="text-xs text-neutral-400 mt-2 hidden"></p>
+            </div>
+
+            <!-- Continue Shopping -->
+            <a href="/courses" class="inline-flex items-center gap-2 text-primary-500 font-semibold text-sm hover:text-primary-600 transition-colors group">
+              <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/></svg>
+              Continue Shopping
+            </a>
+          </div>
+
+          <!-- Right Column: Order Summary Sidebar -->
+          <div class="space-y-6">
+            <!-- Order Summary -->
+            <div class="bg-neutral-50 rounded-2xl p-6 border border-neutral-100 shadow-brand-sm sticky top-28">
+              <h3 class="font-display font-bold text-lg text-neutral-900 mb-5">Order Summary</h3>
+
+              <!-- Pay in Full Summary -->
+              <div id="summary-full">
+                <div class="space-y-3 mb-4">
+                  <div class="flex justify-between text-neutral-600 text-sm">
+                    <span>Subtotal (ex. VAT)</span>
+                    <span id="cart-subtotal" class="font-medium">--</span>
+                  </div>
+                  <div class="flex justify-between text-neutral-500 text-sm">
+                    <span>VAT (20%)</span>
+                    <span id="cart-vat">--</span>
+                  </div>
+                </div>
+                <div class="flex justify-between font-bold text-lg text-neutral-900 border-t border-neutral-200 pt-4 mb-6">
+                  <span>Total</span>
+                  <span id="cart-total">--</span>
+                </div>
+              </div>
+
+              <!-- Pay Monthly Summary -->
+              <div id="summary-monthly" class="hidden">
+                <div class="space-y-3 mb-4">
+                  <div class="flex justify-between text-neutral-600 text-sm">
+                    <span>Monthly payment</span>
+                    <span id="cart-monthly-amount" class="font-semibold text-primary-600">--</span>
+                  </div>
+                  <div class="flex justify-between text-neutral-500 text-sm">
+                    <span>Duration</span>
+                    <span>12 months</span>
+                  </div>
+                </div>
+                <div class="flex justify-between font-bold text-lg text-neutral-900 border-t border-neutral-200 pt-4 mb-2">
+                  <span>Total over 12 months</span>
+                  <span id="cart-monthly-total">--</span>
+                </div>
+                <p class="text-xs text-neutral-400 mb-6">Interest-free, no credit check required.</p>
+              </div>
+
+              <!-- Checkout Button -->
+              <a
+                id="checkout-btn"
+                href="/checkout"
+                class="block text-center bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3.5 rounded-xl font-semibold shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 transition-all duration-300 text-base"
+              >
+                Proceed to Checkout
+              </a>
+
+              <!-- Payment Method Logos -->
+              <div class="mt-5 pt-4 border-t border-neutral-200">
+                <p class="text-xs text-neutral-400 mb-3 text-center">We accept</p>
+                <div class="flex items-center justify-center gap-3">
+                  <!-- Visa -->
+                  <div class="h-8 w-12 bg-white rounded-md border border-neutral-200 flex items-center justify-center" title="Visa">
+                    <svg viewBox="0 0 48 32" class="h-5 w-8" fill="none">
+                      <rect width="48" height="32" rx="4" fill="white"/>
+                      <path d="M19.5 21h-3l1.9-11.5h3L19.5 21zm12.7-11.2c-.6-.2-1.5-.5-2.7-.5-3 0-5.1 1.5-5.1 3.7 0 1.6 1.5 2.5 2.6 3.1 1.2.5 1.6.9 1.6 1.4 0 .8-.9 1.1-1.8 1.1-1.2 0-1.9-.2-2.9-.6l-.4-.2-.4 2.5c.7.3 2.1.6 3.5.6 3.2 0 5.2-1.5 5.2-3.8 0-1.3-.8-2.2-2.5-3.1-1-.5-1.7-.8-1.7-1.4 0-.5.5-1 1.7-1 1 0 1.7.2 2.2.4l.3.1.4-2.3zm7.8-.3h-2.3c-.7 0-1.3.2-1.6 1L32 21h3.2l.6-1.7h3.9l.4 1.7H43l-2.6-11.5h-0.4zm-3.1 7.4l1.2-3.2.4-1 .2 1 .7 3.2h-2.5zM16 9.5l-2.8 7.9-.3-1.5c-.5-1.8-2.2-3.8-4.1-4.7l2.7 9.8h3.2l4.8-11.5H16z" fill="#1A1F71"/>
+                      <path d="M10.3 9.5H5.6l-.1.3c3.8.9 6.3 3.2 7.4 5.9l-1.1-5.3c-.2-.7-.7-.9-1.5-.9z" fill="#F9A533"/>
+                    </svg>
+                  </div>
+                  <!-- Mastercard -->
+                  <div class="h-8 w-12 bg-white rounded-md border border-neutral-200 flex items-center justify-center" title="Mastercard">
+                    <svg viewBox="0 0 48 32" class="h-5 w-8" fill="none">
+                      <rect width="48" height="32" rx="4" fill="white"/>
+                      <circle cx="19" cy="16" r="8" fill="#EB001B"/>
+                      <circle cx="29" cy="16" r="8" fill="#F79E1B"/>
+                      <path d="M24 10.3a8 8 0 010 11.4 8 8 0 000-11.4z" fill="#FF5F00"/>
+                    </svg>
+                  </div>
+                  <!-- Amex -->
+                  <div class="h-8 w-12 bg-white rounded-md border border-neutral-200 flex items-center justify-center" title="American Express">
+                    <svg viewBox="0 0 48 32" class="h-5 w-8" fill="none">
+                      <rect width="48" height="32" rx="4" fill="#016FD0"/>
+                      <path d="M7 16h2l1-2.5L11 16h2l-2-4 2-4H11l-1 2.5L9 8H7l2 4-2 4zm8-8l-3 8h2.5l.5-1.5h3l.5 1.5H21l-3-8h-3zm1.5 5l1-3 1 3h-2zM22 8v8h2v-3l2 3h2.5l-2.5-3.5L28.5 8H26l-2 3V8h-2zm9 0l-3 8h2.5l.5-1.5h3l.5 1.5H37l-3-8h-3zm1.5 5l1-3 1 3h-2z" fill="white"/>
+                      <path d="M7 18v6h3l1-1.5 1 1.5h3v-6h-2v4l-1.5-2L10 22v-4H7zm12 0l-2 6h2l.5-1.5h2.5l.5 1.5h2l-2-6h-3.5zm1 1.5l.8 2.5h-1.5l.7-2.5zM26 18v6h2v-2h1c2 0 3-1 3-2s-1-2-3-2h-3zm2 1.5h1c.5 0 1 .3 1 .5s-.5.5-1 .5h-1v-1z" fill="white"/>
+                    </svg>
+                  </div>
+                  <!-- Stripe -->
+                  <div class="h-8 w-12 bg-white rounded-md border border-neutral-200 flex items-center justify-center" title="Stripe">
+                    <svg viewBox="0 0 48 32" class="h-4 w-7" fill="none">
+                      <path d="M24 5.5c-7.4 0-13 3.2-13 7.5 0 5.8 8.5 6.5 8.5 9.5 0 1.2-1.1 2-2.8 2-2.5 0-5.5-1.5-7.2-3l-2.3 5c2 1.8 5.8 3 9.3 3 7.7 0 13-3.5 13-7.8 0-6.2-8.5-6.8-8.5-9.7 0-1 .9-1.8 2.5-1.8 2 0 4.5 1 6.3 2.3l2.2-5C30 5.9 27.3 5.5 24 5.5z" fill="#635BFF"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Trust Elements -->
+              <div class="mt-5 pt-4 border-t border-neutral-200 space-y-2.5">
+                <div class="flex items-center gap-2 text-xs text-neutral-500">
+                  <svg class="w-4 h-4 text-primary-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                  SSL Secure Checkout
+                </div>
+                <div class="flex items-center gap-2 text-xs text-neutral-500">
+                  <svg class="w-4 h-4 text-primary-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  30-Day Money-Back Guarantee
+                </div>
+                <div class="flex items-center gap-2 text-xs text-neutral-500">
+                  <svg class="w-4 h-4 text-primary-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                  Ofqual Regulated Qualifications
+                </div>
+              </div>
+            </div>
+
+            <!-- Speak to a Course Advisor -->
+            <div class="bg-white rounded-2xl p-6 border border-neutral-100 shadow-brand-sm">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                </div>
+                <div>
+                  <h4 class="font-display font-bold text-neutral-900 text-base mb-1">Speak to a Course Advisor</h4>
+                  <p class="text-sm text-neutral-500 mb-3">Not sure? Our advisors can help you choose the right course and payment plan.</p>
+                  <a href="tel:01216909563" class="flex items-center gap-2 text-primary-600 font-bold text-lg hover:text-primary-700 transition-colors mb-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    0121 690 9563
+                  </a>
+                  <a
+                    href={`https://wa.me/44${siteConfig.whatsapp.replace(/^0/, '').replace(/\s/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
+                  >
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Chat on WhatsApp
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { getCart, removeFromCart, getCartTotal, getCartMonthlyTotal, getPaymentMode, setPaymentMode } from '../lib/cart';
+  import type { PaymentMode } from '../lib/cart';
+
+  function formatCurrency(amount: number): string {
+    return `\u00A3${amount.toFixed(2)}`;
+  }
+
+  function updatePaymentModeUI(mode: PaymentMode): void {
+    const fullBtn = document.getElementById('mode-full')!;
+    const monthlyBtn = document.getElementById('mode-monthly')!;
+    const summaryFull = document.getElementById('summary-full')!;
+    const summaryMonthly = document.getElementById('summary-monthly')!;
+    const monthlyTableWrapper = document.getElementById('monthly-table-wrapper')!;
+    const checkoutBtn = document.getElementById('checkout-btn')!;
+
+    // Active / inactive button styles
+    const activeClasses = ['border-primary-500', 'bg-primary-50', 'text-primary-700'];
+    const inactiveClasses = ['border-neutral-200', 'bg-white', 'text-neutral-600', 'hover:border-neutral-300', 'hover:bg-neutral-50'];
+
+    if (mode === 'full') {
+      fullBtn.classList.remove(...inactiveClasses);
+      fullBtn.classList.add(...activeClasses);
+      monthlyBtn.classList.remove(...activeClasses);
+      monthlyBtn.classList.add(...inactiveClasses);
+      summaryFull.classList.remove('hidden');
+      summaryMonthly.classList.add('hidden');
+      monthlyTableWrapper.classList.add('hidden');
+      checkoutBtn.textContent = 'Proceed to Checkout';
+    } else {
+      monthlyBtn.classList.remove(...inactiveClasses);
+      monthlyBtn.classList.add(...activeClasses);
+      fullBtn.classList.remove(...activeClasses);
+      fullBtn.classList.add(...inactiveClasses);
+      summaryFull.classList.add('hidden');
+      summaryMonthly.classList.remove('hidden');
+      monthlyTableWrapper.classList.remove('hidden');
+      checkoutBtn.textContent = 'Set Up Monthly Payments';
+    }
+  }
+
+  function renderCart(): void {
+    const items = getCart();
+    const emptyEl = document.getElementById('cart-empty')!;
+    const contentEl = document.getElementById('cart-content')!;
+    const itemsEl = document.getElementById('cart-items')!;
+    const itemCountEl = document.getElementById('cart-item-count')!;
+    const mode = getPaymentMode();
+
+    if (items.length === 0) {
+      emptyEl.classList.remove('hidden');
+      contentEl.classList.add('hidden');
+      itemCountEl.textContent = '';
+      return;
+    }
+
+    emptyEl.classList.add('hidden');
+    contentEl.classList.remove('hidden');
+    itemCountEl.textContent = `${items.length} course${items.length !== 1 ? 's' : ''} in your basket`;
+
+    // -- Pay in Full totals --
+    const total = getCartTotal();
+    const subtotalExVat = total / 1.2;
+    const vat = total - subtotalExVat;
+
+    document.getElementById('cart-subtotal')!.textContent = formatCurrency(subtotalExVat);
+    document.getElementById('cart-vat')!.textContent = formatCurrency(vat);
+    document.getElementById('cart-total')!.textContent = formatCurrency(total);
+
+    // -- Monthly totals --
+    const monthlyTotal = getCartMonthlyTotal();
+    const monthlyGrandTotal = monthlyTotal * 12;
+
+    document.getElementById('cart-monthly-amount')!.textContent = `${formatCurrency(monthlyTotal)}/mo`;
+    document.getElementById('cart-monthly-total')!.textContent = formatCurrency(monthlyGrandTotal);
+
+    // -- Monthly table rows --
+    const monthlyTableBody = document.getElementById('monthly-table-body')!;
+    monthlyTableBody.innerHTML = items
+      .map(
+        ({ course }) => `
+        <tr class="text-neutral-700">
+          <td class="px-4 sm:px-6 py-3">
+            <div class="font-medium text-neutral-900">${course.title}</div>
+          </td>
+          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap">${formatCurrency(course.monthlyPrice)}/mo</td>
+          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap">12 months</td>
+          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap font-medium">${formatCurrency(course.monthlyPrice * 12)}</td>
+        </tr>`
+      )
+      .join('');
+
+    document.getElementById('monthly-table-total-monthly')!.textContent = `${formatCurrency(monthlyTotal)}/mo`;
+    document.getElementById('monthly-table-total-cost')!.textContent = formatCurrency(monthlyGrandTotal);
+
+    // -- Render cart item rows --
+    itemsEl.innerHTML = items
+      .map(
+        ({ course }) => `
+      <div class="flex items-center gap-4 p-4 sm:p-6 group" data-course-id="${course.id}">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden flex-shrink-0 bg-neutral-100">
+          <img src="${course.image}" alt="${course.title}" class="w-full h-full object-cover" loading="lazy" />
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 class="font-semibold text-neutral-900 text-sm sm:text-base leading-snug mb-1">${course.title}</h4>
+          <p class="text-xs text-neutral-500 mb-1">${course.category}${course.qualificationLevel ? ' | ' + course.qualificationLevel : ''} | Online</p>
+          <div class="flex items-center gap-2">
+            <span class="item-price-full text-sm font-bold text-neutral-900 ${mode === 'monthly' ? 'hidden' : ''}">${formatCurrency(course.price)}</span>
+            <span class="item-price-monthly text-sm font-bold text-primary-600 ${mode === 'full' ? 'hidden' : ''}">${formatCurrency(course.monthlyPrice)}/mo</span>
+            ${course.oldPrice > course.price ? `<span class="text-xs text-neutral-400 line-through">${formatCurrency(mode === 'monthly' ? course.oldMonthlyPrice : course.oldPrice)}</span>` : ''}
+          </div>
+        </div>
+        <div class="flex-shrink-0">
+          <button class="remove-btn w-8 h-8 rounded-lg flex items-center justify-center text-neutral-400 hover:bg-red-50 hover:text-red-500 transition-all" data-id="${course.id}" title="Remove course">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        </div>
+      </div>`
+      )
+      .join('');
+
+    // Bind remove buttons
+    itemsEl.querySelectorAll('.remove-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = (btn as HTMLElement).dataset.id!;
+        removeFromCart(id);
+        renderCart();
+      });
+    });
+
+    // Update payment mode UI
+    updatePaymentModeUI(mode);
+  }
+
+  function initCart(): void {
+    renderCart();
+
+    // Payment mode toggle buttons
+    document.getElementById('mode-full')?.addEventListener('click', () => {
+      setPaymentMode('full');
+      renderCart();
+    });
+
+    document.getElementById('mode-monthly')?.addEventListener('click', () => {
+      setPaymentMode('monthly');
+      renderCart();
+    });
+
+    // Discount code button (UI only)
+    document.getElementById('apply-discount-btn')?.addEventListener('click', () => {
+      const input = document.getElementById('discount-input') as HTMLInputElement;
+      const msg = document.getElementById('discount-message')!;
+      const code = input.value.trim();
+
+      if (!code) {
+        msg.textContent = 'Please enter a discount code.';
+        msg.classList.remove('hidden', 'text-green-600');
+        msg.classList.add('text-red-500');
+        return;
+      }
+
+      // No backend yet - show a generic message
+      msg.textContent = 'Sorry, this discount code is not valid.';
+      msg.classList.remove('hidden', 'text-green-600');
+      msg.classList.add('text-red-500');
+    });
+  }
+
+  document.addEventListener('astro:page-load', initCart);
+  window.addEventListener('cart-updated', renderCart);
+</script>

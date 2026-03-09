@@ -1,0 +1,36 @@
+---
+import { siteConfig } from '../../data/site-config';
+
+interface Props {
+  name: string;
+  description: string;
+  url: string;
+}
+
+const { name, description, url } = Astro.props;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: name,
+  description: description,
+  url: url.startsWith('http') ? url : `${siteConfig.url}${url}`,
+  provider: {
+    '@type': 'EducationalOrganization',
+    name: siteConfig.name,
+    url: siteConfig.url,
+  },
+  educationalCredentialAwarded: 'Certificate',
+  hasCourseInstance: {
+    '@type': 'CourseInstance',
+    courseMode: 'online',
+    courseWorkload: 'PT10H',
+  },
+  areaServed: {
+    '@type': 'Country',
+    name: 'United Kingdom',
+  },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

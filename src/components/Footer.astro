@@ -1,0 +1,160 @@
+---
+import { siteConfig } from '../data/site-config';
+---
+
+<footer class="relative bg-neutral-900 text-neutral-300 overflow-hidden">
+  <!-- Gradient mesh decoration -->
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+    <div
+      class="absolute -top-32 -right-32 w-96 h-96 rounded-full blur-3xl"
+      style="background: radial-gradient(circle, rgba(13, 148, 136, 0.08), transparent 70%);"
+    ></div>
+    <div
+      class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full blur-3xl"
+      style="background: radial-gradient(circle, rgba(245, 158, 11, 0.05), transparent 70%);"
+    ></div>
+    <!-- Branded accent shape -->
+    <div
+      class="absolute top-20 right-20 w-40 h-40 border border-white/5 rounded-3xl opacity-30"
+      style="transform: rotate(12deg);"
+    ></div>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8">
+    <!-- Main footer grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
+      <!-- Brand Column -->
+      <div class="sm:col-span-2 lg:col-span-1">
+        <a href="/" class="flex items-center gap-3 mb-6">
+          <img src="/images/logo.webp" alt="Integer Training logo - accredited online course provider" class="h-10 w-auto" width="40" height="40" />
+        </a>
+        <p class="text-neutral-400 text-sm leading-relaxed mb-6 max-w-xs">
+          {siteConfig.tagline} With over {siteConfig.stats.years} years of experience and {siteConfig.stats.students.toLocaleString()}+ successful students, we deliver accredited qualifications that advance careers.
+        </p>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map(() => (
+              <svg class="w-4 h-4 text-accent-500" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+            ))}
+          </div>
+          <a href={siteConfig.social.trustpilot} target="_blank" rel="noopener noreferrer" class="text-sm text-neutral-400 hover:text-accent-400 transition-colors duration-300">
+            {siteConfig.stats.trustpilotRating}/5 on Trustpilot
+          </a>
+        </div>
+
+        <!-- Social links -->
+        <div class="flex items-center gap-3 mt-4">
+          <a href={siteConfig.social.trustpilot} target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-lg bg-neutral-800 hover:bg-green-600/20 flex items-center justify-center text-neutral-400 hover:text-green-400 transition-all duration-300" aria-label="Trustpilot reviews">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Courses Column -->
+      <div>
+        <h3 class="font-display font-semibold text-white text-sm uppercase tracking-wider mb-6">Courses</h3>
+        <ul class="space-y-3">
+          {siteConfig.services.map((service) => (
+            <li>
+              <a
+                href={`/courses/${service.slug}`}
+                class="text-neutral-400 hover:text-primary-400 transition-colors duration-300 text-sm"
+              >
+                {service.name}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="/courses" class="text-primary-400 hover:text-primary-300 transition-colors duration-300 text-sm font-medium">
+              View All Courses &rarr;
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Locations Column -->
+      <div>
+        <h3 class="font-display font-semibold text-white text-sm uppercase tracking-wider mb-6">Locations</h3>
+        <ul class="space-y-3">
+          {siteConfig.locations.map((location) => (
+            <li>
+              <a
+                href={`/locations/${location.slug}`}
+                class="text-neutral-400 hover:text-primary-400 transition-colors duration-300 text-sm"
+              >
+                {location.city}{location.isPrimary ? ' (HQ)' : ''}
+              </a>
+            </li>
+          ))}
+          <li class="pt-2">
+            <a href="/about" class="text-neutral-400 hover:text-primary-400 transition-colors duration-300 text-sm">About Us</a>
+          </li>
+          <li>
+            <a href="/contact" class="text-neutral-400 hover:text-primary-400 transition-colors duration-300 text-sm">Contact</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contact Column -->
+      <div>
+        <h3 class="font-display font-semibold text-white text-sm uppercase tracking-wider mb-6">Contact Us</h3>
+        <ul class="space-y-4">
+          <li>
+            <a href={`tel:${siteConfig.phone.replace(/\s/g, '')}`} class="flex items-start gap-3 text-neutral-400 hover:text-primary-400 transition-colors duration-300 text-sm">
+              <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+              <span>{siteConfig.phone}</span>
+            </a>
+          </li>
+          <li>
+            <a href={`https://wa.me/44${siteConfig.whatsapp.replace(/^0/, '').replace(/\s/g, '')}`} class="flex items-start gap-3 text-neutral-400 hover:text-green-400 transition-colors duration-300 text-sm">
+              <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+              <span>WhatsApp: {siteConfig.whatsapp}</span>
+            </a>
+          </li>
+          <li>
+            <a href={`mailto:${siteConfig.email}`} class="flex items-start gap-3 text-neutral-400 hover:text-primary-400 transition-colors duration-300 text-sm">
+              <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              <span>{siteConfig.email}</span>
+            </a>
+          </li>
+          <li class="flex items-start gap-3 text-neutral-400 text-sm">
+            <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span>Mon-Fri, 9am-5pm</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Accreditation partners -->
+    <div class="border-t border-neutral-800 pt-8 mb-8">
+      <p class="text-xs text-neutral-500 uppercase tracking-wider text-center mb-6">Accredited by</p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        {siteConfig.partners.slice(0, 8).map((partner) => (
+          <div class="bg-white rounded-lg px-3 py-2 flex items-center justify-center">
+            <img
+              src={partner.logo}
+              alt={partner.name}
+              class="h-8 w-auto object-contain max-w-[100px]"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="border-t border-neutral-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-xs text-neutral-500">
+        &copy; {new Date().getFullYear()} {siteConfig.companyName}. Company No: {siteConfig.companyNumber}. All rights reserved.
+      </p>
+      <div class="flex items-center gap-6">
+        <a href="/privacy-policy" class="text-xs text-neutral-500 hover:text-primary-400 transition-colors duration-300">Privacy Policy</a>
+        <a href="/terms" class="text-xs text-neutral-500 hover:text-primary-400 transition-colors duration-300">Terms & Conditions</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+

@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import FAQ from '../components/FAQ.astro';
+import { siteConfig } from '../data/site-config';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Contact', href: '/contact' },
+];
+
+const contactFAQs = [
+  {
+    question: "What's the fastest way to get a response?",
+    answer: 'For the quickest reply, call us directly on 0121 690 9563 during business hours (Monday-Friday, 9am-5pm). You can also WhatsApp us on 07828 924057 for a fast text-based response. Email and form enquiries are typically answered within 2 hours on working days.',
+  },
+  {
+    question: 'Can I visit a branch without an appointment?',
+    answer: 'We recommend booking an appointment before visiting to ensure a team member is available to assist you. You can arrange a visit by calling 0121 690 9563 or emailing info@integertraining.com. Our branches are staffed during standard business hours, Monday to Friday.',
+  },
+  {
+    question: "I'm not sure which course is right for me. Can you help?",
+    answer: "Absolutely. That's one of the most common reasons people contact us. Tell us about your career goals, current qualifications, and experience, and our admissions team will recommend the most suitable course and level. There's no obligation -- we'd rather point you in the right direction than enrol you on the wrong course.",
+  },
+  {
+    question: 'How do I check on the progress of my current course?',
+    answer: 'Current learners can contact their assigned tutor directly, or reach our learner support team on 0121 690 9563 or info@integertraining.com. You can also access your course progress, assignments, and feedback through our online learning platform at any time.',
+  },
+];
+---
+
+<BaseLayout
+  title="Contact Integer Training | Call 0121 690 9563 Today"
+  description="Get in touch with Integer Training for course advice, enrolment support, or general enquiries. Call 0121 690 9563, WhatsApp, email, or visit a branch."
+>
+  <Breadcrumb items={breadcrumbs} />
+
+  <Hero
+    heading="Let's Find Your Perfect Course"
+    subheading="Whether you're exploring your options, ready to enrol, or have a question about an existing course, our team is here to help. We typically respond within 2 hours during business hours."
+    variant="inner"
+    image="/images/hero-banner.png"
+    imageAlt="Contact Integer Training for course enquiries"
+  />
+
+  <section class="py-24 lg:py-32 bg-neutral-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
+        <!-- Contact Form -->
+        <div class="lg:col-span-3">
+          <h2 class="section-heading font-display font-bold text-2xl md:text-3xl text-neutral-900 mb-4">
+            Send Us a <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-accent-500">Message</span>
+          </h2>
+          <p class="text-neutral-600 leading-relaxed mb-8">
+            Fill in the form below and a member of our admissions team will get back to you -- usually within 2 hours on weekdays. Tell us a bit about your career goals and we'll recommend the right qualification. No obligation, no sales pressure. Not sure where to start? <a href="/courses" class="text-primary-500 font-semibold hover:text-primary-600 transition-colors duration-300">Browse our courses</a> first.
+          </p>
+          <ContactForm />
+
+          <!-- Prefer to Talk? -->
+          <div class="mt-12 p-6 bg-neutral-50 rounded-2xl">
+            <h3 class="font-display font-bold text-xl text-neutral-900 mb-3">Prefer to Talk?</h3>
+            <p class="text-neutral-600 leading-relaxed">
+              Our admissions team is available Monday to Friday, 9am-5pm. Call us on <a href="tel:01216909563" class="text-primary-500 font-semibold hover:text-primary-600 transition-colors duration-300">0121 690 9563</a> or send a WhatsApp message to <a href="https://wa.me/447828924057" class="text-primary-500 font-semibold hover:text-primary-600 transition-colors duration-300">07828 924057</a> for a quick response.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-2">
+          <div class="sticky top-28 space-y-6">
+            <!-- Contact details card -->
+            <div class="glass rounded-3xl p-8 shadow-brand-sm">
+              <h3 class="font-display font-bold text-lg text-neutral-900 mb-6">Contact Details</h3>
+              <ul class="space-y-5">
+                <li>
+                  <a href="tel:01216909563" class="flex items-start gap-4 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0">
+                      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm text-neutral-400 font-medium">Phone</p>
+                      <p class="text-neutral-900 font-semibold group-hover:text-primary-500 transition-colors duration-300">{siteConfig.phone}</p>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a href={`https://wa.me/44${siteConfig.whatsapp.replace(/^0/, '').replace(/\s/g, '')}`} class="flex items-start gap-4 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center flex-shrink-0">
+                      <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm text-neutral-400 font-medium">WhatsApp</p>
+                      <p class="text-neutral-900 font-semibold group-hover:text-green-600 transition-colors duration-300">{siteConfig.whatsapp}</p>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a href={`mailto:${siteConfig.email}`} class="flex items-start gap-4 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0">
+                      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm text-neutral-400 font-medium">Email</p>
+                      <p class="text-neutral-900 font-semibold group-hover:text-primary-500 transition-colors duration-300">{siteConfig.email}</p>
+                    </div>
+                  </a>
+                </li>
+                <li class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm text-neutral-400 font-medium">Office Hours</p>
+                    <p class="text-neutral-900 font-semibold">Monday - Friday</p>
+                    <p class="text-neutral-600 text-sm">9:00am - 5:00pm</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Branches -->
+            <div class="bg-white rounded-3xl p-8 shadow-brand-sm">
+              <h3 class="font-display font-bold text-lg text-neutral-900 mb-6">Our Centres</h3>
+              <ul class="space-y-5">
+                {siteConfig.locations.map((location) => (
+                  <li>
+                    <a href={`/locations/${location.slug}`} class="group block">
+                      <p class="font-semibold text-neutral-900 group-hover:text-primary-500 transition-colors duration-300">
+                        {location.city} {location.isPrimary && <span class="text-xs text-accent-600 bg-accent-50 px-2 py-0.5 rounded-full ml-1">HQ</span>}
+                      </p>
+                      <p class="text-sm text-neutral-500">{location.address}</p>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQs -->
+  <FAQ faqs={contactFAQs} title="Contact FAQs" accentWord="FAQs" />
+</BaseLayout>

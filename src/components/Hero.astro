@@ -1,0 +1,200 @@
+---
+import GradientMesh from './GradientMesh.astro';
+import { siteConfig } from '../data/site-config';
+
+interface Props {
+  heading: string;
+  subheading: string;
+  ctaPrimary?: { text: string; href: string };
+  ctaSecondary?: { text: string; href: string };
+  image?: string;
+  imageAlt?: string;
+  variant?: 'homepage' | 'inner';
+}
+
+const {
+  heading,
+  subheading,
+  ctaPrimary = { text: 'Explore Courses', href: '/courses' },
+  ctaSecondary = { text: 'Contact Us', href: '/contact' },
+  image = '/images/hero-banner.png',
+  imageAlt = 'Integer Training - Professional education and training',
+  variant = 'homepage',
+} = Astro.props;
+---
+
+{variant === 'homepage' ? (
+  <section class="relative min-h-[90vh] flex items-center overflow-hidden bg-white">
+    <GradientMesh variant="hero" />
+
+    <!-- Branded accent shape decoration -->
+    <div
+      class="absolute top-20 left-10 w-64 h-64 border-2 border-primary-100 rounded-4xl opacity-20 pointer-events-none"
+      style="transform: rotate(12deg);"
+      aria-hidden="true"
+    ></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 w-full">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-center">
+        <!-- Left column (60%) -->
+        <div class="lg:col-span-3 space-y-8">
+          <h1 class="hero-heading font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-primary-500">
+              {heading}
+            </span>
+          </h1>
+
+          <p class="hero-subheading text-lg md:text-xl text-neutral-600 leading-relaxed max-w-prose">
+            {subheading}
+          </p>
+
+          <div class="hero-ctas flex flex-col sm:flex-row gap-4">
+            <a
+              href={ctaPrimary.href}
+              class="btn-primary bg-gradient-to-r from-primary-500 to-primary-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-brand transition-all duration-300 text-center"
+            >
+              {ctaPrimary.text}
+            </a>
+            <a
+              href={ctaSecondary.href}
+              class="btn-secondary border-2 border-primary-500 text-primary-600 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 text-center"
+            >
+              {ctaSecondary.text}
+            </a>
+          </div>
+
+          <!-- Trust signals -->
+          <div class="hero-trust flex flex-wrap items-center gap-4 text-sm text-neutral-500 pt-4">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+              <span class="font-medium">{siteConfig.stats.years}+ Years</span>
+            </div>
+            <span class="hidden sm:block text-neutral-300">|</span>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+              <span class="font-medium">{siteConfig.stats.students.toLocaleString()}+ Students</span>
+            </div>
+            <span class="hidden sm:block text-neutral-300">|</span>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-accent-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+              <span class="font-medium">{siteConfig.stats.trustpilotRating}/5 Trustpilot</span>
+            </div>
+            <span class="hidden sm:block text-neutral-300">|</span>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+              <span class="font-medium">{siteConfig.stats.passRate}% Pass Rate</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column (40%) -->
+        <div class="lg:col-span-2 relative">
+          <!-- Decorative accent shape behind image -->
+          <div
+            class="absolute -top-6 -right-6 w-full h-full bg-gradient-to-br from-primary-100 to-accent-100 rounded-4xl opacity-60 pointer-events-none"
+            style="transform: rotate(3deg);"
+            aria-hidden="true"
+          ></div>
+          <div class="relative rounded-3xl overflow-hidden shadow-brand-xl">
+            <div class="absolute inset-0 animate-pulse bg-neutral-200 rounded-3xl" id="hero-skeleton"></div>
+            <img
+              src={image}
+              alt={imageAlt}
+              width="800"
+              height="600"
+              class="relative z-10 w-full h-auto object-cover"
+              loading="eager"
+              fetchpriority="high"
+              onload="document.getElementById('hero-skeleton').style.display='none'"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+) : (
+  <section class="relative min-h-[50vh] md:min-h-[60vh] flex items-end overflow-hidden">
+    <!-- Background image with Ken Burns -->
+    <div class="absolute inset-0 hero-bg-image">
+      <img
+        src={image}
+        alt={imageAlt}
+        width="1920"
+        height="1080"
+        class="w-full h-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+
+    <!-- Gradient overlay -->
+    <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/90 via-neutral-900/50 to-neutral-900/20"></div>
+
+    <GradientMesh variant="hero" />
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 w-full">
+      <h1 class="hero-heading font-display font-bold text-4xl md:text-5xl lg:text-6xl text-white leading-tight tracking-tight mb-4">
+        {heading}
+      </h1>
+      <p class="hero-subheading text-lg md:text-xl text-neutral-200 max-w-2xl leading-relaxed">
+        {subheading}
+      </p>
+    </div>
+  </section>
+)}
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    // @ts-ignore
+    if (typeof gsap === 'undefined') return;
+
+    // Hero text animation
+    const heroHeading = document.querySelector('.hero-heading');
+    if (heroHeading) {
+      const text = heroHeading.textContent || '';
+      const words = text.trim().split(/\s+/);
+      heroHeading.innerHTML = words
+        .map(
+          (word) =>
+            `<span class="inline-block overflow-hidden"><span class="hero-word inline-block">${word}</span></span>`
+        )
+        .join(' ');
+
+      // Re-apply gradient class to all word spans in homepage variant
+      const isHomepage = heroHeading.closest('.hero-heading')?.querySelector('.hero-word');
+      if (heroHeading.classList.contains('text-transparent') || heroHeading.querySelector('[class*="text-transparent"]')) {
+        // The gradient was on the whole heading; we need to re-apply to the wrapper
+      }
+
+      // @ts-ignore
+      const tl = gsap.timeline();
+      // @ts-ignore
+      tl.from('.hero-word', {
+        y: '100%',
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.08,
+      })
+      // @ts-ignore
+        .from('.hero-subheading', { y: 30, opacity: 0, duration: 0.6, ease: 'power2.out' }, '-=0.4')
+      // @ts-ignore
+        .from('.hero-ctas', { y: 20, opacity: 0, duration: 0.5 }, '-=0.3')
+      // @ts-ignore
+        .from('.hero-trust', { y: 20, opacity: 0, duration: 0.5 }, '-=0.2');
+    }
+
+    // Ken Burns effect for inner hero
+    const heroBg = document.querySelector('.hero-bg-image img');
+    if (heroBg) {
+      // @ts-ignore
+      gsap.fromTo(
+        heroBg,
+        { scale: 1.08 },
+        { scale: 1, duration: 12, ease: 'none' }
+      );
+    }
+  });
+</script>

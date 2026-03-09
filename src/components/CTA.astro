@@ -1,0 +1,93 @@
+---
+import GradientMesh from './GradientMesh.astro';
+
+interface Props {
+  heading?: string;
+  subheading?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  variant?: 'standard' | 'dramatic';
+}
+
+const {
+  heading = 'Ready to Start Your Journey?',
+  subheading = 'Get in touch today to discuss your course options and take the first step toward a career you\'ll love.',
+  ctaText = 'Get Started Today',
+  ctaHref = '/contact',
+  variant = 'standard',
+} = Astro.props;
+---
+
+<section
+  class:list={[
+    'cta-section relative py-24 lg:py-32 overflow-hidden',
+    variant === 'dramatic' ? '' : '',
+  ]}
+  style={variant === 'dramatic'
+    ? 'clip-path: polygon(0 8%, 100% 0, 100% 92%, 0 100%);'
+    : ''
+  }
+>
+  <!-- Multi-stop gradient background -->
+  <div class="absolute inset-0 bg-gradient-to-br from-primary-700 via-primary-600 to-secondary-500 cta-bg"></div>
+
+  <!-- Noise grain overlay -->
+  <div
+    class="absolute inset-0 opacity-[0.05] pointer-events-none mix-blend-overlay"
+    style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E&quot;); background-repeat: repeat; background-size: 256px 256px;"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Decorative rotating circles -->
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full border border-white/10 animate-spin-slow"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full border border-white/5 animate-spin-slower"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full border border-white/[0.03] animate-spin-slow"></div>
+  </div>
+
+  <GradientMesh variant="cta" />
+
+  <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="font-display font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight">
+      {heading}
+    </h2>
+    <p class="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed">
+      {subheading}
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a
+        href={ctaHref}
+        class="bg-white text-primary-600 px-8 py-4 rounded-xl font-bold text-lg shadow-brand-lg hover:shadow-brand-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+      >
+        {ctaText}
+      </a>
+      <a
+        href="tel:01216909563"
+        class="text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300"
+      >
+        Call 0121 690 9563
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    // @ts-ignore
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    // CTA parallax
+    const ctaBg = document.querySelector('.cta-bg');
+    if (ctaBg) {
+      // @ts-ignore
+      gsap.to(ctaBg, {
+        // @ts-ignore
+        scrollTrigger: { trigger: '.cta-section', scrub: 1 },
+        yPercent: -15,
+      });
+    }
+  });
+</script>

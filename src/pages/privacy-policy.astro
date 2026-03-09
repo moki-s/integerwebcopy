@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { siteConfig } from '../data/site-config';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Privacy Policy', href: '/privacy-policy' },
+];
+---
+
+<BaseLayout
+  title="Privacy Policy | Integer Training Online Courses UK"
+  description="Integer Training's privacy policy explains how we collect, store, and use your personal data. GDPR-compliant data handling for all learners and enquiries."
+>
+  <Breadcrumb items={breadcrumbs} />
+
+  <section class="py-24 lg:py-32">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="font-display font-bold text-4xl md:text-5xl text-neutral-900 mb-8">Privacy Policy</h1>
+      <p class="text-neutral-500 text-sm mb-12">Last updated: March 2026</p>
+
+      <div class="prose prose-lg text-neutral-600 space-y-8">
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">1. Introduction</h2>
+          <p>{siteConfig.companyName} (Company Number: {siteConfig.companyNumber}), trading as {siteConfig.name}, is committed to protecting your privacy and handling your personal data responsibly. This privacy policy explains how we collect, use, store, and protect your personal information in accordance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">2. Data Controller</h2>
+          <p>The data controller is {siteConfig.companyName}, registered at {siteConfig.address.street}, {siteConfig.address.city}, {siteConfig.address.zip}. For data protection enquiries, contact us at {siteConfig.email}.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">3. Information We Collect</h2>
+          <p>We may collect the following personal data:</p>
+          <ul class="list-disc pl-6 space-y-2">
+            <li>Name, email address, phone number, and postal address</li>
+            <li>Course enrolment and academic progress data</li>
+            <li>Payment and billing information</li>
+            <li>Communication records (emails, phone calls, messages)</li>
+            <li>Website usage data (via cookies and analytics)</li>
+            <li>Assessment submissions and results</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">4. How We Use Your Data</h2>
+          <p>We process your personal data for the following purposes:</p>
+          <ul class="list-disc pl-6 space-y-2">
+            <li>Processing course enrolments and managing your learning</li>
+            <li>Providing tutor support and academic guidance</li>
+            <li>Processing payments and managing payment plans</li>
+            <li>Registering you with awarding bodies for certification</li>
+            <li>Communicating course updates, deadlines, and relevant information</li>
+            <li>Improving our services and website experience</li>
+            <li>Complying with legal and regulatory obligations</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">5. Legal Basis for Processing</h2>
+          <p>We process your data on the following legal bases: contractual necessity (to deliver courses you have enrolled on), legitimate interests (to improve our services), consent (for marketing communications), and legal obligation (for regulatory compliance and awarding body requirements).</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">6. Data Sharing</h2>
+          <p>We may share your data with: awarding bodies (AAT, NCFE, HABC, Pearson, ATHE) for registration and certification purposes; payment processors for secure transaction processing; and regulatory bodies where legally required. We do not sell your personal data to third parties.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">7. Data Retention</h2>
+          <p>We retain your personal data for as long as necessary to fulfil the purposes for which it was collected, typically for the duration of your course plus 6 years for regulatory compliance. Enquiry data from contact forms is retained for 2 years unless you enrol on a course.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">8. Your Rights</h2>
+          <p>Under UK GDPR, you have the right to: access your personal data, rectify inaccurate data, request erasure of your data, restrict processing, data portability, and object to processing. To exercise any of these rights, contact us at {siteConfig.email}.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">9. Cookies</h2>
+          <p>Our website uses essential cookies to ensure proper functionality and analytics cookies to understand how visitors use our site. You can manage cookie preferences through your browser settings. For more details, see our cookie notice on the website.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">10. Contact</h2>
+          <p>For any privacy-related enquiries or to exercise your data protection rights, contact us at {siteConfig.email} or write to us at {siteConfig.address.street}, {siteConfig.address.city}, {siteConfig.address.zip}. You also have the right to lodge a complaint with the Information Commissioner's Office (ICO) at ico.org.uk.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

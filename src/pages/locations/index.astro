@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import LocationCard from '../../components/LocationCard.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import CTA from '../../components/CTA.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+import { siteConfig } from '../../data/site-config';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Locations', href: '/locations' },
+];
+---
+
+<BaseLayout
+  title="Training Centres & Locations UK | Integer Training"
+  description="Integer Training has branches in Bude, London, Birmingham, and Wolverhampton. All courses available online UK-wide. Visit a centre or study from home."
+>
+  <Breadcrumb items={breadcrumbs} />
+
+  <Hero
+    heading="Training Across the UK"
+    subheading="Integer Training operates from four branch locations in England while delivering all courses online to learners across the entire UK. Whether you prefer face-to-face support or fully remote study, we're here for you."
+    variant="inner"
+    image="/images/hero-banner.png"
+    imageAlt="Integer Training centres across the UK"
+  />
+
+  <section class="py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="location-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+        {siteConfig.locations.map((location) => (
+          <LocationCard
+            city={location.city}
+            slug={location.slug}
+            address={location.address}
+            isPrimary={location.isPrimary}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Online learning note -->
+  <section class="py-16 bg-neutral-50">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-brand flex items-center justify-center mx-auto mb-6">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+      </div>
+      <h2 class="section-heading font-display font-bold text-2xl md:text-3xl text-neutral-900 mb-4">
+        Study from <span class="text-primary-500">Anywhere</span>
+      </h2>
+      <p class="text-lg text-neutral-600 leading-relaxed">
+        Most of our courses are available for fully online study, meaning you can learn from the comfort of your own home regardless of your location. Our centres are available for in-person support, enrolment guidance, and practical assessments.
+      </p>
+    </div>
+  </section>
+
+  <CTA
+    heading="Find Your Nearest Centre"
+    subheading="Contact us to learn more about the courses and support available at your local Integer Training centre."
+    ctaText="Get in Touch"
+    ctaHref="/contact"
+    variant="dramatic"
+  />
+
+  <SectionDivider fillColor="#0f172a" variant="curve" />
+</BaseLayout>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    // @ts-ignore
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    // @ts-ignore
+    gsap.registerPlugin(ScrollTrigger);
+
+    // @ts-ignore
+    gsap.fromTo('.location-grid .service-card',
+      { y: 40, opacity: 0 },
+      { // @ts-ignore
+        scrollTrigger: { trigger: '.location-grid', start: 'top 85%' },
+        y: 0, opacity: 1,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: 'power2.out',
+      }
+    );
+  });
+</script>

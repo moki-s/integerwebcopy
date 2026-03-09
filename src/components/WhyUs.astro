@@ -1,0 +1,81 @@
+---
+import { siteConfig } from '../data/site-config';
+
+interface Props {
+  usps?: typeof siteConfig.usps;
+}
+
+const { usps = siteConfig.usps } = Astro.props;
+
+const icons: Record<string, string> = {
+  'expert-tutors': `<svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>`,
+  'self-paced': `<svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+  'interest-free': `<svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+  'accredited': `<svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>`,
+};
+---
+
+<section class="why-us-section relative py-24 lg:py-32 bg-neutral-50" style="clip-path: polygon(0 4%, 100% 0, 100% 96%, 0 100%);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16 lg:mb-20">
+      <h2 class="section-heading font-display font-bold text-3xl md:text-4xl lg:text-5xl text-neutral-900 mb-6">
+        Why Choose <span class="text-primary-500">Integer Training</span>?
+      </h2>
+      <p class="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
+        With over {siteConfig.stats.years} years of experience and {siteConfig.stats.students.toLocaleString()}+ successful students, we know what it takes to help you succeed.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+      {usps.map((usp, index) => (
+        <div class="relative group">
+          <!-- Oversized number watermark -->
+          <span
+            class="absolute -top-4 -right-2 text-8xl font-bold text-primary-50 pointer-events-none select-none"
+            aria-hidden="true"
+          >
+            0{index + 1}
+          </span>
+
+          <div class="relative flex gap-6 items-start">
+            <!-- Icon in gradient container -->
+            <div class="usp-icon flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-brand flex items-center justify-center">
+              <Fragment set:html={icons[usp.icon] || icons['accredited']} />
+            </div>
+
+            <div>
+              <h3 class="font-display font-bold text-xl text-neutral-900 mb-2">
+                {usp.title}
+              </h3>
+              <p class="text-neutral-600 leading-relaxed">
+                {usp.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    // @ts-ignore
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    // @ts-ignore
+    gsap.fromTo('.usp-icon',
+      { rotation: -15, opacity: 0 },
+      { // @ts-ignore
+        scrollTrigger: { trigger: '.why-us-section', start: 'top 85%' },
+        rotation: 0, opacity: 1,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'back.out(1.7)',
+      }
+    );
+  });
+</script>

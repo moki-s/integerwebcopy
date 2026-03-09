@@ -1,0 +1,203 @@
+---
+import { siteConfig } from '../data/site-config';
+---
+
+<form id="contact-form" class="space-y-6" novalidate>
+  <!-- Honeypot -->
+  <input name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+
+  <!-- Name -->
+  <div class="form-field">
+    <input
+      type="text"
+      name="name"
+      id="form-name"
+      required
+      placeholder=" "
+      class="w-full border-b-2 border-neutral-200 bg-neutral-50 rounded-t-xl px-4 pt-7 pb-2 text-neutral-900 outline-none"
+    />
+    <label for="form-name">Full Name *</label>
+  </div>
+
+  <!-- Email -->
+  <div class="form-field">
+    <input
+      type="email"
+      name="email"
+      id="form-email"
+      required
+      placeholder=" "
+      class="w-full border-b-2 border-neutral-200 bg-neutral-50 rounded-t-xl px-4 pt-7 pb-2 text-neutral-900 outline-none"
+    />
+    <label for="form-email">Email Address *</label>
+  </div>
+
+  <!-- Phone -->
+  <div class="form-field">
+    <input
+      type="tel"
+      name="phone"
+      id="form-phone"
+      placeholder=" "
+      class="w-full border-b-2 border-neutral-200 bg-neutral-50 rounded-t-xl px-4 pt-7 pb-2 text-neutral-900 outline-none"
+    />
+    <label for="form-phone">Phone Number</label>
+  </div>
+
+  <!-- Service -->
+  <div class="form-field">
+    <select
+      name="service"
+      id="form-service"
+      class="w-full border-b-2 border-neutral-200 bg-neutral-50 rounded-t-xl px-4 pt-7 pb-2 text-neutral-900 outline-none appearance-none"
+    >
+      <option value="">Select a course category</option>
+      {siteConfig.services.map((service) => (
+        <option value={service.name}>{service.name}</option>
+      ))}
+    </select>
+    <label for="form-service">Course Interest</label>
+    <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+  </div>
+
+  <!-- Message -->
+  <div class="form-field">
+    <textarea
+      name="message"
+      id="form-message"
+      required
+      rows="4"
+      placeholder=" "
+      class="w-full border-b-2 border-neutral-200 bg-neutral-50 rounded-t-xl px-4 pt-7 pb-2 text-neutral-900 outline-none resize-none"
+    ></textarea>
+    <label for="form-message">Your Message *</label>
+  </div>
+
+  <!-- Error messages container -->
+  <div id="form-errors" class="hidden">
+    <p class="error-message text-red-500 text-sm font-medium"></p>
+  </div>
+
+  <!-- Submit button -->
+  <button
+    type="submit"
+    id="form-submit"
+    class="btn-primary w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-brand transition-all duration-300 flex items-center justify-center gap-3"
+  >
+    <span id="submit-text">Send Message</span>
+    <svg id="submit-spinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+  </button>
+</form>
+
+<!-- Success state -->
+<div id="form-success" class="hidden text-center py-12">
+  <div class="mx-auto w-16 h-16 mb-6">
+    <svg class="w-16 h-16 text-green-500" viewBox="0 0 52 52">
+      <circle class="stroke-current fill-none" cx="26" cy="26" r="25" stroke-width="2" stroke-dasharray="166" stroke-dashoffset="0" />
+      <path class="stroke-current fill-none animate-draw-check" d="M14.1 27.2l7.1 7.2 16.7-16.8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="100" stroke-dashoffset="100" style="animation-delay: 0.3s;" />
+    </svg>
+  </div>
+  <h3 class="font-display font-bold text-2xl text-neutral-900 mb-2">Message Sent!</h3>
+  <p class="text-neutral-600 mb-6">Thank you for getting in touch. We'll respond within 24 hours.</p>
+  <button
+    id="form-reset-btn"
+    class="text-primary-500 font-semibold hover:text-primary-600 transition-colors duration-300"
+  >
+    Send another message
+  </button>
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const form = document.getElementById('contact-form') as HTMLFormElement | null;
+    const formSuccess = document.getElementById('form-success');
+    const formErrors = document.getElementById('form-errors');
+    const submitBtn = document.getElementById('form-submit');
+    const submitText = document.getElementById('submit-text');
+    const submitSpinner = document.getElementById('submit-spinner');
+    const resetBtn = document.getElementById('form-reset-btn');
+
+    if (!form || !formSuccess || !formErrors || !submitBtn) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Clear previous errors
+      formErrors.classList.add('hidden');
+      document.querySelectorAll('.form-field-error').forEach((el) => el.classList.remove('form-field-error'));
+
+      const formData = new FormData(form);
+
+      // Honeypot check
+      if (formData.get('_honey')) return;
+
+      // Validation
+      const name = formData.get('name')?.toString().trim();
+      const email = formData.get('email')?.toString().trim();
+      const message = formData.get('message')?.toString().trim();
+
+      if (!name) {
+        showError('Please enter your name', 'form-name');
+        return;
+      }
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('Please enter a valid email address', 'form-email');
+        return;
+      }
+
+      if (!message) {
+        showError('Please enter your message', 'form-message');
+        return;
+      }
+
+      // Show loading
+      if (submitText) submitText.textContent = 'Sending...';
+      if (submitSpinner) submitSpinner.classList.remove('hidden');
+      submitBtn.setAttribute('disabled', 'true');
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          form.classList.add('hidden');
+          formSuccess.classList.remove('hidden');
+        } else {
+          const data = await response.json();
+          showError(data.error || 'Something went wrong. Please try again.');
+        }
+      } catch {
+        showError('Network error. Please check your connection and try again.');
+      } finally {
+        if (submitText) submitText.textContent = 'Send Message';
+        if (submitSpinner) submitSpinner.classList.add('hidden');
+        submitBtn.removeAttribute('disabled');
+      }
+    });
+
+    resetBtn?.addEventListener('click', () => {
+      form.reset();
+      form.classList.remove('hidden');
+      formSuccess.classList.add('hidden');
+    });
+
+    function showError(message: string, fieldId?: string) {
+      const errorP = formErrors?.querySelector('p');
+      if (errorP) errorP.textContent = message;
+      formErrors?.classList.remove('hidden');
+
+      if (fieldId) {
+        const field = document.getElementById(fieldId)?.closest('.form-field');
+        if (field) {
+          field.classList.add('form-field-error');
+        }
+      }
+    }
+  });
+</script>

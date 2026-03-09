@@ -1,0 +1,105 @@
+---
+import FAQSchema from './schemas/FAQSchema.astro';
+
+interface Props {
+  faqs: Array<{ question: string; answer: string }>;
+  title?: string;
+  accentWord?: string;
+}
+
+const { faqs, title = 'Frequently Asked Questions', accentWord = 'Questions' } = Astro.props;
+---
+
+<FAQSchema faqs={faqs} />
+
+<section class="py-24 lg:py-32">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12 lg:mb-16">
+      <h2 class="section-heading font-display font-bold text-3xl md:text-4xl lg:text-5xl text-neutral-900 mb-6">
+        {title.split(accentWord).map((part, i) => (
+          <Fragment>
+            {part}
+            {i < title.split(accentWord).length - 1 && (
+              <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-accent-500">{accentWord}</span>
+            )}
+          </Fragment>
+        ))}
+      </h2>
+    </div>
+
+    <div class="space-y-4" role="list">
+      {faqs.map((faq, index) => (
+        <div
+          class="faq-item border border-neutral-200 rounded-2xl overflow-hidden bg-white hover:border-primary-200 transition-colors duration-300"
+          role="listitem"
+        >
+          <button
+            class="faq-trigger w-full flex items-center justify-between px-6 py-5 text-left gap-4"
+            aria-expanded="false"
+            aria-controls={`faq-answer-${index}`}
+          >
+            <span class="font-display font-semibold text-neutral-900 text-base md:text-lg pr-4">
+              {faq.question}
+            </span>
+            <span class="faq-icon relative w-6 h-6 flex-shrink-0" aria-hidden="true">
+              <span class="faq-icon-bar absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-0.5 bg-primary-500 rounded-full"></span>
+              <span class="faq-icon-bar faq-icon-vertical absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-0.5 bg-primary-500 rounded-full rotate-90"></span>
+            </span>
+          </button>
+          <div
+            id={`faq-answer-${index}`}
+            class="faq-answer"
+            role="region"
+          >
+            <div class="px-6 pb-5">
+              <p class="text-neutral-600 leading-relaxed">
+                {faq.answer}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const faqItems = document.querySelectorAll('.faq-item');
+
+    faqItems.forEach((item) => {
+      const trigger = item.querySelector('.faq-trigger') as HTMLButtonElement;
+      const answer = item.querySelector('.faq-answer') as HTMLElement;
+
+      if (!trigger || !answer) return;
+
+      trigger.addEventListener('click', () => {
+        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+
+        // Close all others
+        faqItems.forEach((otherItem) => {
+          const otherTrigger = otherItem.querySelector('.faq-trigger') as HTMLButtonElement;
+          const otherAnswer = otherItem.querySelector('.faq-answer') as HTMLElement;
+          if (otherItem !== item && otherTrigger && otherAnswer) {
+            otherTrigger.setAttribute('aria-expanded', 'false');
+            otherItem.classList.remove('faq-open');
+            otherAnswer.style.height = '0';
+            otherAnswer.classList.remove('open');
+          }
+        });
+
+        if (isOpen) {
+          trigger.setAttribute('aria-expanded', 'false');
+          item.classList.remove('faq-open');
+          answer.style.height = '0';
+          answer.classList.remove('open');
+        } else {
+          trigger.setAttribute('aria-expanded', 'true');
+          item.classList.add('faq-open');
+          answer.style.height = answer.scrollHeight + 'px';
+          answer.classList.add('open');
+        }
+      });
+    });
+  });
+</script>

@@ -1,0 +1,1060 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Testimonials from '../../components/Testimonials.astro';
+import CTA from '../../components/CTA.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
+import { siteConfig } from '../../data/site-config';
+import { COURSES, categoryToSlug, type Course } from '../../data/courses';
+
+export function getStaticPaths() {
+  return Object.values(COURSES).map((course) => ({
+    params: { id: course.id },
+    props: { course },
+  }));
+}
+
+const { course } = Astro.props as { course: Course };
+const categorySlug = categoryToSlug[course.category] || 'accounting';
+const savings = course.oldPrice - course.price;
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Courses', href: '/courses' },
+  { label: course.category, href: `/courses/${categorySlug}` },
+  { label: course.title, href: `/course/${course.id}` },
+];
+
+const defaultFaqs = [
+  { question: 'Do I need prior qualifications to enrol?', answer: course.entryRequirements || 'Most of our courses have no specific entry requirements. Some advanced qualifications (Level 3+) may recommend prior knowledge or a lower-level qualification in the same subject. Contact our team if you are unsure about eligibility.' },
+  { question: 'How much time do I need per week?', answer: 'We recommend around 10-15 hours per week for most courses. However, since our courses are fully online and self-paced, you can study at a schedule that fits around your work and personal commitments.' },
+  { question: 'Is the qualification recognised by employers?', answer: 'Yes. All our courses lead to nationally recognised, Ofqual-regulated qualifications. They are accepted by employers, professional bodies, and further education providers across the UK.' },
+  { question: 'What support is available during my studies?', answer: 'Every learner receives dedicated 1-to-1 tutor support throughout their course. You can contact your assigned tutor via email or phone during business hours. We also provide comprehensive study materials and resources.' },
+  { question: 'How is the course assessed?', answer: course.assessmentType || 'Assessment is conducted online through a combination of multiple-choice exams and coursework assignments. You can take exams from home at a time that suits you, with full support from your tutor.' },
+];
+const faqs = course.faqs || defaultFaqs;
+
+// Related courses from same category
+const relatedCourses = Object.values(COURSES)
+  .filter((c) => c.category === course.category && c.id !== course.id)
+  .slice(0, 3);
+
+// Category-based career & salary data
+const careerData: Record<string, { avgSalary: string; roles: { title: string; salary: string }[] }> = {
+  'Accounting': {
+    avgSalary: '£35,000+',
+    roles: [
+      { title: 'Accounts Assistant', salary: '£22k - £26k' },
+      { title: 'Bookkeeper', salary: '£24k - £30k' },
+      { title: 'Finance Officer', salary: '£28k - £35k' },
+      { title: 'Management Accountant', salary: '£35k - £50k' },
+    ],
+  },
+  'Health & Social Care': {
+    avgSalary: '£28,000+',
+    roles: [
+      { title: 'Care Worker', salary: '£20k - £24k' },
+      { title: 'Senior Care Assistant', salary: '£23k - £28k' },
+      { title: 'Care Home Manager', salary: '£28k - £40k' },
+      { title: 'Social Worker', salary: '£30k - £42k' },
+    ],
+  },
+  'Business & Management': {
+    avgSalary: '£32,000+',
+    roles: [
+      { title: 'Team Leader', salary: '£24k - £30k' },
+      { title: 'Office Manager', salary: '£26k - £34k' },
+      { title: 'Operations Manager', salary: '£32k - £45k' },
+      { title: 'Business Manager', salary: '£35k - £50k' },
+    ],
+  },
+  'Functional Skills': {
+    avgSalary: '£25,000+',
+    roles: [
+      { title: 'Administrative Assistant', salary: '£20k - £24k' },
+      { title: 'Customer Service Advisor', salary: '£21k - £26k' },
+      { title: 'Data Entry Clerk', salary: '£20k - £25k' },
+      { title: 'Teaching Assistant', salary: '£22k - £27k' },
+    ],
+  },
+  'Security & Stewarding': {
+    avgSalary: '£27,000+',
+    roles: [
+      { title: 'Door Supervisor', salary: '£22k - £28k' },
+      { title: 'Security Officer', salary: '£22k - £30k' },
+      { title: 'Event Steward', salary: '£20k - £26k' },
+      { title: 'Security Manager', salary: '£30k - £42k' },
+    ],
+  },
+  'Occupational Studies': {
+    avgSalary: '£24,000+',
+    roles: [
+      { title: 'Administrative Assistant', salary: '£20k - £24k' },
+      { title: 'Customer Service Advisor', salary: '£21k - £26k' },
+      { title: 'Office Coordinator', salary: '£22k - £28k' },
+      { title: 'Operations Assistant', salary: '£22k - £27k' },
+    ],
+  },
+};
+
+// Use per-course career data if available, otherwise fall back to category defaults
+const career = {
+  avgSalary: course.avgSalary || (careerData[course.category] || careerData['Occupational Studies']).avgSalary,
+  roles: course.careerRoles || (careerData[course.category] || careerData['Occupational Studies']).roles,
+};
+
+// Course schema JSON-LD
+const courseSchema = {
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": course.title,
+  "description": course.overview,
+  "provider": {
+    "@type": "Organization",
+    "name": "Integer Training",
+    "url": "https://www.integertraining.com",
+    "sameAs": "https://www.integertraining.com"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": course.price,
+    "priceCurrency": "GBP",
+    "availability": "https://schema.org/InStock",
+    "url": `https://www.integertraining.com/course/${course.id}`
+  },
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseSchedule": {
+      "@type": "Schedule",
+      "repeatFrequency": "P1D"
+    }
+  }
+};
+---
+
+<BaseLayout
+  title={course.metaTitle || `${course.title} | Online Course | Integer Training`}
+  description={course.metaDescription || `${course.overview} Enrol today from just £${course.price}. Accredited, fully online with tutor support. 0% finance available.`}
+>
+  <!-- Course Schema Markup -->
+  <script type="application/ld+json" set:html={JSON.stringify(courseSchema)} />
+
+  <Breadcrumb items={breadcrumbs} />
+
+  <!-- Top Promo Banner (LearnDirect-style) -->
+  <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-center gap-3 text-sm">
+      <svg class="w-5 h-5 text-accent-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <span><strong>Flexible Payment Options</strong> &mdash; Enrol today from just &pound;{course.monthlyPrice}/month interest-free</span>
+      <a href="#sidebar-pricing" class="hidden sm:inline-flex items-center bg-accent-500 text-neutral-900 font-bold px-3 py-1 rounded-lg text-xs hover:bg-accent-400 transition-colors">
+        ENROL NOW
+      </a>
+    </div>
+  </div>
+
+  <!-- Hero Section with salary hook -->
+  <section class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-12 lg:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <span
+          class="text-xs font-bold px-3 py-1 rounded-full text-white"
+          style={`background-color: ${course.badgeColor};`}
+        >
+          {course.badge}
+        </span>
+        <span class="text-xs text-neutral-400 uppercase tracking-wider">{course.category}</span>
+        {savings > 0 && (
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-red-500 text-white">
+            SAVE &pound;{savings}
+          </span>
+        )}
+      </div>
+      <h1 class="font-display font-bold text-3xl md:text-4xl lg:text-5xl mb-4 leading-tight">
+        {course.title}
+      </h1>
+      <!-- Salary hook - like competitor's "average salary of £40,000+" -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 mb-6 inline-block">
+        <p class="text-sm text-neutral-200">
+          Work towards a career in {course.category.toLowerCase()}, with an average salary of
+          <span class="text-accent-400 font-bold text-base">{career.avgSalary} per annum</span>
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center gap-6 text-sm text-neutral-200">
+        <span class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          {course.students.toLocaleString()}+ students enrolled
+        </span>
+        <span class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+          100% Online Course
+        </span>
+        <span class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+          Start Immediately
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Above-the-fold Enquiry Form (Google Ads optimised - captures high-intent traffic immediately) -->
+  <section class="bg-neutral-50 border-b border-neutral-200" id="enquiry-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="lg:grid lg:grid-cols-2 lg:gap-10 items-start">
+        <!-- Left: Value proposition + trust signals -->
+        <div class="mb-6 lg:mb-0">
+          <h2 class="font-display font-bold text-xl lg:text-2xl text-neutral-900 mb-3">Get Expert Course Advice</h2>
+          <p class="text-neutral-600 text-sm mb-5">Speak with a dedicated course advisor about funding options, start dates, and how this qualification can advance your career.</p>
+          <div class="grid grid-cols-2 gap-3 mb-5">
+            <div class="flex items-center gap-2 text-sm text-neutral-700">
+              <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+              <span>Free, no-obligation advice</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-neutral-700">
+              <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+              <span>Response within 24 hours</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-neutral-700">
+              <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+              <span>0% finance guidance</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-neutral-700">
+              <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+              <span>Career pathway support</span>
+            </div>
+          </div>
+          <!-- Trustpilot-style social proof directly below (competitor pattern) -->
+          <div class="flex items-center gap-3 bg-white rounded-xl px-4 py-3 border border-neutral-100">
+            <div class="flex items-center gap-0.5">
+              {[1,2,3,4,5].map(() => (
+                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+              ))}
+            </div>
+            <div>
+              <span class="text-sm font-bold text-neutral-900">{siteConfig.stats.trustpilotRating}/5</span>
+              <span class="text-xs text-neutral-500 ml-1">from {siteConfig.stats.trustpilotReviews}+ reviews on Trustpilot</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Compact enquiry form -->
+        <div class="bg-white rounded-2xl border border-neutral-200 shadow-brand-sm overflow-hidden">
+          <div class="bg-neutral-900 text-white px-5 py-3">
+            <h3 class="font-display font-bold text-base">Enquire About This Course</h3>
+            <p class="text-neutral-400 text-xs mt-0.5">Or call us free: <a href="tel:01216909563" class="text-accent-400 font-semibold hover:underline">0121 690 9563</a></p>
+          </div>
+          <form class="hero-enquiry-form p-5 space-y-3" data-course-name={course.title}>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input type="text" name="name" placeholder="Full Name *" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+              <input type="tel" name="phone" placeholder="Phone Number *" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+            </div>
+            <input type="email" name="email" placeholder="Email Address *" required class="w-full px-4 py-2.5 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" />
+            <input type="hidden" name="course_interest" value={course.title} />
+            <input type="hidden" name="page" value={`/course/${course.id}`} />
+            <input type="hidden" name="utm_source" class="utm-source" value="" />
+            <input type="hidden" name="utm_campaign" class="utm-campaign" value="" />
+            <div class="hidden"><input type="text" name="website" /></div>
+            <button type="submit" class="w-full bg-gradient-to-r from-accent-500 to-accent-600 text-neutral-900 font-bold py-3 rounded-xl shadow-brand hover:shadow-brand-lg transition-all duration-300 text-sm">
+              Get Free Course Advice
+            </button>
+            <p class="enquiry-msg text-sm text-center hidden"></p>
+            <p class="text-[11px] text-neutral-400 text-center leading-tight">By submitting, you agree to our <a href="/privacy-policy" class="underline">Privacy Policy</a>. We'll never share your details.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pass Rate + Course Stats (LearnDirect-inspired) -->
+  <section class="bg-neutral-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-0">
+      <div class="grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/10">
+        <div class="py-5 px-4 text-center">
+          <div class="text-3xl lg:text-4xl font-bold text-accent-400">{course.passRate || 93}%</div>
+          <div class="text-xs text-neutral-300 mt-1 font-medium">Pass Rate</div>
+        </div>
+        <div class="py-5 px-4 text-center">
+          <div class="text-3xl lg:text-4xl font-bold text-white">100%</div>
+          <div class="text-xs text-neutral-300 mt-1 font-medium">Online Learning</div>
+        </div>
+        <div class="py-5 px-4 text-center">
+          <div class="text-3xl lg:text-4xl font-bold text-white">{course.units || course.curriculum.length}</div>
+          <div class="text-xs text-neutral-300 mt-1 font-medium">Course Units</div>
+        </div>
+        <div class="py-5 px-4 text-center">
+          <div class="text-3xl lg:text-4xl font-bold text-white">{course.duration || '6-12'}<span class="text-lg font-normal"> mo</span></div>
+          <div class="text-xs text-neutral-300 mt-1 font-medium">Avg. Completion</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content + Sidebar -->
+  <section class="py-12 lg:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="lg:grid lg:grid-cols-3 lg:gap-12">
+        <!-- Main Content (2 cols) -->
+        <div class="lg:col-span-2">
+          <!-- Tabs -->
+          <div class="border-b border-neutral-200 mb-8">
+            <div class="flex gap-0" role="tablist">
+              <button
+                class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-primary-500 text-primary-600 transition-all duration-200"
+                role="tab"
+                aria-selected="true"
+                data-tab="overview"
+              >
+                Overview
+              </button>
+              <button
+                class="tab-btn px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-neutral-500 hover:text-neutral-700 transition-all duration-200"
+                role="tab"
+                aria-selected="false"
+                data-tab="curriculum"
+              >
+                Curriculum
+              </button>
+            </div>
+          </div>
+
+          <!-- Overview Tab -->
+          <div id="tab-overview" class="tab-panel">
+            <!-- Course at a Glance (LearnDirect-inspired) -->
+            <div class="mb-10 bg-white rounded-2xl border-2 border-primary-200 p-6">
+              <h2 class="font-display font-bold text-lg text-primary-700 mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                This Course at a Glance
+              </h2>
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {(course.glancePoints || [
+                  `${course.curriculum.length} comprehensive units of study`,
+                  '100% online - study from anywhere',
+                  'Self-paced: fit learning around your life',
+                  'Dedicated 1-to-1 tutor support',
+                  `From just £${course.monthlyPrice}/month interest-free`,
+                  'Nationally recognised qualification',
+                ]).map((point) => (
+                  <li class="flex items-start gap-2 text-sm text-neutral-800">
+                    <svg class="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                    {point}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="prose prose-neutral max-w-none mb-12">
+              <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">About This Course</h2>
+              <p class="text-base text-neutral-800 leading-relaxed">{course.overview}</p>
+              {course.description && <div class="mt-4 text-neutral-700 leading-relaxed" set:html={course.description} />}
+            </div>
+
+            <!-- What's Included (competitor-inspired) -->
+            <div class="mb-12 bg-primary-50 rounded-2xl p-6 border border-primary-100">
+              <h2 class="font-display font-bold text-xl text-primary-700 mb-4">Your course includes:</h2>
+              <ul class="space-y-3">
+                {(course.whatsIncluded || [
+                  'Industry-leading eLearning platform with 24/7 access',
+                  'Dedicated 1-to-1 tutor support via email and phone',
+                  'Comprehensive study materials and practice assessments',
+                  'Official courseware, revision guides, and question banks',
+                  'Online exam booking and assessment support',
+                  'Certificate upon successful completion',
+                  'Lifetime access to course materials',
+                ]).map((item) => (
+                  <li class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    <span class="text-sm font-medium text-neutral-800">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <!-- Why Study This Course -->
+            <div class="mb-12">
+              <h2 class="font-display font-bold text-2xl text-neutral-900 mb-6">Why study this course?</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="flex items-center gap-3 p-4 bg-primary-50 rounded-xl">
+                  <div class="w-8 h-8 rounded-lg bg-primary-500 text-white flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                  </div>
+                  <span class="font-semibold text-neutral-900">Accredited qualification</span>
+                </div>
+                <div class="flex items-center gap-3 p-4 bg-primary-50 rounded-xl">
+                  <div class="w-8 h-8 rounded-lg bg-primary-500 text-white flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                  </div>
+                  <span class="font-semibold text-neutral-900">100% Online learning</span>
+                </div>
+                <div class="flex items-center gap-3 p-4 bg-primary-50 rounded-xl">
+                  <div class="w-8 h-8 rounded-lg bg-primary-500 text-white flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  </div>
+                  <span class="font-semibold text-neutral-900">Tutor support included</span>
+                </div>
+                <div class="flex items-center gap-3 p-4 bg-primary-50 rounded-xl">
+                  <div class="w-8 h-8 rounded-lg bg-primary-500 text-white flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <span class="font-semibold text-neutral-900">Study at your own pace</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Career Outcomes & Salary (competitor-inspired) -->
+            <div class="mb-12">
+              <h3 class="font-display font-bold text-xl text-neutral-900 mb-6">Career Outcomes & Salaries</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {career.roles.map((role) => (
+                  <div class="bg-white rounded-xl border border-neutral-200 p-4 hover:border-green-300 hover:shadow-sm transition-all">
+                    <h4 class="font-bold text-neutral-900 text-sm mb-2">{role.title}</h4>
+                    <div class="flex items-center gap-2 bg-green-50 rounded-lg px-3 py-1.5">
+                      <svg class="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <span class="text-sm font-bold text-green-800">{role.salary}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p class="text-xs text-neutral-400 mt-3">Source: Glassdoor, Indeed UK average salaries 2025</p>
+            </div>
+
+            <!-- Benefits -->
+            <div class="mb-12">
+              <h3 class="font-display font-bold text-xl text-neutral-900 mb-4">Benefits of Choosing Integer Training</h3>
+              <ul class="space-y-3">
+                {(course.benefits || [
+                  'Nationally recognised, Ofqual-regulated qualifications',
+                  'Dedicated 1-to-1 tutor support throughout your studies',
+                  'Flexible online learning that fits around your schedule',
+                  'Interest-free monthly payment plans available',
+                ]).map((benefit) => (
+                  <li class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span class="text-neutral-800">{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <!-- What Happens After Your Course? (LearnDirect-inspired) -->
+            <div class="mb-12">
+              <h3 class="font-display font-bold text-xl text-neutral-900 mb-4">What Happens After Your Course?</h3>
+              <div class="bg-gradient-to-br from-primary-50 to-primary-100 rounded-2xl p-6 border border-primary-200">
+                <div class="flex items-start gap-4 mb-4">
+                  <div class="w-12 h-12 rounded-xl bg-primary-600 text-white flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-neutral-900 mb-1">Advance your career</h4>
+                    <p class="text-sm text-neutral-700">This qualification opens doors to higher-level courses, university entry, and career progression in {course.category.toLowerCase()}.</p>
+                  </div>
+                </div>
+                {(course.progressionOptions || [
+                  'Progress to higher-level qualifications in ' + course.category.toLowerCase(),
+                  'Use your qualification to apply for relevant job roles',
+                  'Enhance your CV and demonstrate professional competence',
+                ]).map((option) => (
+                  <div class="flex items-start gap-2 ml-16 mb-2">
+                    <svg class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    <span class="text-sm text-neutral-700">{option}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <!-- 0% Finance Callout (competitor-inspired) -->
+            {course.monthlyPrice > 0 && (
+              <div class="mb-12 bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-2xl p-6 text-white">
+                <div class="flex items-start gap-4">
+                  <div class="bg-accent-500 text-neutral-900 rounded-xl px-3 py-2 font-bold text-center flex-shrink-0">
+                    <div class="text-lg leading-none">0%</div>
+                    <div class="text-[10px] uppercase tracking-wider">APR</div>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-lg mb-2">Interest-free finance available</h4>
+                    <ul class="space-y-1.5">
+                      <li class="flex items-center gap-2 text-sm text-neutral-300">
+                        <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        Spread the cost from just &pound;{course.monthlyPrice}/month
+                      </li>
+                      <li class="flex items-center gap-2 text-sm text-neutral-300">
+                        <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        No credit check required
+                      </li>
+                      <li class="flex items-center gap-2 text-sm text-neutral-300">
+                        <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        Speak to a course advisor to find the best option
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <!-- Mid-page CTA banner (re-capture attention before FAQs) -->
+            <div class="mb-12 bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 text-center">
+              <h4 class="font-display font-bold text-lg text-white mb-2">Still have questions?</h4>
+              <p class="text-primary-100 text-sm mb-4">Our course advisors are here to help you make the right choice.</p>
+              <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <a href="#enquiry-section" class="inline-flex items-center gap-2 bg-white text-primary-700 font-bold px-6 py-3 rounded-xl text-sm hover:bg-neutral-50 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                  Send an Enquiry
+                </a>
+                <a href="tel:01216909563" class="inline-flex items-center gap-2 bg-white/20 text-white font-bold px-6 py-3 rounded-xl text-sm hover:bg-white/30 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                  Call 0121 690 9563
+                </a>
+              </div>
+            </div>
+
+            <!-- FAQs -->
+            <div class="mb-12">
+              <h3 class="font-display font-bold text-xl text-neutral-900 mb-6">Frequently Asked Questions</h3>
+              <div class="space-y-3">
+                {faqs.map((faq, i) => (
+                  <details class="group border border-neutral-200 rounded-xl overflow-hidden bg-white hover:border-primary-200 transition-colors">
+                    <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-semibold text-neutral-900 text-sm">
+                      {faq.question}
+                      <svg class="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    </summary>
+                    <div class="px-5 pb-4 text-sm text-neutral-700 leading-relaxed">
+                      {faq.answer}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <!-- Curriculum Tab -->
+          <div id="tab-curriculum" class="tab-panel hidden">
+            <h2 class="font-display font-bold text-2xl text-neutral-900 mb-6">Course Curriculum</h2>
+            <div class="space-y-3">
+              {course.curriculum.map((unit, i) => (
+                <details class="group border border-neutral-200 rounded-xl overflow-hidden bg-white hover:border-primary-200 transition-colors" open={i === 0}>
+                  <summary class="flex items-center gap-4 px-5 py-4 cursor-pointer">
+                    <div class="w-8 h-8 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center flex-shrink-0 font-bold text-sm">
+                      {i + 1}
+                    </div>
+                    <span class="font-semibold text-neutral-900">{unit}</span>
+                    <svg class="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform duration-200 flex-shrink-0 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                  </summary>
+                  <div class="px-5 pb-4 text-sm text-neutral-700 leading-relaxed pl-17">
+                    This module covers the fundamental concepts and practical skills related to {unit.toLowerCase()}. You will develop the knowledge and understanding required to demonstrate competence in this area.
+                  </div>
+                </details>
+              ))}
+
+              <!-- Assessment section -->
+              <details class="group border border-neutral-200 rounded-xl overflow-hidden bg-white hover:border-primary-200 transition-colors">
+                <summary class="flex items-center gap-4 px-5 py-4 cursor-pointer">
+                  <div class="w-8 h-8 rounded-lg bg-accent-50 text-accent-600 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <span class="font-semibold text-neutral-900">Exam & Assessment</span>
+                  <svg class="w-5 h-5 text-neutral-400 group-open:rotate-180 transition-transform duration-200 flex-shrink-0 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div class="px-5 pb-4 text-sm text-neutral-700 leading-relaxed pl-17">
+                  Assessment is conducted online through a combination of multiple-choice exams and coursework assignments. You can take exams from home at a time that suits you, with full support from your tutor throughout the assessment process.
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="mt-8 lg:mt-0">
+          <div id="course-sidebar" class="lg:sticky lg:top-24 space-y-6">
+            <!-- Course Image + Pricing Card -->
+            <div class="rounded-2xl overflow-hidden border border-neutral-200 bg-white relative">
+              <!-- Savings ribbon -->
+              {savings > 0 && (
+                <div class="absolute top-3 right-0 z-10 bg-red-500 text-white font-bold text-xs px-4 py-1.5 rounded-l-lg shadow-lg">
+                  SAVE &pound;{savings}
+                </div>
+              )}
+              <div class="aspect-[4/3] bg-neutral-100 flex items-center justify-center overflow-hidden">
+                <img
+                  src={course.image}
+                  alt={course.title}
+                  class="w-full h-full object-cover"
+                  width="400"
+                  height="300"
+                  onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\'flex items-center justify-center w-full h-full\'><svg class=\'w-16 h-16 text-neutral-300\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253\' /></svg></div>'"
+                />
+              </div>
+
+              <!-- Pricing -->
+              <div id="sidebar-pricing" class="p-6">
+                <!-- Payment toggle -->
+                <div class="flex bg-neutral-100 rounded-xl p-1 mb-6">
+                  <button
+                    class="payment-toggle flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-white shadow-sm text-neutral-900"
+                    data-mode="full"
+                  >
+                    Pay in Full
+                  </button>
+                  {course.monthlyPrice > 0 && (
+                    <button
+                      class="payment-toggle flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-neutral-500"
+                      data-mode="monthly"
+                    >
+                      Monthly
+                    </button>
+                  )}
+                </div>
+
+                <!-- Full Price -->
+                <div id="price-full" class="text-center">
+                  <div class="text-sm text-neutral-400 line-through mb-1">Was &pound;{course.oldPrice}</div>
+                  <div class="text-4xl font-bold text-neutral-900 mb-1">Now &pound;{course.price}</div>
+                  <div class="text-xs text-neutral-600 mb-4">Inc. VAT &middot; One-time payment</div>
+                </div>
+
+                <!-- Monthly Price -->
+                {course.monthlyPrice > 0 && (
+                  <div id="price-monthly" class="text-center hidden">
+                    {course.oldMonthlyPrice > 0 && (
+                      <div class="text-sm text-neutral-400 line-through mb-1">Was &pound;{course.oldMonthlyPrice}/mo</div>
+                    )}
+                    <div class="text-4xl font-bold text-neutral-900 mb-1">&pound;{course.monthlyPrice}<span class="text-lg text-neutral-500 font-normal">/month</span></div>
+                    <div class="text-xs text-neutral-500 mb-2">10 monthly interest-free payments</div>
+                    <div class="inline-block bg-teal-50 border border-teal-200 rounded-lg px-3 py-1 text-xs text-teal-700 font-semibold mb-4">
+                      0% APR &middot; Interest-free
+                    </div>
+                  </div>
+                )}
+
+                <!-- Add to Cart -->
+                <button
+                  id="sidebar-add-to-cart"
+                  class="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold py-4 rounded-xl shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-base"
+                  data-course-id={course.id}
+                  data-course-price={course.price}
+                  data-course-title={course.title}
+                >
+                  Add to Basket
+                </button>
+                <a
+                  id="sidebar-view-cart"
+                  href="/cart"
+                  class="hidden w-full block text-center bg-neutral-100 text-neutral-700 font-bold py-3.5 rounded-xl hover:bg-neutral-200 transition-colors duration-200 text-sm mt-2"
+                >
+                  In Basket &mdash; View Cart
+                </a>
+
+                <!-- Enquire button in sidebar -->
+                <a
+                  href="#enquiry-section"
+                  class="block w-full text-center bg-neutral-900 text-white font-bold py-3 rounded-xl hover:bg-neutral-800 transition-colors duration-300 text-sm mt-2"
+                >
+                  Enquire Now
+                </a>
+                <a
+                  href="tel:01216909563"
+                  class="block w-full text-center text-neutral-700 font-semibold py-2 text-sm mt-1 hover:text-primary-600 transition-colors"
+                >
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                    or call 0121 690 9563
+                  </span>
+                </a>
+
+                <!-- Urgency (LearnDirect-inspired) -->
+                <div class="mt-3 bg-red-50 border border-red-200 rounded-xl px-3 py-2 text-center">
+                  <div class="flex items-center justify-center gap-1.5 text-red-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span class="text-xs font-bold">Limited time offer - enrol today!</span>
+                  </div>
+                </div>
+
+                <!-- Payment method logos (LearnDirect-inspired) -->
+                <div class="mt-4 flex items-center justify-center gap-3 opacity-60">
+                  <span class="text-[10px] font-bold text-neutral-500 tracking-wider">VISA</span>
+                  <span class="text-[10px] font-bold text-neutral-500 tracking-wider">MC</span>
+                  <span class="text-[10px] font-bold text-neutral-500 tracking-wider">AMEX</span>
+                  <span class="text-[10px] font-bold text-neutral-500 tracking-wider">Apple Pay</span>
+                </div>
+              </div>
+
+              <!-- Price Match Guarantee (LearnDirect-inspired) -->
+              <div class="border-t border-neutral-100 px-6 py-3 bg-primary-50">
+                <div class="flex items-center gap-2">
+                  <svg class="w-5 h-5 text-primary-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <div>
+                    <span class="text-xs font-bold text-primary-800">PRICE MATCH GUARANTEE</span>
+                    <p class="text-[10px] text-primary-600">Find it cheaper? We'll match it.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Trust Elements -->
+              <div class="border-t border-neutral-100 px-6 py-4 grid grid-cols-2 gap-3">
+                <div class="flex items-center gap-2 text-xs font-medium text-neutral-700">
+                  <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                  Secure Checkout
+                </div>
+                <div class="flex items-center gap-2 text-xs font-medium text-neutral-700">
+                  <svg class="w-4 h-4 text-accent-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                  {siteConfig.stats.trustpilotRating}/5 Reviews
+                </div>
+                <div class="flex items-center gap-2 text-xs font-medium text-neutral-700">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                  14-Day Returns
+                </div>
+                <div class="flex items-center gap-2 text-xs font-medium text-neutral-700">
+                  <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+                  Cert. Included
+                </div>
+              </div>
+
+              <!-- Social Proof -->
+              <div class="border-t border-neutral-100 px-6 py-4">
+                <div class="bg-primary-50 rounded-xl p-4 mb-3">
+                  <div class="flex items-center gap-1 mb-2">
+                    {[1,2,3,4,5].map(() => (
+                      <svg class="w-4 h-4 text-accent-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    ))}
+                  </div>
+                  <p class="text-sm text-neutral-800 italic">"The tutor support was fantastic. I completed my qualification while working full-time."</p>
+                  <p class="text-xs text-neutral-600 mt-1 font-semibold">- Verified Student, Trustpilot</p>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-neutral-600">
+                  <svg class="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span class="font-semibold">{course.students.toLocaleString()}+ students enrolled this year</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Integer Training (competitor-inspired "Why learn with us") -->
+  <section class="py-12 bg-neutral-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="font-display font-bold text-2xl md:text-3xl text-neutral-900 mb-8 text-center">Why Choose Integer Training</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="bg-white rounded-xl border border-neutral-100 p-5 text-center hover:border-primary-200 transition-colors">
+          <div class="w-12 h-12 mx-auto mb-3 bg-primary-50 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+          </div>
+          <h4 class="font-bold text-neutral-900 text-sm mb-1">Ofqual Regulated</h4>
+          <p class="text-xs text-neutral-600">Nationally recognised qualifications</p>
+        </div>
+        <div class="bg-white rounded-xl border border-neutral-100 p-5 text-center hover:border-primary-200 transition-colors">
+          <div class="w-12 h-12 mx-auto mb-3 bg-primary-50 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          </div>
+          <h4 class="font-bold text-neutral-900 text-sm mb-1">Expert Tutors</h4>
+          <p class="text-xs text-neutral-600">Dedicated 1-to-1 support</p>
+        </div>
+        <div class="bg-white rounded-xl border border-neutral-100 p-5 text-center hover:border-primary-200 transition-colors">
+          <div class="w-12 h-12 mx-auto mb-3 bg-primary-50 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <h4 class="font-bold text-neutral-900 text-sm mb-1">0% Finance</h4>
+          <p class="text-xs text-neutral-600">Interest-free payment plans</p>
+        </div>
+        <div class="bg-white rounded-xl border border-neutral-100 p-5 text-center hover:border-primary-200 transition-colors">
+          <div class="w-12 h-12 mx-auto mb-3 bg-primary-50 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+          </div>
+          <h4 class="font-bold text-neutral-900 text-sm mb-1">{siteConfig.stats.trustpilotRating}/5 Rated</h4>
+          <p class="text-xs text-neutral-600">Trustpilot verified reviews</p>
+        </div>
+        <div class="bg-white rounded-xl border border-neutral-100 p-5 text-center hover:border-primary-200 transition-colors col-span-2 lg:col-span-1">
+          <div class="w-12 h-12 mx-auto mb-3 bg-primary-50 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+          </div>
+          <h4 class="font-bold text-neutral-900 text-sm mb-1">Start Today</h4>
+          <p class="text-xs text-neutral-600">Enrol and begin instantly</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Courses -->
+  {relatedCourses.length > 0 && (
+    <section class="py-16 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-display font-bold text-2xl md:text-3xl text-neutral-900 mb-8">
+          More <span class="text-primary-500">{course.category}</span> Courses
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {relatedCourses.map((rc) => (
+            <a href={`/course/${rc.id}`} class="group bg-white rounded-2xl overflow-hidden shadow-brand-sm hover:shadow-brand-lg border border-neutral-100 hover:border-primary-200 transition-all duration-300 hover:-translate-y-1">
+              <div class="p-6">
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full text-white mb-3 inline-block" style={`background-color: ${rc.badgeColor};`}>{rc.badge}</span>
+                <h3 class="font-display font-bold text-neutral-900 group-hover:text-primary-600 transition-colors mb-2">{rc.title}</h3>
+                <div class="flex items-center justify-between pt-3 border-t border-neutral-100 mt-3">
+                  <span class="text-sm text-neutral-400 line-through">&pound;{rc.oldPrice}</span>
+                  <span class="text-lg font-bold text-primary-600">&pound;{rc.price}</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <Testimonials title="What Our Students Say" />
+
+  <CTA
+    heading="Ready to Get Started?"
+    subheading={`Enrol on the ${course.title} today and take the next step in your career. Our team is here to help.`}
+    ctaText="Enquire Now"
+    ctaHref="/contact"
+    variant="dramatic"
+  />
+
+  <SectionDivider fillColor="#0f172a" variant="curve" />
+
+  <!-- Desktop Sticky CTA Bar (hidden on mobile - mobile has its own) -->
+  <div id="sticky-cta-bar" class="hidden lg:block fixed bottom-0 left-0 right-0 z-40 translate-y-full transition-transform duration-300 bg-white border-t border-neutral-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="min-w-0 flex-1">
+        <p class="font-bold text-neutral-900 text-sm truncate">{course.title}</p>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-neutral-400 line-through">&pound;{course.oldPrice}</span>
+          <span class="text-primary-600 font-bold text-lg">&pound;{course.price}</span>
+          {savings > 0 && (
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-red-500 text-white">SAVE &pound;{savings}</span>
+          )}
+        </div>
+      </div>
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <a
+          href="#enquiry-section"
+          class="bg-white border-2 border-neutral-900 text-neutral-900 font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-neutral-50 transition-colors"
+        >
+          Enquire Now
+        </a>
+        <button
+          id="sticky-add-to-cart"
+          class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-brand hover:shadow-brand-lg transition-all duration-300"
+          data-course-id={course.id}
+        >
+          Add to Basket - &pound;{course.price}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sticky Buy Bar (always visible on scroll, competitor-style) -->
+  <div id="mobile-sticky-bar" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 translate-y-full transition-transform duration-300 bg-white border-t border-neutral-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+    <div class="px-4 py-3">
+      <div class="flex items-center gap-2">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            {savings > 0 && <span class="text-xs text-neutral-400 line-through">&pound;{course.oldPrice}</span>}
+            <span class="text-neutral-900 font-bold text-lg">&pound;{course.price}</span>
+            {savings > 0 && <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white">-{Math.round((savings / course.oldPrice) * 100)}%</span>}
+          </div>
+          {course.monthlyPrice > 0 && (
+            <p class="text-xs text-neutral-500">or &pound;{course.monthlyPrice}/mo</p>
+          )}
+        </div>
+        <a
+          href="#enquiry-section"
+          class="bg-white border-2 border-neutral-900 text-neutral-900 font-bold px-4 py-2.5 rounded-xl text-sm flex-shrink-0"
+        >
+          Enquire
+        </a>
+        <button
+          id="mobile-sticky-add-to-cart"
+          class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-brand flex-shrink-0"
+          data-course-id={course.id}
+        >
+          Add to Basket
+        </button>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { addToCart, isInCart } from '../../lib/cart';
+
+  document.addEventListener('astro:page-load', () => {
+    // --- UTM Capture ---
+    const params = new URLSearchParams(window.location.search);
+    const utmSource = params.get('utm_source') || '';
+    const utmCampaign = params.get('utm_campaign') || '';
+    document.querySelectorAll('.utm-source').forEach((el) => (el as HTMLInputElement).value = utmSource);
+    document.querySelectorAll('.utm-campaign').forEach((el) => (el as HTMLInputElement).value = utmCampaign);
+
+    // --- Tabs ---
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tab = (btn as HTMLElement).dataset.tab;
+        tabBtns.forEach((b) => {
+          b.classList.remove('border-primary-500', 'text-primary-600');
+          b.classList.add('border-transparent', 'text-neutral-500');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('border-primary-500', 'text-primary-600');
+        btn.classList.remove('border-transparent', 'text-neutral-500');
+        btn.setAttribute('aria-selected', 'true');
+
+        tabPanels.forEach((panel) => {
+          if (panel.id === `tab-${tab}`) {
+            panel.classList.remove('hidden');
+          } else {
+            panel.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // --- Payment Toggle ---
+    const toggleBtns = document.querySelectorAll('.payment-toggle');
+    const priceFull = document.getElementById('price-full');
+    const priceMonthly = document.getElementById('price-monthly');
+
+    toggleBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mode = (btn as HTMLElement).dataset.mode;
+        toggleBtns.forEach((b) => {
+          b.classList.remove('bg-white', 'shadow-sm', 'text-neutral-900');
+          b.classList.add('text-neutral-500');
+        });
+        btn.classList.add('bg-white', 'shadow-sm', 'text-neutral-900');
+        btn.classList.remove('text-neutral-500');
+
+        if (mode === 'monthly') {
+          priceFull?.classList.add('hidden');
+          priceMonthly?.classList.remove('hidden');
+        } else {
+          priceFull?.classList.remove('hidden');
+          priceMonthly?.classList.add('hidden');
+        }
+      });
+    });
+
+    // --- Add to Cart (sidebar) ---
+    const addBtn = document.getElementById('sidebar-add-to-cart') as HTMLButtonElement;
+    const viewCartLink = document.getElementById('sidebar-view-cart') as HTMLAnchorElement;
+    if (addBtn) {
+      const courseId = addBtn.dataset.courseId || '';
+
+      if (isInCart(courseId)) {
+        addBtn.classList.add('hidden');
+        viewCartLink?.classList.remove('hidden');
+      }
+
+      addBtn.addEventListener('click', () => {
+        addToCart(courseId);
+        addBtn.textContent = 'Added!';
+        setTimeout(() => {
+          addBtn.classList.add('hidden');
+          viewCartLink?.classList.remove('hidden');
+        }, 800);
+      });
+    }
+
+    // --- Add to Cart (all sticky bars) ---
+    const stickyBtns = document.querySelectorAll('#sticky-add-to-cart, #mobile-sticky-add-to-cart') as NodeListOf<HTMLButtonElement>;
+    stickyBtns.forEach((stickyBtn) => {
+      const courseId = stickyBtn.dataset.courseId || '';
+
+      if (isInCart(courseId)) {
+        stickyBtn.textContent = 'In Basket';
+        stickyBtn.disabled = true;
+        stickyBtn.classList.add('opacity-60');
+      }
+
+      stickyBtn.addEventListener('click', () => {
+        addToCart(courseId);
+        stickyBtn.textContent = 'Added!';
+        stickyBtn.disabled = true;
+        stickyBtn.classList.add('opacity-60');
+        // Sync sidebar button too
+        if (addBtn) {
+          addBtn.classList.add('hidden');
+          viewCartLink?.classList.remove('hidden');
+        }
+        // Sync all sticky buttons
+        stickyBtns.forEach((b) => {
+          b.textContent = 'Added!';
+          b.disabled = true;
+          b.classList.add('opacity-60');
+        });
+        setTimeout(() => {
+          stickyBtns.forEach((b) => { b.textContent = 'In Basket'; });
+        }, 800);
+      });
+    });
+
+    // --- Sticky CTA Bars ---
+    const stickyBar = document.getElementById('sticky-cta-bar');
+    const mobileStickyBar = document.getElementById('mobile-sticky-bar');
+    const sidebar = document.getElementById('sidebar-pricing');
+
+    // Desktop: use IntersectionObserver on sidebar pricing card
+    if (sidebar && stickyBar) {
+      const desktopObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            stickyBar.classList.add('translate-y-full');
+          } else {
+            stickyBar.classList.remove('translate-y-full');
+          }
+        },
+        { threshold: 0 }
+      );
+      desktopObserver.observe(sidebar);
+    }
+
+    // Mobile: show after scrolling past 500px (hero area)
+    if (mobileStickyBar) {
+      const handleMobileScroll = () => {
+        if (window.innerWidth >= 1024) return; // skip on desktop
+        if (window.scrollY > 500) {
+          mobileStickyBar.classList.remove('translate-y-full');
+        } else {
+          mobileStickyBar.classList.add('translate-y-full');
+        }
+      };
+      window.addEventListener('scroll', handleMobileScroll, { passive: true });
+      handleMobileScroll();
+    }
+
+    // --- Enquiry Forms ---
+    document.querySelectorAll('.hero-enquiry-form').forEach((form) => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const f = e.target as HTMLFormElement;
+        const msg = f.querySelector('.enquiry-msg') as HTMLElement;
+        const btn = f.querySelector('button[type="submit"]') as HTMLButtonElement;
+        const origText = btn.textContent;
+        btn.textContent = 'Sending...';
+        btn.disabled = true;
+
+        try {
+          const formData = new FormData(f);
+          const res = await fetch('/api/enquiry', { method: 'POST', body: formData });
+          if (res.ok) {
+            msg.textContent = 'Thank you! We will be in touch shortly.';
+            msg.classList.remove('hidden', 'text-red-600');
+            msg.classList.add('text-green-600');
+            f.reset();
+          } else {
+            throw new Error('Failed');
+          }
+        } catch {
+          msg.textContent = 'Something went wrong. Please try again.';
+          msg.classList.remove('hidden', 'text-green-600');
+          msg.classList.add('text-red-600');
+        } finally {
+          btn.textContent = origText;
+          btn.disabled = false;
+        }
+      });
+    });
+  });
+</script>

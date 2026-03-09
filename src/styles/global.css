@@ -1,0 +1,462 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors - Primary (Warm Teal) */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #0d9488;
+  --color-primary-600: #0f766e;
+  --color-primary-700: #115e59;
+  --color-primary-800: #134e4a;
+  --color-primary-900: #042f2e;
+
+  /* Colors - Secondary (Deep Cyan) */
+  --color-secondary-50: #ecfeff;
+  --color-secondary-100: #cffafe;
+  --color-secondary-200: #a5f3fc;
+  --color-secondary-300: #67e8f9;
+  --color-secondary-400: #22d3ee;
+  --color-secondary-500: #164e63;
+  --color-secondary-600: #0e3a4a;
+  --color-secondary-700: #0a2e3b;
+  --color-secondary-800: #072330;
+  --color-secondary-900: #041a24;
+
+  /* Colors - Accent (Amber) */
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+  --color-accent-700: #b45309;
+  --color-accent-800: #92400e;
+  --color-accent-900: #78350f;
+
+  /* Colors - Neutral */
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+
+  /* Fonts */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Border Radius */
+  --radius-4xl: 2rem;
+
+  /* Shadows - Brand Colored */
+  --shadow-brand-sm: 0 1px 3px rgba(13, 148, 136, 0.12);
+  --shadow-brand: 0 4px 14px rgba(13, 148, 136, 0.15);
+  --shadow-brand-lg: 0 10px 30px rgba(13, 148, 136, 0.2);
+  --shadow-brand-xl: 0 20px 50px rgba(13, 148, 136, 0.25);
+
+  /* Animations */
+  --animate-fade-up: fadeUp 0.6s ease-out forwards;
+  --animate-fade-in: fadeIn 0.4s ease-out forwards;
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-draw-check: drawCheck 0.6s ease-out forwards;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-marquee-reverse: marquee 40s linear infinite reverse;
+
+  @keyframes fadeUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes drawCheck {
+    0% {
+      stroke-dashoffset: 100;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+/* Global CSS Custom Properties */
+:root {
+  --color-primary-rgb: 13, 148, 136;
+  --color-secondary-rgb: 22, 78, 99;
+  --color-accent-rgb: 245, 158, 11;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-neutral-900);
+  background-color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* Header scroll states */
+.site-header {
+  transition: all 0.3s ease-out;
+}
+
+.header-scrolled {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-brand-sm);
+}
+
+/* Scroll progress bar */
+.scroll-progress-bar {
+  transition: width 0.05s linear;
+}
+
+/* Section heading animation helper */
+.section-heading .heading-word {
+  display: inline-block;
+}
+
+/* FAQ accordion */
+.faq-answer {
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  transition:
+    height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease-out 0.1s;
+}
+
+.faq-answer.open {
+  opacity: 1;
+}
+
+/* Plus to minus icon animation */
+.faq-icon-bar {
+  transition: all 0.3s ease-out;
+}
+
+.faq-open .faq-icon-vertical {
+  transform: rotate(90deg);
+  opacity: 0;
+}
+
+/* Contact form floating labels */
+.form-field {
+  position: relative;
+}
+
+.form-field label {
+  position: absolute;
+  left: 1rem;
+  top: 1.25rem;
+  color: var(--color-neutral-400);
+  transition: all 0.2s ease-out;
+  pointer-events: none;
+  font-size: 1rem;
+}
+
+.form-field input:focus ~ label,
+.form-field input:not(:placeholder-shown) ~ label,
+.form-field textarea:focus ~ label,
+.form-field textarea:not(:placeholder-shown) ~ label,
+.form-field select:focus ~ label,
+.form-field select ~ label {
+  top: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--color-primary-500);
+  font-weight: 500;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  transition: all 0.3s ease-out;
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+}
+
+/* Button shine effect */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease-out;
+}
+
+.btn-primary:hover::after {
+  transform: translateX(100%);
+}
+
+/* Secondary button fill effect */
+.btn-secondary {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-secondary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: var(--color-primary-500);
+  transition: width 0.3s ease-out;
+  z-index: -1;
+}
+
+.btn-secondary:hover::before {
+  width: 100%;
+}
+
+.btn-secondary:hover {
+  color: white;
+  border-color: var(--color-primary-500);
+}
+
+/* Text link underline reveal */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--color-primary-500);
+  transition: width 0.3s ease-out;
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* Mobile menu animation */
+.hamburger-bar {
+  transition: all 0.3s ease-out;
+}
+
+.menu-open .hamburger-bar:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.menu-open .hamburger-bar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.menu-open .hamburger-bar:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Card hover effects */
+.service-card {
+  transition: all 0.3s ease-out;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+}
+
+.service-card .card-accent-bar {
+  transition: all 0.3s ease-out;
+  height: 4px;
+}
+
+.service-card:hover .card-accent-bar {
+  height: 6px;
+}
+
+.service-card .card-arrow {
+  transition: transform 0.3s ease-out;
+}
+
+.service-card:hover .card-arrow {
+  transform: translateX(4px);
+}
+
+/* Partner logo marquee */
+.marquee-track {
+  display: flex;
+  gap: 3rem;
+  animation: marquee 40s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* Decorative spin animation for CTA circles */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-slower {
+  animation: spin-slow 30s linear infinite reverse;
+}
+
+/* Validation error shake */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  50%,
+  90% {
+    transform: translateX(-4px);
+  }
+  30%,
+  70% {
+    transform: translateX(4px);
+  }
+}
+
+.form-field-error {
+  animation: shake 0.5s ease-out;
+}
+
+/* Error message slide in */
+.error-message {
+  animation: fadeUp 0.2s ease-out forwards;
+}
+
+/* Glass morphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Dropdown animation */
+.nav-dropdown {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: all 0.25s ease-out;
+}
+
+/* Invisible bridge to prevent hover gap */
+.nav-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -1rem;
+  left: 0;
+  right: 0;
+  height: 1rem;
+}
+
+.nav-item:hover .nav-dropdown,
+.nav-item:focus-within .nav-dropdown {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}

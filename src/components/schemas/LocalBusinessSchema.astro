@@ -1,0 +1,49 @@
+---
+import { siteConfig } from '../../data/site-config';
+
+interface Props {
+  city?: string;
+  address?: string;
+}
+
+const { city, address } = Astro.props;
+
+const businessAddress = address || `${siteConfig.address.street}, ${siteConfig.address.city}, ${siteConfig.address.zip}`;
+const businessCity = city || siteConfig.address.city;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: siteConfig.name,
+  url: siteConfig.url,
+  telephone: siteConfig.phone,
+  email: siteConfig.email,
+  description: siteConfig.description,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: businessAddress,
+    addressLocality: businessCity,
+    addressRegion: siteConfig.address.state,
+    postalCode: siteConfig.address.zip,
+    addressCountry: siteConfig.address.country,
+  },
+  openingHoursSpecification: siteConfig.hours
+    .filter((h) => h.open !== 'Closed')
+    .map((h) => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: h.day,
+      opens: h.open,
+      closes: h.close,
+    })),
+  sameAs: Object.values(siteConfig.social).filter(Boolean),
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: siteConfig.stats.trustpilotRating.toString(),
+    reviewCount: siteConfig.stats.trustpilotReviews.toString(),
+    bestRating: '5',
+    worstRating: '1',
+  },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

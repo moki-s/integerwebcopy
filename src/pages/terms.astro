@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { siteConfig } from '../data/site-config';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Terms & Conditions', href: '/terms' },
+];
+---
+
+<BaseLayout
+  title="Terms & Conditions | Integer Training Enrolment Policy"
+  description="Read Integer Training's terms and conditions covering enrolment, course delivery, payment plans, refund policies, and learner responsibilities."
+>
+  <Breadcrumb items={breadcrumbs} />
+
+  <section class="py-24 lg:py-32">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="font-display font-bold text-4xl md:text-5xl text-neutral-900 mb-8">Terms & Conditions</h1>
+      <p class="text-neutral-500 text-sm mb-12">Last updated: March 2026</p>
+
+      <div class="prose prose-lg text-neutral-600 space-y-8">
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">1. Company Information</h2>
+          <p>These terms and conditions apply to all courses and services provided by {siteConfig.companyName} (Company Number: {siteConfig.companyNumber}), trading as {siteConfig.name}. Our registered address is {siteConfig.address.street}, {siteConfig.address.city}, {siteConfig.address.zip}, United Kingdom.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">2. Course Enrolment</h2>
+          <p>By enrolling on a course with Integer Training, you agree to these terms and conditions. Enrolment is subject to availability and confirmation by our admissions team. We reserve the right to decline enrolment where we believe a course is not suitable for a candidate's current level of experience or qualifications.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">3. Fees and Payment</h2>
+          <p>Course fees are as stated at the time of enrolment. We offer interest-free payment plans on selected courses. Payment plan arrangements must be agreed in writing before course commencement. All fees are in British Pounds (GBP) and are inclusive of course materials, tutor support, and assessment fees unless otherwise stated.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">4. Cancellation and Refunds</h2>
+          <p>You have the right to cancel your enrolment within 14 days of purchase under the Consumer Contracts Regulations 2013, provided you have not accessed the course materials. Refund requests outside the 14-day cooling-off period will be considered on a case-by-case basis. Contact our team at {siteConfig.email} to discuss cancellations.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">5. Course Delivery</h2>
+          <p>Courses are delivered through our online learning platform and, where applicable, at our training centres. We endeavour to provide uninterrupted access to course materials but cannot guarantee continuous availability due to maintenance or technical issues. Tutor support is available during normal business hours (Monday to Friday, 9am to 5pm).</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">6. Assessment and Certification</h2>
+          <p>Qualifications are awarded by the relevant accrediting body (AAT, NCFE, HABC, Pearson, or ATHE) upon successful completion of all required assessments. Integer Training acts as a registered centre and delivers courses on behalf of these awarding organisations. Certification timescales are determined by the awarding body.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">7. Student Responsibilities</h2>
+          <p>Students are expected to engage with course materials, submit assignments within agreed timeframes, and maintain respectful communication with tutors and staff. Plagiarism, academic misconduct, or abusive behaviour may result in removal from a course without refund.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">8. Intellectual Property</h2>
+          <p>All course materials, content, and resources provided by Integer Training are protected by copyright and remain the property of Integer Training or our content partners. Materials may not be reproduced, distributed, or shared without written permission.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">9. Limitation of Liability</h2>
+          <p>Integer Training provides educational services and qualifications but does not guarantee employment outcomes. Our liability is limited to the course fees paid. We are not liable for any indirect, consequential, or incidental damages arising from the use of our services.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">10. Contact</h2>
+          <p>For questions about these terms, contact us at {siteConfig.email} or call {siteConfig.phone}.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,17 +1,568 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GradientMesh from '../components/GradientMesh.astro';
+import Testimonials from '../components/Testimonials.astro';
+import FAQ from '../components/FAQ.astro';
+import LocalBusinessSchema from '../components/schemas/LocalBusinessSchema.astro';
+import WebSiteSchema from '../components/schemas/WebSiteSchema.astro';
+import { siteConfig } from '../data/site-config';
 
+const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }> = {
+  'health-social-care': { thumbnail: '/images/courses/health-social/hs-thumb.png', thumbnailAlt: 'Care worker supporting elderly resident in UK care home' },
+  'accounting': { thumbnail: '/images/courses/accounting/acc-thumb.png', thumbnailAlt: 'Student studying AAT accounting course with financial documents' },
+  'occupational-studies': { thumbnail: '/images/courses/occupational/occ-thumb.png', thumbnailAlt: 'Professional completing workplace skills training online' },
+  'functional-skills': { thumbnail: '/images/courses/functional-skills/func-thumb.png', thumbnailAlt: 'Adult learner studying Functional Skills Maths on tablet device' },
+  'security-stewarding': { thumbnail: '/images/courses/security/sec-thumb.png', thumbnailAlt: 'Door supervisor in high-visibility vest at venue entrance' },
+  'business-management': { thumbnail: '/images/courses/business/bus-thumb.png', thumbnailAlt: 'Team leader facilitating a workplace meeting with colleagues' },
+};
+
+const coursePricing: Record<string, string> = {
+  'health-social-care': '£35',
+  'accounting': '£25',
+  'occupational-studies': '£20',
+  'functional-skills': '£20',
+  'security-stewarding': '£30',
+  'business-management': '£25',
+};
+
+const homepageFAQs = [
+  {
+    question: 'How does online learning work at Integer Training?',
+    answer: 'Once you enrol, you\'ll receive login details for our online learning platform within 24 hours. All course materials, assignments, and resources are available 24/7 -- you study at your own pace from any device. Your assigned tutor provides 1-to-1 support via phone, email, and video call throughout your course. You submit assignments online and receive detailed feedback to help you progress.',
+  },
+  {
+    question: 'Are your qualifications genuinely recognised by employers?',
+    answer: 'Yes. Every Integer Training course is accredited by a nationally recognised awarding body such as NCFE, AAT, HABC, Pearson, or ATHE. These are the same Ofqual-regulated qualifications delivered in colleges and universities across the UK. Employers, the NHS, local authorities, and professional bodies all recognise them equally.',
+  },
+  {
+    question: 'Can I spread the cost of my course?',
+    answer: 'Absolutely. We offer interest-free payment plans on all courses with no credit checks and no hidden fees. You\'ll agree a fixed monthly amount before you start, and that\'s exactly what you pay. Contact our team on 0121 690 9563 to discuss a plan that suits your budget.',
+  },
+  {
+    question: 'How long do courses take to complete?',
+    answer: 'Completion times vary by course and level. Most Level 2 certificates take 3-6 months, while Level 4-5 diplomas may take 12-18 months. Because our courses are self-paced, motivated learners often finish ahead of schedule. Your tutor will help you set a realistic study plan based on the hours you can commit each week.',
+  },
+  {
+    question: 'Do I need any prior qualifications to enrol?',
+    answer: 'Entry requirements vary by course level. Our Level 1 and Level 2 courses have no formal entry requirements -- they\'re designed for beginners. Higher-level courses (Level 3-5) may ask for relevant prior learning or work experience. Contact our admissions team and we\'ll advise you on the best starting point for your goals.',
+  },
+];
+
+const employers = [
+  { name: 'NHS', classes: 'text-[#005EB8] font-black text-base md:text-2xl tracking-tight' },
+  { name: 'Barclays', classes: 'text-[#00AEEF] font-bold text-sm md:text-xl' },
+  { name: 'Amazon', classes: 'text-[#FF9900] font-black text-sm md:text-xl tracking-tight' },
+  { name: 'Vodafone', classes: 'text-[#E60000] font-bold text-sm md:text-xl' },
+  { name: 'Tesco', classes: 'text-[#00539F] font-black text-sm md:text-xl' },
+  { name: 'Care UK', classes: 'text-[#7B2D8E] font-bold text-sm md:text-xl' },
+  { name: 'Local Gov', classes: 'text-neutral-700 font-bold text-sm md:text-xl' },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title="Accredited Online Courses UK | Integer Training"
+  description="Accredited online courses in healthcare, accounting, and security from Integer Training. 25+ years, 93% pass rate, interest-free payments. Enrol today."
+>
+  <LocalBusinessSchema />
+  <WebSiteSchema />
+
+  <!-- ========== TRUSTPILOT + PROMO BAR ========== -->
+  <div class="bg-neutral-900 text-white py-2.5 border-b border-neutral-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="text-neutral-400 hidden sm:inline">Rated</span>
+        <span class="font-bold text-green-400">Excellent</span>
+        <div class="flex items-center gap-0.5">
+          {[1,2,3,4,5].map(() => (
+            <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+          ))}
+        </div>
+        <a href={siteConfig.social.trustpilot} target="_blank" rel="noopener noreferrer" class="underline decoration-dotted text-neutral-300 hover:text-white transition-colors">{siteConfig.stats.trustpilotRating}/5 Trustpilot</a>
+      </div>
+      <span class="hidden sm:inline text-neutral-700">|</span>
+      <a href="/courses" class="flex items-center gap-2 group">
+        <span class="bg-accent-500 text-neutral-900 font-extrabold text-xs px-2.5 py-0.5 rounded-md uppercase tracking-wide animate-pulse">Spring Sale</span>
+        <span class="text-neutral-300 group-hover:text-white transition-colors">0% finance on all courses</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ========== HERO ========== -->
+  <section class="relative bg-white overflow-hidden">
+    <GradientMesh variant="hero" />
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-20">
+      <!-- Mobile: Image first, then text -->
+      <div class="lg:hidden space-y-5">
+        <!-- Mobile hero image -->
+        <div class="relative rounded-2xl overflow-hidden shadow-lg -mx-1">
+          <img
+            src="/images/hero-banner.png"
+            alt="Adult learner studying accredited online course on laptop at home"
+            width="800"
+            height="400"
+            class="w-full h-48 object-cover"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-neutral-900/90 via-neutral-900/60 to-transparent p-4">
+            <div class="flex items-center gap-2">
+              <span class="bg-accent-500 text-neutral-900 font-extrabold text-xs px-2.5 py-1 rounded-lg">0% APR</span>
+              <span class="text-white font-semibold text-sm">Interest-free finance on all courses</span>
+            </div>
+          </div>
+        </div>
+
+        <h1 class="hero-heading font-display font-bold text-3xl sm:text-4xl leading-[1.1] tracking-tight text-neutral-900">
+          Train Toward a <span class="text-primary-500">Career</span> You'll Love
+        </h1>
+
+        <p class="hero-subheading text-base text-neutral-600 leading-relaxed">
+          Nationally recognised online courses with <strong class="text-neutral-900">expert tutor support</strong>, flexible study, and <strong class="text-neutral-900">0% finance</strong>.
+        </p>
+
+        <div class="hero-ctas flex flex-col sm:flex-row gap-3">
+          <a href="/courses" class="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-7 py-3.5 rounded-xl font-bold text-base shadow-brand text-center">
+            Explore Courses
+          </a>
+          <a href="tel:01216909563" class="border-2 border-neutral-200 text-neutral-700 px-7 py-3.5 rounded-xl font-bold text-base text-center flex items-center justify-center gap-2">
+            <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+            0121 690 9563
+          </a>
+        </div>
+
+        <!-- Mobile trust row - compact 2x2 grid -->
+        <div class="hero-trust grid grid-cols-2 gap-2 text-xs text-neutral-500">
+          <div class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-primary-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+            <span class="font-medium">{siteConfig.stats.years}+ Years</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-primary-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+            <span class="font-medium">{siteConfig.stats.students.toLocaleString()}+ Students</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-primary-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+            <span class="font-medium">{siteConfig.stats.passRate}% Pass Rate</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-accent-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+            <span class="font-medium">{siteConfig.stats.trustpilotRating}/5 Trustpilot</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop: Side by side -->
+      <div class="hidden lg:grid lg:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+          <div class="inline-flex items-center gap-2 bg-primary-50 border border-primary-100 text-primary-700 text-sm font-semibold px-4 py-1.5 rounded-full">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+            Ofqual Regulated Qualifications
+          </div>
+
+          <h1 class="hero-heading font-display font-bold text-5xl xl:text-6xl leading-[1.08] tracking-tight text-neutral-900">
+            Train Toward a <span class="text-primary-500">Career</span> You'll Love
+          </h1>
+
+          <p class="hero-subheading text-lg text-neutral-600 leading-relaxed max-w-lg">
+            Nationally recognised online courses in healthcare, accounting, security and more. <strong class="text-neutral-900">Expert tutor support</strong>, flexible study, and <strong class="text-neutral-900">0% finance</strong> available.
+          </p>
+
+          <div class="hero-ctas flex flex-row gap-3">
+            <a href="/courses" class="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-7 py-3.5 rounded-xl font-bold text-base shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-center">
+              Explore Courses
+            </a>
+            <a href="tel:01216909563" class="border-2 border-neutral-200 text-neutral-700 px-7 py-3.5 rounded-xl font-bold text-base hover:border-primary-300 hover:text-primary-600 transition-all duration-300 text-center flex items-center justify-center gap-2">
+              <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+              0121 690 9563
+            </a>
+          </div>
+
+          <div class="hero-trust flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-neutral-500 pt-2">
+            <div class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-primary-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span class="font-medium">{siteConfig.stats.years}+ Years</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-primary-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span class="font-medium">{siteConfig.stats.students.toLocaleString()}+ Students</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-primary-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span class="font-medium">{siteConfig.stats.passRate}% Pass Rate</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-accent-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+              <span class="font-medium">{siteConfig.stats.trustpilotRating}/5 Trustpilot</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+            <img
+              src="/images/hero-banner.png"
+              alt="Adult learner studying accredited online course on laptop at home"
+              width="800"
+              height="600"
+              class="w-full h-auto object-cover"
+              loading="eager"
+              fetchpriority="high"
+            />
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-neutral-900/90 via-neutral-900/60 to-transparent p-6">
+              <div class="flex items-center gap-3">
+                <span class="bg-accent-500 text-neutral-900 font-extrabold text-sm px-3 py-1 rounded-lg">0% APR</span>
+                <span class="text-white font-semibold">Interest-free finance on all courses</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== EMPLOYER LOGOS ========== -->
+  <section class="py-5 bg-neutral-50 border-y border-neutral-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-center text-[10px] md:text-[11px] text-neutral-400 uppercase tracking-[0.2em] font-semibold mb-3">Our students & graduates work at</p>
+      <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:gap-x-12">
+        {employers.map((emp) => (
+          <span class={emp.classes}>{emp.name}</span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== USP STRIP ========== -->
+  <section class="bg-primary-600 py-5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/20">
+        <div class="flex items-center justify-center gap-3 py-3 sm:py-0 sm:px-4">
+          <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+          </div>
+          <div>
+            <p class="text-white font-bold text-sm">Expert Tutors</p>
+            <p class="text-white/70 text-xs">1-to-1 dedicated support</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-center gap-3 py-3 sm:py-0 sm:px-4">
+          <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div>
+            <p class="text-white font-bold text-sm">Self-Paced, 100% Online</p>
+            <p class="text-white/70 text-xs">Study around your life</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-center gap-3 py-3 sm:py-0 sm:px-4">
+          <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div>
+            <p class="text-white font-bold text-sm">0% Interest Finance</p>
+            <p class="text-white/70 text-xs">No credit check required</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== COURSE CATEGORIES ========== -->
+  <section class="py-10 lg:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8 lg:mb-10">
+        <h2 class="font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-3">
+          Explore Our Online <span class="text-primary-500">Courses</span>
+        </h2>
+        <p class="text-neutral-600 max-w-xl mx-auto">
+          Accredited by industry-leading awarding bodies. Nationally recognised qualifications that boost your skills and advance your career.
+        </p>
+      </div>
+
+      <div class="services-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+        {siteConfig.services.map((service) => {
+          const images = serviceImages[service.slug];
+          const monthlyFrom = coursePricing[service.slug] || '£25';
+          return (
+            <a
+              href={`/courses/${service.slug}`}
+              class="service-card group relative bg-white rounded-xl overflow-hidden border border-neutral-200 hover:border-primary-300 hover:shadow-lg transition-all duration-300"
+            >
+              {/* Image */}
+              <div class="relative h-44 overflow-hidden">
+                <img
+                  src={images?.thumbnail || '/images/hero-banner.png'}
+                  alt={images?.thumbnailAlt || service.name}
+                  width="600"
+                  height="400"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+                {/* Price badge */}
+                <div class="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-neutral-900 font-bold text-sm px-3 py-1.5 rounded-lg shadow-md">
+                  From {monthlyFrom}<span class="text-neutral-500 font-normal text-xs">/mo</span>
+                </div>
+              </div>
+              {/* Content */}
+              <div class="p-5">
+                <h3 class="font-display font-bold text-neutral-900 mb-2 group-hover:text-primary-600 transition-colors text-lg">
+                  {service.name}
+                </h3>
+                <p class="text-neutral-600 text-sm leading-relaxed mb-3 line-clamp-2">
+                  {service.shortDescription}
+                </p>
+                <div class="flex items-center justify-between">
+                  <span class="inline-flex items-center gap-1.5 text-primary-500 font-semibold text-sm group-hover:text-primary-600 transition-colors">
+                    View Courses
+                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                  </span>
+                  <span class="text-xs text-neutral-400 font-medium">0% Finance</span>
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="/courses" class="inline-flex items-center gap-2 bg-neutral-900 text-white font-bold px-8 py-3.5 rounded-xl hover:bg-neutral-800 transition-colors">
+          View All 30+ Courses
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 0% FINANCE BANNER ========== -->
+  <section class="bg-gradient-to-r from-primary-700 via-primary-600 to-primary-500 py-10 lg:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-4 text-center md:text-left">
+          <div class="hidden md:flex w-16 h-16 rounded-2xl bg-white/20 items-center justify-center flex-shrink-0">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-3 mb-1 justify-center md:justify-start">
+              <span class="bg-accent-500 text-neutral-900 font-extrabold text-sm px-3 py-1 rounded-lg">0% APR</span>
+              <h3 class="font-display font-bold text-2xl md:text-3xl text-white">Interest-Free Finance</h3>
+            </div>
+            <p class="text-white/80 max-w-lg">
+              Spread the cost with affordable monthly payments. No credit check. No hidden fees. Start learning today.
+            </p>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          <a href="/courses" class="bg-white text-primary-700 font-bold px-7 py-3 rounded-xl hover:bg-neutral-50 transition-colors shadow-lg whitespace-nowrap">
+            Browse Courses
+          </a>
+          <a href="tel:01216909563" class="border-2 border-white/30 text-white font-bold px-7 py-3 rounded-xl hover:bg-white/10 transition-colors whitespace-nowrap">
+            Call {siteConfig.phone}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== STATS ========== -->
+  <section class="stats-bar bg-neutral-900 py-14 lg:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
+        <div class="text-center">
+          <div class="stat-number font-display font-bold text-4xl md:text-6xl text-white leading-none" data-target="25">0</div>
+          <p class="text-white/60 text-xs md:text-sm font-medium mt-1.5">Years in Education</p>
+        </div>
+        <div class="text-center">
+          <div class="flex items-baseline justify-center">
+            <div class="stat-number font-display font-bold text-4xl md:text-6xl text-white leading-none" data-target="50000">0</div>
+            <span class="text-white/40 text-lg md:text-xl font-bold ml-0.5">+</span>
+          </div>
+          <p class="text-white/60 text-xs md:text-sm font-medium mt-1.5">Learners Trained</p>
+        </div>
+        <div class="text-center">
+          <div class="flex items-baseline justify-center">
+            <div class="stat-number font-display font-bold text-4xl md:text-6xl text-white leading-none" data-target="93">0</div>
+            <span class="text-white/40 text-lg md:text-xl font-bold ml-0.5">%</span>
+          </div>
+          <p class="text-white/60 text-xs md:text-sm font-medium mt-1.5">Pass Rate</p>
+        </div>
+        <div class="text-center">
+          <div class="flex items-baseline justify-center">
+            <div class="stat-number font-display font-bold text-4xl md:text-6xl text-white leading-none" data-target="48">0</div>
+            <span class="text-white/40 text-lg md:text-xl font-bold ml-0.5">/5</span>
+          </div>
+          <p class="text-white/60 text-xs md:text-sm font-medium mt-1.5">Trustpilot Rating</p>
+        </div>
+        <div class="text-center hidden md:block">
+          <div class="flex items-baseline justify-center">
+            <div class="stat-number font-display font-bold text-6xl text-white leading-none" data-target="30">0</div>
+            <span class="text-white/40 text-xl font-bold ml-0.5">+</span>
+          </div>
+          <p class="text-white/60 text-sm font-medium mt-1.5">Accredited Courses</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== WHY CHOOSE US (inline, tighter) ========== -->
+  <section class="py-10 lg:py-20 bg-neutral-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8 lg:mb-12">
+        <h2 class="font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-3">
+          Why Choose <span class="text-primary-500">Integer Training</span>?
+        </h2>
+        <p class="text-neutral-600 max-w-xl mx-auto">
+          With over {siteConfig.stats.years} years of experience and {siteConfig.stats.students.toLocaleString()}+ successful students, we know what it takes to help you succeed.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        {siteConfig.usps.map((usp) => (
+          <div class="flex gap-4 items-start bg-white rounded-xl p-6 border border-neutral-100 shadow-sm">
+            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-primary-500 flex items-center justify-center">
+              {usp.icon === 'expert-tutors' && <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>}
+              {usp.icon === 'self-paced' && <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+              {usp.icon === 'interest-free' && <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+              {usp.icon === 'accredited' && <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>}
+            </div>
+            <div>
+              <h3 class="font-display font-bold text-neutral-900 mb-1">{usp.title}</h3>
+              <p class="text-neutral-600 text-sm leading-relaxed">{usp.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TESTIMONIALS ========== -->
+  <Testimonials />
+
+  <!-- ========== ACCREDITATION LOGOS ========== -->
+  <section class="py-10 bg-white border-t border-neutral-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-center text-[11px] text-neutral-400 uppercase tracking-[0.2em] font-semibold mb-6">Accredited by leading awarding bodies</p>
+      <div class="flex flex-wrap items-center justify-center gap-4 lg:gap-6">
+        {siteConfig.partners.slice(0, 8).map((partner) => (
+          <div class="bg-white rounded-lg px-4 py-2.5 flex items-center justify-center border border-neutral-200 shadow-sm">
+            <img
+              src={partner.logo}
+              alt={partner.name}
+              class="h-9 w-auto object-contain max-w-[110px]"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== QUESTIONS CTA ========== -->
+  <section class="bg-gradient-to-br from-primary-700 to-primary-800 py-14 lg:py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="font-display font-bold text-2xl md:text-3xl text-white mb-3">Questions About Your Course?</h2>
+      <p class="text-white/80 text-lg mb-8 max-w-xl mx-auto">Our Course Advisors are ready to help. Free, no-obligation guidance on the right qualification for your career.</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="/contact" class="inline-flex items-center gap-2 bg-white text-primary-700 font-bold px-7 py-3.5 rounded-xl hover:bg-neutral-50 transition-colors shadow-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+          Send an Enquiry
+        </a>
+        <a href="tel:01216909563" class="inline-flex items-center gap-2 border-2 border-white/30 text-white font-bold px-7 py-3.5 rounded-xl hover:bg-white/10 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+          Call {siteConfig.phone}
+        </a>
+        <a href={`https://wa.me/44${siteConfig.whatsapp.replace(/^0/, '').replace(/\s/g, '')}`} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 border-2 border-white/30 text-white font-bold px-7 py-3.5 rounded-xl hover:bg-white/10 transition-colors">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FAQ ========== -->
+  <FAQ faqs={homepageFAQs} title="Frequently Asked Questions" accentWord="Questions" />
+
+  <!-- ========== FINAL CTA ========== -->
+  <section class="relative bg-gradient-to-br from-primary-700 via-primary-600 to-secondary-500 py-16 lg:py-20 overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full border border-white/5"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full border border-white/[0.03]"></div>
+    </div>
+
+    <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="font-display font-bold text-3xl md:text-4xl text-white mb-4">Ready to Get Started?</h2>
+      <p class="text-white/80 text-lg mb-8 max-w-xl mx-auto">
+        Join {siteConfig.stats.students.toLocaleString()}+ learners who've already advanced their careers with Integer Training. Free, no-obligation advice.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="/contact" class="bg-white text-primary-600 px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+          Enquire Now
+        </a>
+        <a href="tel:01216909563" class="text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-300">
+          Call {siteConfig.phone}
+        </a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    // @ts-ignore
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    // @ts-ignore
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Service card stagger
+    // @ts-ignore
+    gsap.fromTo('.services-grid .service-card',
+      { y: 30, opacity: 0 },
+      { // @ts-ignore
+        scrollTrigger: { trigger: '.services-grid', start: 'top 85%' },
+        y: 0, opacity: 1,
+        duration: 0.4,
+        stagger: 0.08,
+        ease: 'power2.out',
+      }
+    );
+
+    // Stats count up
+    // @ts-ignore
+    ScrollTrigger.create({
+      trigger: '.stats-bar',
+      start: 'top 80%',
+      once: true,
+      onEnter: () => {
+        document.querySelectorAll('.stat-number').forEach((el) => {
+          const target = parseInt((el as HTMLElement).dataset.target || '0');
+          // @ts-ignore
+          gsap.to(el, {
+            innerHTML: target,
+            duration: 2,
+            snap: { innerHTML: 1 },
+            ease: 'power2.out',
+          });
+        });
+      },
+    });
+
+    // Hero animations
+    const heroHeading = document.querySelector('.hero-heading');
+    if (heroHeading) {
+      // @ts-ignore
+      const tl = gsap.timeline();
+      // @ts-ignore
+      tl.from('.hero-heading', { y: 30, opacity: 0, duration: 0.6, ease: 'power2.out' })
+      // @ts-ignore
+        .from('.hero-subheading', { y: 20, opacity: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+      // @ts-ignore
+        .from('.hero-ctas', { y: 15, opacity: 0, duration: 0.4 }, '-=0.2')
+      // @ts-ignore
+        .from('.hero-trust', { y: 15, opacity: 0, duration: 0.4 }, '-=0.1');
+    }
+  });
+</script>

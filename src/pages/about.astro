@@ -1,0 +1,193 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import WhyUs from '../components/WhyUs.astro';
+import SectionDivider from '../components/SectionDivider.astro';
+import CTA from '../components/CTA.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import FAQ from '../components/FAQ.astro';
+import { siteConfig } from '../data/site-config';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
+];
+
+const aboutFAQs = [
+  {
+    question: 'Is Integer Training a legitimate, accredited training provider?',
+    answer: 'Yes. Integer Training Limited (Company No: 03791017) is an approved centre for multiple nationally recognised awarding bodies including NCFE, AAT, HABC, Pearson, and ATHE. We hold Matrix Quality Standard certification and are recognised by the ESFA. All our qualifications are Ofqual-regulated and carry the same standing as those delivered by colleges and universities.',
+  },
+  {
+    question: 'How long has Integer Training been operating?',
+    answer: 'Integer Training was established in 1999, giving us over 25 years of experience in delivering accredited vocational qualifications across the UK. In that time, we\'ve trained more than 50,000 learners and maintained a 93% pass rate across our programmes.',
+  },
+  {
+    question: 'Are your online courses the same as classroom-based qualifications?',
+    answer: 'Yes, in terms of accreditation and recognition. Our online courses lead to the same nationally recognised qualifications as classroom-based programmes. The awarding bodies (NCFE, AAT, etc.) set the same syllabus, assessment criteria, and quality standards regardless of delivery method. The difference is convenience -- you study on your own schedule with 1-to-1 tutor support.',
+  },
+  {
+    question: 'Do you have physical locations I can visit?',
+    answer: 'Yes. While our courses are delivered online, we have four branch offices in Bude (HQ), London (Barking), Birmingham (Handsworth), and Wolverhampton. You\'re welcome to visit by appointment to discuss courses in person. Contact us on 0121 690 9563 or email info@integertraining.com to arrange a visit.',
+  },
+];
+---
+
+<BaseLayout
+  title="About Integer Training | 25+ Years in Education"
+  description="Integer Training has delivered accredited qualifications to 50,000+ UK learners since 1999. Expert tutors, nationally recognised courses, real career outcomes."
+>
+  <Breadcrumb items={breadcrumbs} />
+
+  <Hero
+    heading="25 Years Building Better Careers"
+    subheading="Integer Training was founded with a single conviction: that high-quality, nationally recognised qualifications should be accessible to everyone -- regardless of location, schedule, or financial circumstances."
+    variant="inner"
+    image="/images/hero-banner.png"
+    imageAlt="Integer Training team providing learner support and course guidance"
+  />
+
+  <!-- Our Story -->
+  <section class="py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-start">
+        <div class="lg:col-span-3">
+          <h2 class="section-heading font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-8">
+            Our <span class="text-primary-500">Story</span>
+          </h2>
+          <div class="prose prose-lg max-w-prose text-neutral-600 space-y-6">
+            <p class="leading-relaxed">
+              <strong>A quarter-century of learner-first education.</strong> Integer Training Limited was established in 1999 with a clear mission: to remove the barriers that prevent working adults from gaining the professional qualifications they need. What began as a small training provider has grown into a nationally recognised centre delivering accredited courses across healthcare, accounting, security, business management, and more.
+            </p>
+            <p class="leading-relaxed">
+              <strong>From classrooms to nationwide online delivery.</strong> Over the past 25 years, we've evolved alongside the education sector. While we maintain four physical branch locations in Bude, London, Birmingham, and Wolverhampton, our primary delivery is now fully online -- enabling learners across the UK to access the same rigorous, accredited programmes without relocating, commuting, or taking time off work. Our online platform provides 24/7 access to course materials, while our tutors provide the human support that self-study alone cannot offer.
+            </p>
+            <p class="leading-relaxed">
+              <strong>Trusted by learners, recognised by industry.</strong> With over 50,000 learners trained and a 93% pass rate, our results speak for themselves. We hold accreditations and partnerships with NCFE, AAT, HABC, Pearson, ATHE, Mindful Education, and the National Careers Service. We're Matrix Quality Standard certified and recognised by the ESFA (Education and Skills Funding Agency). Our 4.8-star Trustpilot rating reflects the experience our learners consistently describe: professional, supportive, and genuinely invested in their success.
+            </p>
+            <p class="leading-relaxed">
+              <strong>Investing in what matters.</strong> We don't spend on flashy marketing gimmicks. Instead, we invest in experienced tutors, up-to-date course content, and responsive learner support. Every member of our team understands that behind every enrolment is a person making a serious investment in their future -- and we take that responsibility seriously. If you'd like to discuss how we can support your career goals, <a href="/contact" class="text-primary-500 font-semibold hover:text-primary-600 transition-colors duration-300">get in touch with our admissions team</a>.
+            </p>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2">
+          <div class="sticky top-28 space-y-6">
+            <!-- Stats card -->
+            <div class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl p-8 shadow-brand-sm">
+              <h3 class="font-display font-bold text-lg text-neutral-900 mb-6">By the Numbers</h3>
+              <div class="space-y-6">
+                <div>
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-display font-bold text-4xl text-primary-500">{siteConfig.stats.years}+</span>
+                    <span class="text-neutral-500 text-sm">years</span>
+                  </div>
+                  <p class="text-neutral-600 text-sm">of delivering professional education</p>
+                </div>
+                <div class="border-t border-neutral-100 pt-4">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-display font-bold text-4xl text-primary-500">{siteConfig.stats.students.toLocaleString()}+</span>
+                  </div>
+                  <p class="text-neutral-600 text-sm">students successfully trained</p>
+                </div>
+                <div class="border-t border-neutral-100 pt-4">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-display font-bold text-4xl text-primary-500">{siteConfig.stats.passRate}%</span>
+                  </div>
+                  <p class="text-neutral-600 text-sm">overall pass rate</p>
+                </div>
+                <div class="border-t border-neutral-100 pt-4">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-display font-bold text-4xl text-accent-500">{siteConfig.stats.trustpilotRating}/5</span>
+                  </div>
+                  <p class="text-neutral-600 text-sm">Trustpilot rating ({siteConfig.stats.trustpilotReviews} reviews)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Company info -->
+            <div class="bg-neutral-50 rounded-3xl p-8">
+              <h3 class="font-display font-bold text-lg text-neutral-900 mb-4">Company Details</h3>
+              <dl class="space-y-3 text-sm">
+                <div>
+                  <dt class="text-neutral-400 font-medium">Registered Name</dt>
+                  <dd class="text-neutral-700">{siteConfig.companyName}</dd>
+                </div>
+                <div>
+                  <dt class="text-neutral-400 font-medium">Company Number</dt>
+                  <dd class="text-neutral-700">{siteConfig.companyNumber}</dd>
+                </div>
+                <div>
+                  <dt class="text-neutral-400 font-medium">Headquarters</dt>
+                  <dd class="text-neutral-700">{siteConfig.address.street}, {siteConfig.address.city}, {siteConfig.address.zip}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <SectionDivider fillColor="#f8fafc" variant="wave" />
+
+  <!-- Values / Why Us -->
+  <WhyUs />
+
+  <SectionDivider fillColor="#ffffff" variant="curve" />
+
+  <!-- Accreditations -->
+  <section class="py-24 lg:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="section-heading font-display font-bold text-3xl md:text-4xl lg:text-5xl text-neutral-900 mb-6">
+          Accredited by the Bodies That <span class="text-primary-500">Matter</span>
+        </h2>
+        <p class="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
+          Integer Training holds accreditations and partnerships with the UK's leading awarding organisations and regulatory bodies. Every qualification we deliver is Ofqual-regulated and nationally recognised by employers, universities, and professional bodies.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
+        {siteConfig.partners.map((partner) => (
+          <div class="flex items-center justify-center p-4 bg-white rounded-2xl shadow-brand-sm hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
+            <img
+              src={partner.logo}
+              alt={partner.name}
+              class="h-12 w-auto object-contain"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission -->
+  <section class="py-24 lg:py-32 bg-neutral-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="section-heading font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-8">
+        Our <span class="text-primary-500">Mission</span>
+      </h2>
+      <blockquote class="relative">
+        <span class="absolute -top-8 -left-4 text-8xl text-primary-100 font-serif leading-none pointer-events-none" aria-hidden="true">&ldquo;</span>
+        <p class="relative text-xl md:text-2xl text-neutral-700 leading-relaxed font-medium italic">
+          Our mission is to deliver accessible, accredited education that equips learners with the qualifications and confidence to build careers they're proud of.
+        </p>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- FAQs -->
+  <FAQ faqs={aboutFAQs} title="About Us FAQs" accentWord="FAQs" />
+
+  <CTA
+    heading="Start Building the Career You Deserve"
+    subheading="25 years of experience. 50,000 learners. Your turn."
+    ctaText="Explore Our Courses"
+    ctaHref="/courses"
+    variant="dramatic"
+  />
+
+  <SectionDivider fillColor="#0f172a" variant="curve" />
+</BaseLayout>

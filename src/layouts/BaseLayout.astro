@@ -1,0 +1,94 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import GrainOverlay from '../components/GrainOverlay.astro';
+import PageTransition from '../components/PageTransition.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+}
+
+const { title, description, canonical, ogImage } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} canonical={canonical} ogImage={ogImage} />
+    <ViewTransitions />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <GrainOverlay />
+    <PageTransition />
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- GSAP CDN -->
+    <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+    <script>
+      document.addEventListener('astro:page-load', () => {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) return;
+
+        // @ts-ignore - GSAP loaded via CDN
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+        // @ts-ignore
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Scroll-driven section heading reveal
+        document.querySelectorAll('.section-heading').forEach((heading) => {
+          const text = heading.textContent || '';
+          const words = text.split(' ');
+          heading.innerHTML = words
+            .map(
+              (word: string) =>
+                `<span class="inline-block overflow-hidden"><span class="heading-word inline-block">${word}</span></span>`
+            )
+            .join(' ');
+
+          // @ts-ignore
+          gsap.from(heading.querySelectorAll('.heading-word'), {
+            // @ts-ignore
+            scrollTrigger: { trigger: heading, start: 'top 85%' },
+            y: '100%',
+            duration: 0.6,
+            ease: 'power3.out',
+            stagger: 0.06,
+          });
+        });
+
+        // Parallax utility
+        document.querySelectorAll('[data-parallax]').forEach((el) => {
+          const speed = parseFloat((el as HTMLElement).dataset.parallax || '0.2');
+          // @ts-ignore
+          gsap.to(el, {
+            // @ts-ignore
+            scrollTrigger: { trigger: el, scrub: 1 },
+            yPercent: -20 * speed,
+          });
+        });
+      });
+
+      // Cleanup ScrollTriggers on page swap
+      document.addEventListener('astro:after-swap', () => {
+        // @ts-ignore
+        if (typeof ScrollTrigger !== 'undefined') {
+          // @ts-ignore
+          ScrollTrigger.getAll().forEach((t: any) => t.kill());
+        }
+      });
+    </script>
+  </body>
+</html>

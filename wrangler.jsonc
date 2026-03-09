@@ -1,0 +1,19 @@
+{
+  "name": "integer-training-site",
+  "main": "dist/_worker.js/index.js",
+  "compatibility_date": "2026-03-04",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+  "vars": {
+    "RESEND_API_KEY": ""
+  },
+  "observability": {
+    "enabled": true
+  }
+}

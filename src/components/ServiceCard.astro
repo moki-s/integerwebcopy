@@ -1,0 +1,58 @@
+---
+interface Props {
+  name: string;
+  slug: string;
+  description: string;
+  thumbnail: string;
+  thumbnailAlt: string;
+  featured?: boolean;
+}
+
+const { name, slug, description, thumbnail, thumbnailAlt, featured = false } = Astro.props;
+---
+
+<a
+  href={`/courses/${slug}`}
+  class:list={[
+    'service-card group block rounded-2xl overflow-hidden shadow-brand-sm hover:shadow-brand-lg bg-white/70 backdrop-blur-xl border border-white/20',
+    featured ? 'md:col-span-2 md:row-span-2' : '',
+  ]}
+  transition:name={`service-${slug}`}
+>
+  <!-- Accent bar -->
+  <div class="card-accent-bar bg-gradient-to-r from-primary-500 to-accent-500 rounded-t-2xl"></div>
+
+  <!-- Image -->
+  <div class:list={['relative overflow-hidden', featured ? 'h-48 md:h-64' : 'h-40 md:h-48']}>
+    <div class="absolute inset-0 animate-pulse bg-neutral-200"></div>
+    <img
+      src={thumbnail}
+      alt={thumbnailAlt}
+      width="600"
+      height="400"
+      class="relative z-10 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      loading="lazy"
+      onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML+='<div class=\'flex items-center justify-center w-full h-full absolute inset-0 bg-neutral-100\'><svg class=\'w-12 h-12 text-neutral-300\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253\' /></svg></div>'"
+    />
+  </div>
+
+  <!-- Content -->
+  <div class:list={['p-6', featured ? 'md:p-8' : '']}>
+    <h3 class:list={[
+      'font-display font-bold text-neutral-900 mb-3 group-hover:text-primary-600 transition-colors duration-300',
+      featured ? 'text-xl md:text-2xl' : 'text-lg',
+    ]}>
+      {name}
+    </h3>
+    <p class:list={[
+      'text-neutral-600 leading-relaxed mb-4',
+      featured ? 'text-base' : 'text-sm',
+    ]}>
+      {description}
+    </p>
+    <span class="inline-flex items-center gap-2 text-primary-500 font-semibold text-sm group-hover:text-primary-600 transition-colors duration-300">
+      View Courses
+      <svg class="w-4 h-4 card-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+    </span>
+  </div>
+</a>

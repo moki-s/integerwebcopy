@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 120">
+    <defs>
+        <linearGradient id="yellowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFEB3B;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FBC02D;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+
+    <!-- Yellow Circle -->
+    <circle cx="60" cy="60" r="50" fill="url(#yellowGradient)" stroke="#0056b3" stroke-width="4" />
+
+    <!-- The 'I' Graphic -->
+    <!-- Positioned to look like it overlaps the circle -->
+    <g transform="translate(60, 20)">
+         <!-- Arrow Head -->
+         <path d="M5 0 L45 0 L5 40 Z" fill="#ffffff" stroke="#0056b3" stroke-width="3" stroke-linejoin="round"/>
+         <!-- Body -->
+         <rect x="5" y="45" width="25" height="55" fill="#ffffff" stroke="#0056b3" stroke-width="3" />
+    </g>
+
+    <!-- Text -->
+    <text x="120" y="95" font-family="Arial, sans-serif" font-weight="bold" font-size="80" fill="#0056b3" stroke="white" stroke-width="2">nteger</text>
+    <text x="120" y="95" font-family="Arial, sans-serif" font-weight="bold" font-size="80" fill="#0056b3">nteger</text>
+</svg>
