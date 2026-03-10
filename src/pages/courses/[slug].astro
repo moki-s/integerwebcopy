@@ -31,12 +31,12 @@ const breadcrumbs = [
 const relatedServices = siteConfig.services.filter((s) => s.slug !== data.slug).slice(0, 3);
 
 const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }> = {
-  'health-social-care': { thumbnail: '/images/courses/health-social/hs-thumb.png', thumbnailAlt: 'Care worker supporting elderly resident in UK care home' },
-  'accounting': { thumbnail: '/images/courses/accounting/acc-thumb.png', thumbnailAlt: 'Student studying AAT accounting course with financial documents' },
-  'occupational-studies': { thumbnail: '/images/courses/occupational/occ-thumb.png', thumbnailAlt: 'Professional completing workplace skills training online' },
-  'functional-skills': { thumbnail: '/images/courses/functional-skills/func-thumb.png', thumbnailAlt: 'Adult learner studying Functional Skills Maths on tablet device' },
-  'security-stewarding': { thumbnail: '/images/courses/security/sec-thumb.png', thumbnailAlt: 'Door supervisor in high-visibility vest at venue entrance' },
-  'business-management': { thumbnail: '/images/courses/business/bus-thumb.png', thumbnailAlt: 'Team leader facilitating a workplace meeting with colleagues' },
+  'health-social-care': { thumbnail: '/images/courses/health-social/hs-thumb.webp', thumbnailAlt: 'Care worker supporting elderly resident in UK care home' },
+  'accounting': { thumbnail: '/images/courses/accounting/acc-thumb.webp', thumbnailAlt: 'Student studying AAT accounting course with financial documents' },
+  'occupational-studies': { thumbnail: '/images/courses/occupational/occ-thumb.webp', thumbnailAlt: 'Professional completing workplace skills training online' },
+  'functional-skills': { thumbnail: '/images/courses/functional-skills/func-thumb.webp', thumbnailAlt: 'Adult learner studying Functional Skills Maths on tablet device' },
+  'security-stewarding': { thumbnail: '/images/courses/security/sec-thumb.webp', thumbnailAlt: 'Door supervisor in high-visibility vest at venue entrance' },
+  'business-management': { thumbnail: '/images/courses/business/bus-thumb.webp', thumbnailAlt: 'Team leader facilitating a workplace meeting with colleagues' },
 };
 ---
 
@@ -112,7 +112,7 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
         {data.courses.map((course) => (
           <div class="course-card group bg-white rounded-2xl overflow-hidden shadow-brand-sm hover:shadow-brand-lg border border-neutral-100 hover:border-primary-200 transition-all duration-300 hover:-translate-y-1">
             {course.image && (
-              <a href={`/course/${course.image?.split('/').pop()?.replace('.png', '') || ''}`} class="block relative h-44 overflow-hidden">
+              <a href={`/course/${course.image?.split('/').pop()?.replace('.webp', '') || ''}`} class="block relative h-44 overflow-hidden">
                 <div class="absolute inset-0 animate-pulse bg-neutral-200"></div>
                 <img
                   src={course.image}
@@ -132,7 +132,7 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
               </div>
 
               <h3 class="font-display font-bold text-lg text-neutral-900 mb-2 group-hover:text-primary-600 transition-colors duration-300 leading-tight">
-                <a href={`/course/${course.image?.split('/').pop()?.replace('.png', '') || ''}`} class="hover:text-primary-600">
+                <a href={`/course/${course.image?.split('/').pop()?.replace('.webp', '') || ''}`} class="hover:text-primary-600">
                   {course.name}
                 </a>
               </h3>
@@ -153,14 +153,14 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
 
               <div class="flex gap-2">
                 <a
-                  href={`/course/${course.image?.split('/').pop()?.replace('.png', '') || ''}`}
+                  href={`/course/${course.image?.split('/').pop()?.replace('.webp', '') || ''}`}
                   class="flex-1 text-center bg-gradient-to-r from-primary-500 to-primary-600 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                 >
                   View Details
                 </a>
                 <button
                   class="add-to-cart-btn px-4 py-2.5 rounded-xl font-semibold text-sm border border-neutral-200 text-neutral-700 hover:border-primary-200 hover:text-primary-600 transition-all duration-300"
-                  data-course-id={course.image?.split('/').pop()?.replace('.png', '') || ''}
+                  data-course-id={course.image?.split('/').pop()?.replace('.webp', '') || ''}
                 >
                   Add to Cart
                 </button>

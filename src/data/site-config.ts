@@ -235,7 +235,7 @@ export const siteConfig = {
   },
   partners: [
     { name: "HABC", logo: "/images/partners/habc.webp" },
-    { name: "NCFE", logo: "/images/partners/ncfe.png" },
+    { name: "NCFE", logo: "/images/partners/ncfe.webp" },
     { name: "AAT", logo: "/images/partners/aat.webp" },
     {
       name: "Mindful Education",
@@ -248,10 +248,10 @@ export const siteConfig = {
       logo: "/images/partners/national-careers.webp",
     },
     { name: "HTQ Quality Mark", logo: "/images/partners/htq.webp" },
-    { name: "ESFA", logo: "/images/partners/esfa.png" },
-    { name: "Association for Learning", logo: "/images/partners/all.png" },
+    { name: "ESFA", logo: "/images/partners/esfa.webp" },
+    { name: "Association for Learning", logo: "/images/partners/all.webp" },
     { name: "Matrix Quality Standard", logo: "/images/partners/matrix.avif" },
-    { name: "Mayor of London", logo: "/images/partners/mayor-of-london.png" },
+    { name: "Mayor of London", logo: "/images/partners/mayor-of-london.webp" },
   ],
 } as const;
 

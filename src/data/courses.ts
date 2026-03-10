@@ -60,7 +60,7 @@ export const COURSES: Record<string, Course> = {
     students: 120,
     badge: "ENTRY LEVEL",
     badgeColor: "#2F855A",
-    image: "/images/courses/accounting/aat-level-1-business-skills.png",
+    image: "/images/courses/accounting/aat-level-1-business-skills.webp",
     overview:
       "This entry-level qualification helps you support finance teams with everyday business activities, and understand sales and purchase processes.",
     curriculum: [
@@ -80,7 +80,7 @@ export const COURSES: Record<string, Course> = {
     students: 150,
     badge: "ENTRY LEVEL",
     badgeColor: "#2F855A",
-    image: "/images/courses/accounting/aat-level-1-bookkeeping.png",
+    image: "/images/courses/accounting/aat-level-1-bookkeeping.webp",
     overview:
       "An introductory course offering a solid foundation in manual bookkeeping skills, including double-entry bookkeeping and associated documents.",
     curriculum: [
@@ -100,7 +100,7 @@ export const COURSES: Record<string, Course> = {
     students: 1250,
     badge: "POPULAR",
     badgeColor: "#2F855A",
-    image: "/images/courses/accounting/aat-level-2-accounting.png",
+    image: "/images/courses/accounting/aat-level-2-accounting.webp",
     overview:
       "The AAT Level 2 Certificate in Accounting is your gateway to a career in finance. Covers foundational aspects from bookkeeping and costing to mastering software.",
     curriculum: [
@@ -121,7 +121,7 @@ export const COURSES: Record<string, Course> = {
     students: 980,
     badge: "ENTRY LEVEL",
     badgeColor: "#2F855A",
-    image: "/images/courses/accounting/aat-level-2-bookkeeping.png",
+    image: "/images/courses/accounting/aat-level-2-bookkeeping.webp",
     overview:
       "A short, sharp qualification that delivers the essential skills for manual and digital bookkeeping.",
     curriculum: [
@@ -140,7 +140,7 @@ export const COURSES: Record<string, Course> = {
     students: 1600,
     badge: "ADVANCED",
     badgeColor: "#D69E2E",
-    image: "/images/courses/accounting/aat-level-3-accounting.png",
+    image: "/images/courses/accounting/aat-level-3-accounting.webp",
     overview:
       "Master complex financial processes, including final accounts, reports, and returns. Covers indirect tax, management accounting, and financial accounting.",
     curriculum: [
@@ -161,7 +161,7 @@ export const COURSES: Record<string, Course> = {
     students: 540,
     badge: "ADVANCED",
     badgeColor: "#D69E2E",
-    image: "/images/courses/accounting/aat-level-3-bookkeeping.png",
+    image: "/images/courses/accounting/aat-level-3-bookkeeping.webp",
     overview:
       "Develop advanced bookkeeping skills needed for senior roles. Learn to prepare financial statements for sole traders and partnerships.",
     curriculum: [
@@ -180,7 +180,7 @@ export const COURSES: Record<string, Course> = {
     students: 320,
     badge: "PROFESSIONAL",
     badgeColor: "#3182CE",
-    image: "/images/courses/accounting/aat-level-4-accounting.png",
+    image: "/images/courses/accounting/aat-level-4-accounting.webp",
     overview:
       "The highest level of AAT qualification. Become a fully qualified accounting technician covering complex accounting tasks.",
     curriculum: [
@@ -204,7 +204,7 @@ export const COURSES: Record<string, Course> = {
     students: 300,
     badge: "CARE",
     badgeColor: "#38B2AC",
-    image: "/images/courses/health-social/ncfe-level-2-care.png",
+    image: "/images/courses/health-social/ncfe-level-2-care.webp",
     overview:
       "The standard qualification for those working in adult care settings in England. Confirms occupational competence for roles such as Adult Care Worker.",
     curriculum: [
@@ -225,7 +225,7 @@ export const COURSES: Record<string, Course> = {
     students: 450,
     badge: "PRACTITIONER",
     badgeColor: "#38B2AC",
-    image: "/images/courses/health-social/ncfe-level-2-early-years.png",
+    image: "/images/courses/health-social/ncfe-level-2-early-years.webp",
     overview:
       "Provides the knowledge and skills required to work with children from birth to 5 years and up to 7 years.",
     curriculum: [
@@ -246,7 +246,7 @@ export const COURSES: Record<string, Course> = {
     students: 600,
     badge: "ADVANCED",
     badgeColor: "#D69E2E",
-    image: "/images/courses/health-social/ncfe-level-3-adult-care.png",
+    image: "/images/courses/health-social/ncfe-level-3-adult-care.webp",
     overview:
       "For those working in lead adult care roles. Develops the knowledge and skills required to work in a senior capacity.",
     curriculum: [
@@ -267,7 +267,7 @@ export const COURSES: Record<string, Course> = {
     students: 120,
     badge: "MANAGEMENT",
     badgeColor: "#805AD5",
-    image: "/images/courses/health-social/ncfe-level-5-adult-care.png",
+    image: "/images/courses/health-social/ncfe-level-5-adult-care.webp",
     overview:
       "A comprehensive qualification for those managing an adult care service. Covers leadership, governance, and strategic management.",
     curriculum: [
@@ -289,7 +289,7 @@ export const COURSES: Record<string, Course> = {
     students: 85,
     badge: "MANAGEMENT",
     badgeColor: "#805AD5",
-    image: "/images/courses/health-social/level-5-residential-childcare.png",
+    image: "/images/courses/health-social/level-5-residential-childcare.webp",
     overview:
       "Designed for those managing residential childcare settings. Covers leading and managing a service for positive outcomes.",
     curriculum: [
@@ -312,7 +312,7 @@ export const COURSES: Record<string, Course> = {
     students: 200,
     badge: "WORKPLACE",
     badgeColor: "#319795",
-    image: "/images/courses/occupational/occ-studies-cert.png",
+    image: "/images/courses/occupational/occ-studies-cert.webp",
     overview:
       "A solid base from which to further develop your skills and learning. Prepares learners for work through real or simulated work situations.",
     curriculum: [
@@ -332,7 +332,7 @@ export const COURSES: Record<string, Course> = {
     students: 150,
     badge: "WORKPLACE",
     badgeColor: "#319795",
-    image: "/images/courses/occupational/occ-studies-diploma.png",
+    image: "/images/courses/occupational/occ-studies-diploma.webp",
     overview:
       "A comprehensive qualification providing practical skills and knowledge for the workplace.",
     curriculum: [
@@ -353,7 +353,7 @@ export const COURSES: Record<string, Course> = {
     students: 180,
     badge: "LEVEL 2",
     badgeColor: "#319795",
-    image: "/images/courses/occupational/level-2-occ-studies.png",
+    image: "/images/courses/occupational/level-2-occ-studies.webp",
     overview:
       "Progression from the Level 1 certificate, offering more in-depth knowledge and practical skills for the modern workplace.",
     curriculum: [
@@ -373,7 +373,7 @@ export const COURSES: Record<string, Course> = {
     students: 300,
     badge: "EMPLOYABILITY",
     badgeColor: "#ED8936",
-    image: "/images/courses/occupational/personal-dev-cert.png",
+    image: "/images/courses/occupational/personal-dev-cert.webp",
     overview:
       "Develop the personal and social skills needed for employment. Covers confidence building, job searching, and interview techniques.",
     curriculum: [
@@ -394,7 +394,7 @@ export const COURSES: Record<string, Course> = {
     students: 250,
     badge: "EMPLOYABILITY",
     badgeColor: "#ED8936",
-    image: "/images/courses/occupational/personal-dev-diploma.png",
+    image: "/images/courses/occupational/personal-dev-diploma.webp",
     overview:
       "An extensive course covering personal development and employability skills with extended workplace behaviour modules.",
     curriculum: [
@@ -416,7 +416,7 @@ export const COURSES: Record<string, Course> = {
     students: 190,
     badge: "CUSTOMER SERVICE",
     badgeColor: "#4299E1",
-    image: "/images/courses/occupational/work-related-cert.png",
+    image: "/images/courses/occupational/work-related-cert.webp",
     overview:
       "Prepares learners for work in the customer service sector. Covers the basics of customer interactions and service delivery.",
     curriculum: [
@@ -437,7 +437,7 @@ export const COURSES: Record<string, Course> = {
     students: 140,
     badge: "CUSTOMER SERVICE",
     badgeColor: "#4299E1",
-    image: "/images/courses/occupational/work-related-diploma.png",
+    image: "/images/courses/occupational/work-related-diploma.webp",
     overview:
       "A comprehensive qualification for those pursuing a career in customer service with advanced service standards modules.",
     curriculum: [
@@ -459,7 +459,7 @@ export const COURSES: Record<string, Course> = {
     students: 800,
     badge: "SAFETY",
     badgeColor: "#E53E3E",
-    image: "/images/courses/occupational/health-safety-award.png",
+    image: "/images/courses/occupational/health-safety-award.webp",
     overview:
       "Essential health and safety knowledge for any workplace. Covers risk assessment, manual handling, and legal responsibilities.",
     curriculum: [
@@ -482,7 +482,7 @@ export const COURSES: Record<string, Course> = {
     students: 2200,
     badge: "MATHS",
     badgeColor: "#3182CE",
-    image: "/images/courses/functional-skills/functional-maths-level-1.png",
+    image: "/images/courses/functional-skills/functional-maths-level-1.webp",
     overview:
       "Develop practical, transferable skills in Mathematics to work confidently, effectively, and independently in life.",
     curriculum: [
@@ -502,7 +502,7 @@ export const COURSES: Record<string, Course> = {
     students: 2500,
     badge: "MATHS",
     badgeColor: "#3182CE",
-    image: "/images/courses/functional-skills/functional-maths-level-2.png",
+    image: "/images/courses/functional-skills/functional-maths-level-2.webp",
     overview:
       "Equivalent to a GCSE Grade 4 (C). Provides skills needed for further education and employment.",
     curriculum: [
@@ -523,7 +523,7 @@ export const COURSES: Record<string, Course> = {
     students: 1800,
     badge: "ENGLISH",
     badgeColor: "#DD6B20",
-    image: "/images/courses/functional-skills/functional-english-level-1.png",
+    image: "/images/courses/functional-skills/functional-english-level-1.webp",
     overview:
       "Improve your reading, writing, and communication skills. Gives you the confidence to apply English skills in work and everyday life.",
     curriculum: ["Reading", "Writing", "Speaking, Listening and Communicating"],
@@ -539,7 +539,7 @@ export const COURSES: Record<string, Course> = {
     students: 2100,
     badge: "ENGLISH",
     badgeColor: "#DD6B20",
-    image: "/images/courses/functional-skills/functional-english-level-2.png",
+    image: "/images/courses/functional-skills/functional-english-level-2.webp",
     overview:
       "Equivalent to a GCSE Grade 4 (C). Demonstrates the ability to read, write, speak, listen, and communicate in English.",
     curriculum: [
@@ -561,7 +561,7 @@ export const COURSES: Record<string, Course> = {
     students: 3000,
     badge: "SAFETY",
     badgeColor: "#E53E3E",
-    image: "/images/courses/security/first-aid-level-3.png",
+    image: "/images/courses/security/first-aid-level-3.webp",
     overview:
       "A one-day course covering the essentials of emergency first aid in the workplace. Meets HSE requirements for low-risk workplaces.",
     curriculum: [
@@ -583,7 +583,7 @@ export const COURSES: Record<string, Course> = {
     students: 2100,
     badge: "LICENSE",
     badgeColor: "#2A4365",
-    image: "/images/courses/security/door-supervisor-level-2.png",
+    image: "/images/courses/security/door-supervisor-level-2.webp",
     overview:
       "The standard qualification required to apply for an SIA Door Supervisor license. Covers legal aspects, physical intervention, and conflict management.",
     curriculum: [
@@ -604,7 +604,7 @@ export const COURSES: Record<string, Course> = {
     students: 1500,
     badge: "STEWARDING",
     badgeColor: "#2A4365",
-    image: "/images/courses/security/spectator-safety-level-2.png",
+    image: "/images/courses/security/spectator-safety-level-2.webp",
     overview:
       "Required for working as a steward at sports grounds and events. Covers crowd control, health and safety, and dealing with emergencies.",
     curriculum: [
@@ -625,7 +625,7 @@ export const COURSES: Record<string, Course> = {
     students: 60,
     badge: "MANAGEMENT",
     badgeColor: "#2A4365",
-    image: "/images/courses/security/spectator-safety-level-4.png",
+    image: "/images/courses/security/spectator-safety-level-4.webp",
     overview:
       "A qualification for Safety Officers and Senior Stewards. Focuses on planning and management of spectator safety at events.",
     curriculum: [
@@ -646,7 +646,7 @@ export const COURSES: Record<string, Course> = {
     students: 500,
     badge: "SECURITY",
     badgeColor: "#2A4365",
-    image: "/images/courses/security/event-security-level-2.png",
+    image: "/images/courses/security/event-security-level-2.webp",
     overview:
       "Specific training for security operatives working at events and festivals. Covers searching, patrolling, and controlling entry/exit.",
     curriculum: [
@@ -669,7 +669,7 @@ export const COURSES: Record<string, Course> = {
     students: 560,
     badge: "LEADERSHIP",
     badgeColor: "#D69E2E",
-    image: "/images/courses/business/team-leading-cert.png",
+    image: "/images/courses/business/team-leading-cert.webp",
     overview:
       "Ideal for new or aspiring team leaders. Develops the skills needed to lead a team effectively, including communication and coaching.",
     curriculum: [

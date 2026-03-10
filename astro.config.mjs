@@ -14,6 +14,21 @@ export default defineConfig({
   },
   integrations: [
     sitemap(),
-    robotsTxt(),
+    robotsTxt({
+      policy: [
+        { userAgent: '*', allow: '/' },
+        { userAgent: 'GPTBot', allow: '/' },
+        { userAgent: 'ChatGPT-User', allow: '/' },
+        { userAgent: 'OAI-SearchBot', allow: '/' },
+        { userAgent: 'ClaudeBot', allow: '/' },
+        { userAgent: 'Claude-Web', allow: '/' },
+        { userAgent: 'Claude-SearchBot', allow: '/' },
+        { userAgent: 'PerplexityBot', allow: '/' },
+        { userAgent: 'Perplexity-User', allow: '/' },
+        { userAgent: 'Google-Extended', allow: '/' },
+        { userAgent: 'Googlebot', allow: '/' },
+        { userAgent: 'Bingbot', allow: '/' },
+      ],
+    }),
   ],
 });

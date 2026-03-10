@@ -8,12 +8,12 @@ import WebSiteSchema from '../components/schemas/WebSiteSchema.astro';
 import { siteConfig } from '../data/site-config';
 
 const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }> = {
-  'health-social-care': { thumbnail: '/images/courses/health-social/hs-thumb.png', thumbnailAlt: 'Care worker supporting elderly resident in UK care home' },
-  'accounting': { thumbnail: '/images/courses/accounting/acc-thumb.png', thumbnailAlt: 'Student studying AAT accounting course with financial documents' },
-  'occupational-studies': { thumbnail: '/images/courses/occupational/occ-thumb.png', thumbnailAlt: 'Professional completing workplace skills training online' },
-  'functional-skills': { thumbnail: '/images/courses/functional-skills/func-thumb.png', thumbnailAlt: 'Adult learner studying Functional Skills Maths on tablet device' },
-  'security-stewarding': { thumbnail: '/images/courses/security/sec-thumb.png', thumbnailAlt: 'Door supervisor in high-visibility vest at venue entrance' },
-  'business-management': { thumbnail: '/images/courses/business/bus-thumb.png', thumbnailAlt: 'Team leader facilitating a workplace meeting with colleagues' },
+  'health-social-care': { thumbnail: '/images/courses/health-social/hs-thumb.webp', thumbnailAlt: 'Care worker supporting elderly resident in UK care home' },
+  'accounting': { thumbnail: '/images/courses/accounting/acc-thumb.webp', thumbnailAlt: 'Student studying AAT accounting course with financial documents' },
+  'occupational-studies': { thumbnail: '/images/courses/occupational/occ-thumb.webp', thumbnailAlt: 'Professional completing workplace skills training online' },
+  'functional-skills': { thumbnail: '/images/courses/functional-skills/func-thumb.webp', thumbnailAlt: 'Adult learner studying Functional Skills Maths on tablet device' },
+  'security-stewarding': { thumbnail: '/images/courses/security/sec-thumb.webp', thumbnailAlt: 'Door supervisor in high-visibility vest at venue entrance' },
+  'business-management': { thumbnail: '/images/courses/business/bus-thumb.webp', thumbnailAlt: 'Team leader facilitating a workplace meeting with colleagues' },
 };
 
 const coursePricing: Record<string, string> = {
@@ -97,7 +97,7 @@ const employers = [
         <!-- Mobile hero image -->
         <div class="relative rounded-2xl overflow-hidden shadow-lg -mx-1">
           <img
-            src="/images/hero-banner.png"
+            src="/images/hero-banner.webp"
             alt="Adult learner studying accredited online course on laptop at home"
             width="800"
             height="400"
@@ -201,7 +201,7 @@ const employers = [
         <div class="relative">
           <div class="relative rounded-2xl overflow-hidden shadow-2xl">
             <img
-              src="/images/hero-banner.png"
+              src="/images/hero-banner.webp"
               alt="Adult learner studying accredited online course on laptop at home"
               width="800"
               height="600"
@@ -292,7 +292,7 @@ const employers = [
               {/* Image */}
               <div class="relative h-44 overflow-hidden">
                 <img
-                  src={images?.thumbnail || '/images/hero-banner.png'}
+                  src={images?.thumbnail || '/images/hero-banner.webp'}
                   alt={images?.thumbnailAlt || service.name}
                   width="600"
                   height="400"

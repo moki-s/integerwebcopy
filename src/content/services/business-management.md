@@ -7,7 +7,7 @@ heroHeading: "Lead Your Team with Confidence"
 heroSubheading: "Our RQF-accredited Team Leading qualification builds the practical leadership, communication, and management skills that organisations need from their front-line leaders. Designed for new and aspiring team leaders who want to formalise their experience with a recognised credential."
 shortDescription: "Develop leadership and management skills with our accredited Team Leading qualification."
 longDescription: "Our Business and Management course is designed for aspiring and current team leaders who want to develop their leadership capabilities. The Team Leading qualification provides practical skills in communication, motivation, performance management, and organisational planning."
-thumbnail: "/images/courses/business/bus-thumb.png"
+thumbnail: "/images/courses/business/bus-thumb.webp"
 thumbnailAlt: "Team leader facilitating a workplace meeting with colleagues"
 courses:
   - name: "Team Leading Certificate"
@@ -15,7 +15,7 @@ courses:
     duration: "8-12 weeks"
     price: "From £449"
     accreditor: "NCFE"
-    image: "/images/courses/business/team-leading-cert.png"
+    image: "/images/courses/business/team-leading-cert.webp"
     description: "Develop essential team leadership skills including communication, motivation, delegation, conflict resolution, and performance management."
 benefits:
   - "Practical leadership skills applicable immediately in your role"
