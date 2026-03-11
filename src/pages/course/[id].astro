@@ -143,15 +143,17 @@ const courseSchema = {
   <Breadcrumb items={breadcrumbs} />
 
   <!-- Top Promo Banner (LearnDirect-style) -->
-  <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-center gap-3 text-sm">
-      <svg class="w-5 h-5 text-accent-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-      <span><strong>Flexible Payment Options</strong> &mdash; Enrol today from just &pound;{course.monthlyPrice}/month interest-free</span>
-      <a href="#sidebar-pricing" class="hidden sm:inline-flex items-center bg-accent-500 text-neutral-900 font-bold px-3 py-1 rounded-lg text-xs hover:bg-accent-400 transition-colors">
-        ENROL NOW
-      </a>
+  {!course.isEnquiryOnly && (
+    <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-center gap-3 text-sm">
+        <svg class="w-5 h-5 text-accent-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <span><strong>Flexible Payment Options</strong> &mdash; &pound;50 deposit + &pound;{course.monthlyPrice}/mo &times; 12 months interest-free</span>
+        <a href="#sidebar-pricing" class="hidden sm:inline-flex items-center bg-accent-500 text-neutral-900 font-bold px-3 py-1 rounded-lg text-xs hover:bg-accent-400 transition-colors">
+          ENROL NOW
+        </a>
+      </div>
     </div>
-  </div>
+  )}
 
   <!-- Hero Section with salary hook -->
   <section class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-12 lg:py-16">
@@ -585,70 +587,86 @@ const courseSchema = {
 
               <!-- Pricing -->
               <div id="sidebar-pricing" class="p-6">
-                <!-- Payment toggle -->
-                <div class="flex bg-neutral-100 rounded-xl p-1 mb-6">
-                  <button
-                    class="payment-toggle flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-white shadow-sm text-neutral-900"
-                    data-mode="full"
-                  >
-                    Pay in Full
-                  </button>
-                  {course.monthlyPrice > 0 && (
-                    <button
-                      class="payment-toggle flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-neutral-500"
-                      data-mode="monthly"
+                {course.isEnquiryOnly ? (
+                  <!-- Enquiry-only course: no pricing, just CTA -->
+                  <div class="text-center">
+                    <p class="text-neutral-600 text-sm mb-4">Contact us for pricing and availability</p>
+                    <a
+                      href="#enquiry-section"
+                      class="block w-full text-center bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold py-4 rounded-xl shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-base"
                     >
-                      Monthly
-                    </button>
-                  )}
-                </div>
-
-                <!-- Full Price -->
-                <div id="price-full" class="text-center">
-                  <div class="text-sm text-neutral-400 line-through mb-1">Was &pound;{course.oldPrice}</div>
-                  <div class="text-4xl font-bold text-neutral-900 mb-1">Now &pound;{course.price}</div>
-                  <div class="text-xs text-neutral-600 mb-4">Inc. VAT &middot; One-time payment</div>
-                </div>
-
-                <!-- Monthly Price -->
-                {course.monthlyPrice > 0 && (
-                  <div id="price-monthly" class="text-center hidden">
-                    {course.oldMonthlyPrice > 0 && (
-                      <div class="text-sm text-neutral-400 line-through mb-1">Was &pound;{course.oldMonthlyPrice}/mo</div>
-                    )}
-                    <div class="text-4xl font-bold text-neutral-900 mb-1">&pound;{course.monthlyPrice}<span class="text-lg text-neutral-500 font-normal">/month</span></div>
-                    <div class="text-xs text-neutral-500 mb-2">10 monthly interest-free payments</div>
-                    <div class="inline-block bg-teal-50 border border-teal-200 rounded-lg px-3 py-1 text-xs text-teal-700 font-semibold mb-4">
-                      0% APR &middot; Interest-free
-                    </div>
+                      Enquire Now
+                    </a>
                   </div>
+                ) : (
+                  <!-- Priced course: payment toggle + cart -->
+                  <>
+                    <!-- Payment toggle -->
+                    <div class="flex bg-neutral-100 rounded-xl p-1 mb-6">
+                      <button
+                        class="payment-toggle flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-white shadow-sm text-neutral-900"
+                        data-mode="full"
+                      >
+                        Pay in Full
+                      </button>
+                      {course.monthlyPrice > 0 && (
+                        <button
+                          class="payment-toggle flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-neutral-500"
+                          data-mode="monthly"
+                        >
+                          Monthly
+                        </button>
+                      )}
+                    </div>
+
+                    <!-- Full Price -->
+                    <div id="price-full" class="text-center">
+                      <div class="text-sm text-neutral-400 line-through mb-1">Was &pound;{course.oldPrice}</div>
+                      <div class="text-4xl font-bold text-neutral-900 mb-1">Now &pound;{course.price}</div>
+                      <div class="text-xs text-neutral-600 mb-4">Inc. VAT &middot; One-time payment</div>
+                    </div>
+
+                    <!-- Monthly Price -->
+                    {course.monthlyPrice > 0 && (
+                      <div id="price-monthly" class="text-center hidden">
+                        {course.oldMonthlyPrice > 0 && (
+                          <div class="text-sm text-neutral-400 line-through mb-1">Was &pound;{course.oldMonthlyPrice}/mo</div>
+                        )}
+                        <div class="text-4xl font-bold text-neutral-900 mb-1">&pound;{course.monthlyPrice}<span class="text-lg text-neutral-500 font-normal">/month</span></div>
+                        <div class="text-xs text-neutral-500 mb-2">&pound;50 deposit + 12 monthly interest-free payments</div>
+                        <div class="inline-block bg-teal-50 border border-teal-200 rounded-lg px-3 py-1 text-xs text-teal-700 font-semibold mb-4">
+                          0% APR &middot; Interest-free
+                        </div>
+                      </div>
+                    )}
+
+                    <!-- Add to Cart -->
+                    <button
+                      id="sidebar-add-to-cart"
+                      class="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold py-4 rounded-xl shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-base"
+                      data-course-id={course.id}
+                      data-course-price={course.price}
+                      data-course-title={course.title}
+                    >
+                      Add to Basket
+                    </button>
+                    <a
+                      id="sidebar-view-cart"
+                      href="/cart"
+                      class="hidden w-full block text-center bg-neutral-100 text-neutral-700 font-bold py-3.5 rounded-xl hover:bg-neutral-200 transition-colors duration-200 text-sm mt-2"
+                    >
+                      In Basket &mdash; View Cart
+                    </a>
+
+                    <!-- Enquire button in sidebar -->
+                    <a
+                      href="#enquiry-section"
+                      class="block w-full text-center bg-neutral-900 text-white font-bold py-3 rounded-xl hover:bg-neutral-800 transition-colors duration-300 text-sm mt-2"
+                    >
+                      Enquire Now
+                    </a>
+                  </>
                 )}
-
-                <!-- Add to Cart -->
-                <button
-                  id="sidebar-add-to-cart"
-                  class="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold py-4 rounded-xl shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-base"
-                  data-course-id={course.id}
-                  data-course-price={course.price}
-                  data-course-title={course.title}
-                >
-                  Add to Basket
-                </button>
-                <a
-                  id="sidebar-view-cart"
-                  href="/cart"
-                  class="hidden w-full block text-center bg-neutral-100 text-neutral-700 font-bold py-3.5 rounded-xl hover:bg-neutral-200 transition-colors duration-200 text-sm mt-2"
-                >
-                  In Basket &mdash; View Cart
-                </a>
-
-                <!-- Enquire button in sidebar -->
-                <a
-                  href="#enquiry-section"
-                  class="block w-full text-center bg-neutral-900 text-white font-bold py-3 rounded-xl hover:bg-neutral-800 transition-colors duration-300 text-sm mt-2"
-                >
-                  Enquire Now
-                </a>
                 <a
                   href="tel:01216909563"
                   class="block w-full text-center text-neutral-700 font-semibold py-2 text-sm mt-1 hover:text-primary-600 transition-colors"
