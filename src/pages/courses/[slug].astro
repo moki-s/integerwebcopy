@@ -37,6 +37,10 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
   'functional-skills': { thumbnail: '/images/courses/functional-skills/func-thumb.webp', thumbnailAlt: 'Adult learner studying Functional Skills Maths on tablet device' },
   'security-stewarding': { thumbnail: '/images/courses/security/sec-thumb.webp', thumbnailAlt: 'Door supervisor in high-visibility vest at venue entrance' },
   'business-management': { thumbnail: '/images/courses/business/bus-thumb.webp', thumbnailAlt: 'Team leader facilitating a workplace meeting with colleagues' },
+  'digital-technology': { thumbnail: '/images/courses/digital-technology/dt-thumb.png', thumbnailAlt: 'Cyber security professional monitoring network security dashboards' },
+  'teaching-qualification': { thumbnail: '/images/courses/teaching/teach-thumb.png', thumbnailAlt: 'Teacher leading a classroom session with adult learners' },
+  'access-to-he': { thumbnail: '/images/courses/access-to-he/access-thumb.png', thumbnailAlt: 'Mature student studying online Access to HE course on laptop' },
+>>>>>>> e823135 (feat: add new category images and enquiry button to category pages)
 };
 ---
 
@@ -158,12 +162,30 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
                 >
                   View Details
                 </a>
+<<<<<<< HEAD
                 <button
                   class="add-to-cart-btn px-4 py-2.5 rounded-xl font-semibold text-sm border border-neutral-200 text-neutral-700 hover:border-primary-200 hover:text-primary-600 transition-all duration-300"
                   data-course-id={course.image?.split('/').pop()?.replace('.webp', '') || ''}
                 >
                   Add to Cart
                 </button>
+=======
+                {course.price.includes('Contact') || course.price.includes('Enquir') ? (
+                  <a
+                    href="/contact"
+                    class="px-4 py-2.5 rounded-xl font-semibold text-sm border border-primary-200 text-primary-600 hover:bg-primary-50 transition-all duration-300"
+                  >
+                    Enquire
+                  </a>
+                ) : (
+                  <button
+                    class="add-to-cart-btn px-4 py-2.5 rounded-xl font-semibold text-sm border border-neutral-200 text-neutral-700 hover:border-primary-200 hover:text-primary-600 transition-all duration-300"
+                    data-course-id={course.image?.split('/').pop()?.replace('.png', '') || ''}
+                  >
+                    Add to Cart
+                  </button>
+                )}
+>>>>>>> e823135 (feat: add new category images and enquiry button to category pages)
               </div>
             </div>
           </div>
