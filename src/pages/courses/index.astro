@@ -16,8 +16,8 @@ const breadcrumbs = [
 ---
 
 <BaseLayout
-  title="All Courses | Browse 30+ Accredited Online Qualifications | Integer Training"
-  description="Browse all 30+ accredited online courses. Filter by category, search by keyword, and sort by price or popularity. Nationally recognised qualifications with tutor support."
+  title="All Courses | Browse 45+ Accredited Online Qualifications | Integer Training"
+  description="Browse all 45+ accredited online courses. Filter by category, search by keyword, and sort by price or popularity. Nationally recognised qualifications with tutor support."
 >
   <Breadcrumb items={breadcrumbs} />
 
@@ -158,8 +158,14 @@ const breadcrumbs = [
                       </span>
                       <div class="flex items-center justify-between pt-3 border-t border-neutral-100">
                         <div>
-                          <span class="text-xs text-neutral-400 line-through">&pound;{course.oldPrice}</span>
-                          <span class="text-lg font-bold text-primary-600 ml-1">&pound;{course.price}</span>
+                          {course.isEnquiryOnly ? (
+                            <span class="text-sm font-semibold text-neutral-600">Contact for pricing</span>
+                          ) : (
+                            <>
+                              <span class="text-xs text-neutral-400 line-through">&pound;{course.oldPrice}</span>
+                              <span class="text-lg font-bold text-primary-600 ml-1">&pound;{course.price}</span>
+                            </>
+                          )}
                         </div>
                         <span class="text-xs text-primary-500 font-semibold">View &rarr;</span>
                       </div>
