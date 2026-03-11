@@ -75,6 +75,27 @@ export const siteConfig = {
         "Develop leadership and management skills with our accredited Team Leading qualification.",
       featured: false,
     },
+    {
+      name: "Digital Technology",
+      slug: "digital-technology",
+      shortDescription:
+        "Industry-recognised cyber security qualifications preparing you for one of the UK's fastest-growing sectors.",
+      featured: false,
+    },
+    {
+      name: "Teaching Qualification",
+      slug: "teaching-qualification",
+      shortDescription:
+        "Accredited teaching, assessing, and SEND qualifications for educators, trainers, and teaching assistants.",
+      featured: false,
+    },
+    {
+      name: "Access To HE",
+      slug: "access-to-he",
+      shortDescription:
+        "Access to Higher Education diplomas and teaching qualifications providing university-entry pathways for adult learners.",
+      featured: false,
+    },
   ],
   locations: [
     {
