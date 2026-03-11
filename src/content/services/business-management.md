@@ -10,10 +10,10 @@ longDescription: "Our Business and Management course is designed for aspiring an
 thumbnail: "/images/courses/business/bus-thumb.webp"
 thumbnailAlt: "Team leader facilitating a workplace meeting with colleagues"
 courses:
-  - name: "Team Leading Certificate"
+  - name: "Certificate in Team Leading Principles (RQF)"
     level: "Level 2"
     duration: "8-12 weeks"
-    price: "From £449"
+    price: "Enquire"
     accreditor: "NCFE"
     image: "/images/courses/business/team-leading-cert.webp"
     description: "Develop essential team leadership skills including communication, motivation, delegation, conflict resolution, and performance management."
