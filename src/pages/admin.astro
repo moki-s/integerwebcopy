@@ -1,0 +1,1030 @@
+---
+export const prerender = false;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin — Integer Training</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg-base: #0c0f14;
+        --bg-raised: #13161d;
+        --bg-surface: #1a1e27;
+        --bg-hover: #22272f;
+        --bg-active: #2a3040;
+        --border: #2a2f3a;
+        --border-subtle: #1f232d;
+        --text-primary: #e8ecf4;
+        --text-secondary: #8b93a8;
+        --text-muted: #5a6278;
+        --accent: #0d9488;
+        --accent-hover: #0f766e;
+        --accent-soft: rgba(13,148,136,0.12);
+        --accent-text: #5eead4;
+        --coral: #f87171;
+        --coral-soft: rgba(248,113,113,0.12);
+        --amber: #fbbf24;
+        --amber-soft: rgba(251,191,36,0.12);
+        --green: #34d399;
+        --green-soft: rgba(52,211,153,0.12);
+        --blue: #60a5fa;
+        --blue-soft: rgba(96,165,250,0.12);
+        --purple: #a78bfa;
+        --purple-soft: rgba(167,139,250,0.12);
+        --radius: 10px;
+        --radius-lg: 14px;
+        --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px var(--border-subtle);
+        --font: 'DM Sans', system-ui, sans-serif;
+        --mono: 'JetBrains Mono', monospace;
+      }
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+      body { font-family: var(--font); background: var(--bg-base); color: var(--text-primary); min-height: 100vh; font-size: 14px; line-height: 1.5; }
+      ::selection { background: var(--accent); color: #fff; }
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+      /* ========== LOGIN ========== */
+      .login-wrap {
+        display: flex; align-items: center; justify-content: center;
+        min-height: 100vh; padding: 1.5rem;
+        background: radial-gradient(ellipse at 50% 0%, rgba(13,148,136,0.08) 0%, transparent 60%), var(--bg-base);
+      }
+      .login-card {
+        background: var(--bg-raised); border: 1px solid var(--border);
+        border-radius: var(--radius-lg); padding: 2.5rem; max-width: 380px; width: 100%;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+      }
+      .login-logo {
+        width: 40px; height: 40px; background: var(--accent); border-radius: 10px;
+        display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;
+        font-weight: 700; color: #fff; font-size: 18px;
+      }
+      .login-card h1 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.25rem; letter-spacing: -0.01em; }
+      .login-card .subtitle { color: var(--text-secondary); font-size: 0.8125rem; margin-bottom: 1.75rem; }
+      .login-card label { display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.375rem; text-transform: uppercase; letter-spacing: 0.05em; }
+      .login-card input {
+        width: 100%; padding: 0.625rem 0.875rem; background: var(--bg-surface); border: 1px solid var(--border);
+        border-radius: var(--radius); color: var(--text-primary); font-size: 0.875rem; font-family: var(--font);
+        outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .login-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+      .login-card input::placeholder { color: var(--text-muted); }
+      .btn-primary {
+        width: 100%; margin-top: 1.25rem; padding: 0.625rem; background: var(--accent); color: #fff;
+        font-weight: 600; border: none; border-radius: var(--radius); font-size: 0.875rem;
+        cursor: pointer; transition: background 0.2s, transform 0.1s; font-family: var(--font);
+      }
+      .btn-primary:hover { background: var(--accent-hover); }
+      .btn-primary:active { transform: scale(0.98); }
+      .login-error { color: var(--coral); font-size: 0.8125rem; margin-top: 0.625rem; display: none; }
+
+      /* ========== LAYOUT ========== */
+      .app { display: none; height: 100vh; }
+      .app.active { display: flex; }
+
+      /* Sidebar */
+      .sidebar {
+        width: 240px; flex-shrink: 0; background: var(--bg-raised);
+        border-right: 1px solid var(--border); display: flex; flex-direction: column;
+        padding: 0; overflow-y: auto;
+      }
+      .sidebar-header {
+        padding: 1.25rem 1.25rem 1rem; border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; gap: 0.75rem;
+      }
+      .sidebar-logo {
+        width: 32px; height: 32px; background: var(--accent); border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; color: #fff; font-size: 14px; flex-shrink: 0;
+      }
+      .sidebar-brand { font-weight: 600; font-size: 0.875rem; letter-spacing: -0.01em; }
+      .sidebar-brand span { display: block; font-size: 0.6875rem; color: var(--text-muted); font-weight: 400; }
+
+      .sidebar-nav { padding: 0.75rem; flex: 1; }
+      .sidebar-section { margin-bottom: 1.5rem; }
+      .sidebar-section-label { font-size: 0.625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); padding: 0 0.75rem; margin-bottom: 0.375rem; }
+
+      .nav-item {
+        display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.75rem;
+        border-radius: var(--radius); color: var(--text-secondary); cursor: pointer;
+        transition: all 0.15s; font-size: 0.8125rem; font-weight: 500; border: none;
+        background: none; width: 100%; text-align: left; font-family: var(--font);
+      }
+      .nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+      .nav-item.active { background: var(--accent-soft); color: var(--accent-text); }
+      .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.7; }
+      .nav-item.active svg { opacity: 1; }
+      .nav-badge {
+        margin-left: auto; background: var(--accent-soft); color: var(--accent-text);
+        font-size: 0.6875rem; font-weight: 600; padding: 0.125rem 0.5rem;
+        border-radius: 2rem; min-width: 22px; text-align: center;
+      }
+
+      .sidebar-footer { padding: 0.75rem; border-top: 1px solid var(--border); }
+
+      /* Main content */
+      .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+      /* Top bar */
+      .topbar {
+        padding: 0.875rem 1.5rem; border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: space-between;
+        background: var(--bg-raised); flex-shrink: 0;
+      }
+      .topbar-title { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.01em; }
+      .topbar-actions { display: flex; gap: 0.5rem; align-items: center; }
+      .btn-ghost {
+        padding: 0.375rem 0.75rem; border-radius: var(--radius); border: 1px solid var(--border);
+        background: var(--bg-surface); color: var(--text-secondary); cursor: pointer;
+        font-size: 0.8125rem; font-weight: 500; transition: all 0.15s; font-family: var(--font);
+        display: flex; align-items: center; gap: 0.375rem;
+      }
+      .btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--text-muted); }
+      .btn-ghost svg { width: 15px; height: 15px; }
+      .btn-danger { color: var(--coral); border-color: rgba(248,113,113,0.2); }
+      .btn-danger:hover { background: var(--coral-soft); color: var(--coral); }
+
+      /* Content area */
+      .content { flex: 1; overflow-y: auto; padding: 1.5rem; }
+
+      /* Page sections */
+      .page { display: none; }
+      .page.active { display: block; }
+
+      /* ========== STATS GRID ========== */
+      .stats-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem; margin-bottom: 1.5rem;
+      }
+      .stat-card {
+        background: var(--bg-raised); border: 1px solid var(--border);
+        border-radius: var(--radius-lg); padding: 1.25rem; position: relative; overflow: hidden;
+      }
+      .stat-card::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      }
+      .stat-card.teal::before { background: var(--accent); }
+      .stat-card.coral::before { background: var(--coral); }
+      .stat-card.amber::before { background: var(--amber); }
+      .stat-card.green::before { background: var(--green); }
+      .stat-card.blue::before { background: var(--blue); }
+      .stat-card.purple::before { background: var(--purple); }
+      .stat-label { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+      .stat-value { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+      .stat-sub { font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.5rem; }
+      .stat-value.teal { color: var(--accent-text); }
+      .stat-value.coral { color: var(--coral); }
+      .stat-value.amber { color: var(--amber); }
+      .stat-value.green { color: var(--green); }
+      .stat-value.blue { color: var(--blue); }
+      .stat-value.purple { color: var(--purple); }
+
+      /* ========== FILTERS ========== */
+      .toolbar {
+        display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;
+      }
+      .pill {
+        padding: 0.3125rem 0.75rem; border-radius: 2rem; border: 1px solid var(--border);
+        background: var(--bg-raised); color: var(--text-secondary); cursor: pointer;
+        font-size: 0.75rem; font-weight: 500; transition: all 0.15s; font-family: var(--font);
+      }
+      .pill:hover { background: var(--bg-hover); color: var(--text-primary); }
+      .pill.active { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(13,148,136,0.3); }
+      .pill .count { margin-left: 0.25rem; opacity: 0.6; }
+      .search-input {
+        margin-left: auto; padding: 0.375rem 0.75rem; background: var(--bg-surface);
+        border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary);
+        font-size: 0.8125rem; font-family: var(--font); outline: none; width: 220px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+      .search-input::placeholder { color: var(--text-muted); }
+
+      /* ========== TABLE ========== */
+      .table-container {
+        background: var(--bg-raised); border: 1px solid var(--border);
+        border-radius: var(--radius-lg); overflow: hidden;
+      }
+      table { width: 100%; border-collapse: collapse; }
+      thead { background: var(--bg-surface); }
+      th {
+        text-align: left; padding: 0.875rem 1.125rem; font-size: 0.75rem; font-weight: 600;
+        color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+        white-space: nowrap; border-bottom: 1px solid var(--border);
+      }
+      td {
+        padding: 0.875rem 1.125rem; font-size: 0.875rem; border-bottom: 1px solid var(--border-subtle);
+        vertical-align: middle; line-height: 1.5;
+      }
+      tr:last-child td { border-bottom: none; }
+      tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+      tr:hover td { background: var(--bg-hover); }
+      .td-name { font-weight: 600; white-space: nowrap; color: var(--text-primary); font-size: 0.9375rem; }
+      .td-email a { color: var(--accent-text); text-decoration: none; font-size: 0.875rem; }
+      .td-email a:hover { text-decoration: underline; }
+      .td-phone a { color: var(--text-secondary); text-decoration: none; white-space: nowrap; }
+      .td-mono { font-family: var(--mono); font-size: 0.8125rem; color: var(--text-secondary); }
+      .td-message {
+        max-width: 280px; overflow: hidden; text-overflow: ellipsis;
+        white-space: nowrap; color: var(--text-secondary);
+      }
+      .td-message:hover { white-space: normal; word-break: break-word; }
+      .td-page { font-size: 0.8125rem; color: var(--text-muted); white-space: nowrap; }
+      .td-date { white-space: nowrap; color: var(--text-muted); font-size: 0.875rem; }
+      .td-amount { font-family: var(--mono); font-weight: 700; font-size: 1rem; white-space: nowrap; color: var(--green); }
+      .td-courses { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); }
+      .td-courses:hover { white-space: normal; word-break: break-word; }
+
+      /* ========== BADGES ========== */
+      .badge {
+        display: inline-flex; align-items: center; padding: 0.3125rem 0.75rem;
+        border-radius: 2rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.02em;
+        cursor: pointer; transition: opacity 0.15s; text-transform: capitalize;
+      }
+      .badge:hover { opacity: 0.8; }
+      .badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; margin-right: 0.4375rem; flex-shrink: 0; }
+      .badge-new { background: var(--accent-soft); color: var(--accent-text); }
+      .badge-new::before { background: var(--accent); }
+      .badge-contacted { background: var(--blue-soft); color: var(--blue); }
+      .badge-contacted::before { background: var(--blue); }
+      .badge-enrolled { background: var(--green-soft); color: var(--green); }
+      .badge-enrolled::before { background: var(--green); }
+      .badge-closed { background: rgba(90,98,120,0.15); color: var(--text-muted); }
+      .badge-closed::before { background: var(--text-muted); }
+      .badge-pending { background: var(--amber-soft); color: var(--amber); }
+      .badge-pending::before { background: var(--amber); }
+      .badge-paid { background: var(--green-soft); color: var(--green); }
+      .badge-paid::before { background: var(--green); }
+      .badge-fulfilled { background: var(--accent-soft); color: var(--accent-text); }
+      .badge-fulfilled::before { background: var(--accent); }
+      .badge-refunded { background: var(--coral-soft); color: var(--coral); }
+      .badge-refunded::before { background: var(--coral); }
+      .badge-cancelled { background: rgba(90,98,120,0.15); color: var(--text-muted); }
+      .badge-cancelled::before { background: var(--text-muted); }
+      .badge-subscription_active { background: var(--purple-soft); color: var(--purple); }
+      .badge-subscription_active::before { background: var(--purple); }
+      .badge-one_time { background: var(--accent-soft); color: var(--accent-text); }
+      .badge-one_time::before { background: var(--accent); }
+      .badge-subscription, .badge-monthly { background: var(--purple-soft); color: var(--purple); }
+      .badge-subscription::before, .badge-monthly::before { background: var(--purple); }
+
+      /* ========== DROPDOWN ========== */
+      .status-cell { position: relative; }
+      .status-dropdown {
+        display: none; position: absolute; top: calc(100% + 4px); left: 0;
+        background: var(--bg-surface); border: 1px solid var(--border);
+        border-radius: var(--radius); box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        z-index: 50; min-width: 140px; padding: 0.25rem; overflow: hidden;
+      }
+      .status-dropdown.open { display: block; }
+      .status-option {
+        padding: 0.4375rem 0.75rem; font-size: 0.8125rem; cursor: pointer;
+        transition: background 0.1s; border-radius: 6px; color: var(--text-secondary);
+      }
+      .status-option:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+      /* ========== EMPTY / LOADING ========== */
+      .loading-state { text-align: center; padding: 3rem; color: var(--text-muted); }
+      .spinner {
+        display: inline-block; width: 24px; height: 24px; border: 2.5px solid var(--border);
+        border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
+      .empty-icon { font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.4; }
+
+      /* ========== DETAIL DRAWER ========== */
+      .drawer-overlay {
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        z-index: 100; backdrop-filter: blur(2px);
+      }
+      .drawer-overlay.open { display: block; }
+      .drawer {
+        position: fixed; top: 0; right: -460px; bottom: 0; width: 460px;
+        background: var(--bg-raised); border-left: 1px solid var(--border);
+        z-index: 101; overflow-y: auto; transition: right 0.25s ease;
+        box-shadow: -8px 0 40px rgba(0,0,0,0.3);
+      }
+      .drawer.open { right: 0; }
+      .drawer-header {
+        padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: space-between;
+        position: sticky; top: 0; background: var(--bg-raised); z-index: 1;
+      }
+      .drawer-header h2 { font-size: 1rem; font-weight: 600; }
+      .drawer-close {
+        width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+        border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg-surface);
+        color: var(--text-secondary); cursor: pointer; transition: all 0.15s;
+      }
+      .drawer-close:hover { background: var(--bg-hover); color: var(--text-primary); }
+      .drawer-body { padding: 1.5rem; }
+      .detail-group { margin-bottom: 1.5rem; }
+      .detail-group-title { font-size: 0.6875rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+      .detail-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle); }
+      .detail-row:last-child { border-bottom: none; }
+      .detail-label { color: var(--text-muted); font-size: 0.8125rem; }
+      .detail-value { color: var(--text-primary); font-size: 0.8125rem; font-weight: 500; text-align: right; max-width: 60%; word-break: break-word; }
+      .detail-value a { color: var(--accent-text); text-decoration: none; }
+      .detail-value a:hover { text-decoration: underline; }
+      .detail-message { margin-top: 0.75rem; padding: 1rem; background: var(--bg-surface); border-radius: var(--radius); color: var(--text-secondary); font-size: 0.8125rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+
+      /* ========== RESPONSIVE ========== */
+      @media (max-width: 768px) {
+        .sidebar { display: none; }
+        .mobile-nav { display: flex !important; }
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .search-input { width: 100%; margin-left: 0; margin-top: 0.5rem; }
+        .toolbar { flex-direction: column; align-items: stretch; }
+        .drawer { width: 100%; right: -100%; }
+      }
+      .mobile-nav {
+        display: none; background: var(--bg-raised); border-bottom: 1px solid var(--border);
+        padding: 0.5rem; gap: 0.25rem; overflow-x: auto;
+      }
+      .mobile-nav .nav-item { white-space: nowrap; justify-content: center; font-size: 0.75rem; padding: 0.5rem 0.75rem; }
+    </style>
+  </head>
+  <body>
+
+    <!-- ==================== LOGIN ==================== -->
+    <div id="login-screen" class="login-wrap">
+      <div class="login-card">
+        <div class="login-logo">IT</div>
+        <h1>Admin Dashboard</h1>
+        <p class="subtitle">Sign in to manage enquiries, orders, and more.</p>
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Enter admin password" autocomplete="current-password" />
+        <div id="login-error" class="login-error">Incorrect password. Please try again.</div>
+        <button class="btn-primary" id="login-btn">Sign In</button>
+      </div>
+    </div>
+
+    <!-- ==================== APP ==================== -->
+    <div id="app" class="app">
+
+      <!-- Mobile nav -->
+      <div class="mobile-nav" id="mobile-nav">
+        <button class="nav-item active" data-page="overview" onclick="switchPage('overview')">Overview</button>
+        <button class="nav-item" data-page="enquiries" onclick="switchPage('enquiries')">Enquiries</button>
+        <button class="nav-item" data-page="orders" onclick="switchPage('orders')">Orders</button>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">IT</div>
+          <div class="sidebar-brand">Integer Training <span>Admin Dashboard</span></div>
+        </div>
+        <nav class="sidebar-nav">
+          <div class="sidebar-section">
+            <div class="sidebar-section-label">Dashboard</div>
+            <button class="nav-item active" data-page="overview" onclick="switchPage('overview')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zm-10 9a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zm10-2a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1v-5z"/></svg>
+              Overview
+            </button>
+          </div>
+          <div class="sidebar-section">
+            <div class="sidebar-section-label">Data</div>
+            <button class="nav-item" data-page="enquiries" onclick="switchPage('enquiries')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+              Enquiries
+              <span class="nav-badge" id="sidebar-enq-count">0</span>
+            </button>
+            <button class="nav-item" data-page="orders" onclick="switchPage('orders')">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+              Orders
+              <span class="nav-badge" id="sidebar-ord-count">0</span>
+            </button>
+          </div>
+        </nav>
+        <div class="sidebar-footer">
+          <button class="nav-item" id="logout-btn" style="color:var(--coral);">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <div class="main">
+        <div class="topbar">
+          <div class="topbar-title" id="page-title">Overview</div>
+          <div class="topbar-actions">
+            <button class="btn-ghost" id="refresh-btn">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              Refresh
+            </button>
+            <button class="btn-ghost" id="export-btn">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              Export CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="content">
+
+          <!-- ===== OVERVIEW PAGE ===== -->
+          <div class="page active" id="page-overview">
+            <div class="stats-grid" id="overview-stats"></div>
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:0.75rem;color:var(--text-primary);display:flex;align-items:center;gap:0.5rem;">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="opacity:0.5;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+              Recent Enquiries
+            </h3>
+            <div class="table-container" id="overview-enquiries-wrap">
+              <div class="loading-state" id="overview-loading"><div class="spinner"></div></div>
+            </div>
+            <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.75rem;color:var(--text-primary);display:flex;align-items:center;gap:0.5rem;">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="opacity:0.5;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+              Recent Orders
+            </h3>
+            <div class="table-container" id="overview-orders-wrap">
+              <div class="loading-state"><div class="spinner"></div></div>
+            </div>
+          </div>
+
+          <!-- ===== ENQUIRIES PAGE ===== -->
+          <div class="page" id="page-enquiries">
+            <div class="stats-grid" id="enquiry-stats"></div>
+            <div class="toolbar" id="enquiry-toolbar">
+              <button class="pill active" data-filter="all" data-target="enquiry">All</button>
+              <button class="pill" data-filter="new" data-target="enquiry">New</button>
+              <button class="pill" data-filter="contacted" data-target="enquiry">Contacted</button>
+              <button class="pill" data-filter="enrolled" data-target="enquiry">Enrolled</button>
+              <button class="pill" data-filter="closed" data-target="enquiry">Closed</button>
+              <input type="text" class="search-input" id="enquiry-search" placeholder="Search name, email, course..." />
+            </div>
+            <div class="table-container">
+              <div class="loading-state" id="enquiry-loading"><div class="spinner"></div></div>
+              <div class="empty-state" id="enquiry-empty" style="display:none;"><div class="empty-icon">&#x1f4ed;</div>No enquiries found.</div>
+              <table id="enquiry-table" style="display:none;">
+                <thead><tr>
+                  <th>Status</th><th>Name</th><th>Email</th><th>Phone</th><th>Course Interest</th><th>Message</th><th>Source</th><th>Date</th>
+                </tr></thead>
+                <tbody id="enquiry-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ===== ORDERS PAGE ===== -->
+          <div class="page" id="page-orders">
+            <div class="stats-grid" id="order-stats"></div>
+            <div class="toolbar" id="order-toolbar">
+              <button class="pill active" data-filter="all" data-target="order">All</button>
+              <button class="pill" data-filter="pending" data-target="order">Pending</button>
+              <button class="pill" data-filter="paid" data-target="order">Paid</button>
+              <button class="pill" data-filter="fulfilled" data-target="order">Fulfilled</button>
+              <button class="pill" data-filter="refunded" data-target="order">Refunded</button>
+              <input type="text" class="search-input" id="order-search" placeholder="Search order, name, email..." />
+            </div>
+            <div class="table-container">
+              <div class="loading-state" id="order-loading"><div class="spinner"></div></div>
+              <div class="empty-state" id="order-empty" style="display:none;"><div class="empty-icon">&#x1f4e6;</div>No orders found.</div>
+              <table id="order-table" style="display:none;">
+                <thead><tr>
+                  <th>Status</th><th>Order #</th><th>Customer</th><th>Email</th><th>Phone</th><th>Courses</th><th>Type</th><th>Amount</th><th>Date</th>
+                </tr></thead>
+                <tbody id="order-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DETAIL DRAWER ===== -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+    <div class="drawer" id="drawer">
+      <div class="drawer-header">
+        <h2 id="drawer-title">Details</h2>
+        <button class="drawer-close" id="drawer-close">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="drawer-body" id="drawer-body"></div>
+    </div>
+
+    <!-- ==================== SCRIPT ==================== -->
+    <script is:inline>
+      let enquiries = [];
+      let orders = [];
+      let enqFilter = 'all';
+      let ordFilter = 'all';
+      let enqSearch = '';
+      let ordSearch = '';
+      let password = '';
+      let currentPage = 'overview';
+
+      // Elements
+      const $ = (id) => document.getElementById(id);
+      const loginScreen = $('login-screen');
+      const app = $('app');
+      const loginBtn = $('login-btn');
+      const loginPw = $('login-password');
+      const loginErr = $('login-error');
+
+      // Session restore
+      const saved = sessionStorage.getItem('admin_pw');
+      if (saved) { password = saved; showApp(); }
+
+      loginBtn.addEventListener('click', tryLogin);
+      loginPw.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryLogin(); });
+
+      async function tryLogin() {
+        const pw = loginPw.value.trim();
+        if (!pw) return;
+        password = pw;
+        loginBtn.textContent = 'Signing in...';
+        loginBtn.disabled = true;
+        try {
+          const res = await fetch('/api/admin/enquiries', { headers: { 'x-admin-password': pw } });
+          if (res.status === 401) {
+            loginErr.style.display = 'block';
+            password = '';
+            loginBtn.textContent = 'Sign In';
+            loginBtn.disabled = false;
+            return;
+          }
+          sessionStorage.setItem('admin_pw', pw);
+          enquiries = (await res.json()).map(normalizeEnquiry);
+          showApp();
+          loadOrders();
+        } catch {
+          loginErr.textContent = 'Connection error.';
+          loginErr.style.display = 'block';
+          loginBtn.textContent = 'Sign In';
+          loginBtn.disabled = false;
+        }
+      }
+
+      function showApp() {
+        loginScreen.style.display = 'none';
+        app.classList.add('active');
+        if (!enquiries.length && !orders.length) loadAll();
+        else renderAll();
+      }
+
+      // Logout
+      $('logout-btn').addEventListener('click', () => {
+        sessionStorage.removeItem('admin_pw');
+        password = ''; enquiries = []; orders = [];
+        app.classList.remove('active');
+        loginScreen.style.display = 'flex';
+        loginPw.value = ''; loginErr.style.display = 'none';
+        loginBtn.textContent = 'Sign In'; loginBtn.disabled = false;
+      });
+
+      // Refresh
+      $('refresh-btn').addEventListener('click', loadAll);
+
+      // Export
+      $('export-btn').addEventListener('click', () => {
+        if (currentPage === 'orders') exportOrders();
+        else exportEnquiries();
+      });
+
+      // Navigation
+      function switchPage(page) {
+        currentPage = page;
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        $('page-' + page).classList.add('active');
+        document.querySelectorAll('.nav-item[data-page]').forEach(b => {
+          b.classList.toggle('active', b.dataset.page === page);
+        });
+        const titles = { overview: 'Overview', enquiries: 'Enquiries', orders: 'Orders & Payments' };
+        $('page-title').textContent = titles[page] || page;
+      }
+
+      // Data loading
+      async function loadAll() {
+        loadEnquiries();
+        loadOrders();
+      }
+
+      async function loadEnquiries() {
+        showLoading('enquiry');
+        try {
+          const res = await fetch('/api/admin/enquiries', { headers: { 'x-admin-password': password } });
+          if (res.status === 401) { $('logout-btn').click(); return; }
+          enquiries = (await res.json()).map(normalizeEnquiry);
+          renderAll();
+        } catch { showError('enquiry'); }
+      }
+
+      async function loadOrders() {
+        showLoading('order');
+        try {
+          const res = await fetch('/api/admin/orders', { headers: { 'x-admin-password': password } });
+          if (res.ok) {
+            orders = (await res.json()).map(normalizeOrder);
+            renderAll();
+          }
+        } catch { showError('order'); }
+      }
+
+      function showLoading(prefix) {
+        const el = $(prefix + '-loading');
+        if (el) { el.style.display = 'block'; el.innerHTML = '<div class="spinner"></div>'; }
+        const tbl = $(prefix + '-table');
+        if (tbl) tbl.style.display = 'none';
+        const empty = $(prefix + '-empty');
+        if (empty) empty.style.display = 'none';
+      }
+
+      function showError(prefix) {
+        const el = $(prefix + '-loading');
+        if (el) el.innerHTML = '<p style="color:var(--coral);">Failed to load data.</p>';
+      }
+
+      // ==================== RENDERING ====================
+
+      function renderAll() {
+        renderOverview();
+        renderEnquiries();
+        renderOrders();
+        // Sidebar badges
+        const newEnq = enquiries.filter(e => e.status === 'new').length;
+        $('sidebar-enq-count').textContent = newEnq || enquiries.length;
+        $('sidebar-ord-count').textContent = orders.length;
+      }
+
+      function renderOverview() {
+        const newEnq = enquiries.filter(e => e.status === 'new').length;
+        const totalRevenue = orders.filter(o => o.status === 'paid' || o.status === 'fulfilled').reduce((s, o) => s + parseFloat(o.total || 0), 0);
+        const paidOrders = orders.filter(o => o.status === 'paid' || o.status === 'fulfilled').length;
+        const thisMonth = new Date(); thisMonth.setDate(1); thisMonth.setHours(0,0,0,0);
+        const monthEnq = enquiries.filter(e => new Date(e.created_at) >= thisMonth).length;
+        const monthOrders = orders.filter(o => new Date(o.created_at) >= thisMonth).length;
+        const monthRevenue = orders.filter(o => (o.status === 'paid' || o.status === 'fulfilled') && new Date(o.created_at) >= thisMonth).reduce((s, o) => s + parseFloat(o.total || 0), 0);
+
+        $('overview-stats').innerHTML = `
+          <div class="stat-card teal">
+            <div class="stat-label">New Enquiries</div>
+            <div class="stat-value teal">${newEnq}</div>
+            <div class="stat-sub">${enquiries.length} total</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value green">&pound;${totalRevenue.toLocaleString('en-GB', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+            <div class="stat-sub">${paidOrders} paid orders</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-label">This Month Enquiries</div>
+            <div class="stat-value blue">${monthEnq}</div>
+            <div class="stat-sub">Since ${thisMonth.toLocaleDateString('en-GB',{month:'short',day:'numeric'})}</div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-label">This Month Revenue</div>
+            <div class="stat-value amber">&pound;${monthRevenue.toLocaleString('en-GB',{minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+            <div class="stat-sub">${monthOrders} orders</div>
+          </div>
+        `;
+
+        // Recent enquiries (last 5)
+        const recent5enq = enquiries.slice(0, 5);
+        $('overview-enquiries-wrap').innerHTML = recent5enq.length ? `
+          <table><thead><tr><th>Status</th><th>Name</th><th>Email</th><th>Course</th><th>Date</th></tr></thead>
+          <tbody>${recent5enq.map(e => `
+            <tr style="cursor:pointer;" onclick="openEnquiryDrawer(${e.id})">
+              <td><span class="badge badge-${e.status}">${e.status}</span></td>
+              <td class="td-name">${esc(e.name)}</td>
+              <td class="td-email"><a href="mailto:${esc(e.email)}">${esc(e.email)}</a></td>
+              <td>${esc(e.course_interest) || '<span style="color:var(--text-muted);">\u2014</span>'}</td>
+              <td class="td-date">${fmtDate(e.created_at)}</td>
+            </tr>`).join('')}
+          </tbody></table>
+        ` : '<div class="empty-state">No enquiries yet.</div>';
+
+        // Recent orders (last 5)
+        const recent5ord = orders.slice(0, 5);
+        $('overview-orders-wrap').innerHTML = recent5ord.length ? `
+          <table><thead><tr><th>Status</th><th>Order #</th><th>Customer</th><th>Amount</th><th>Date</th></tr></thead>
+          <tbody>${recent5ord.map(o => `
+            <tr style="cursor:pointer;" onclick="openOrderDrawer(${o.id})">
+              <td><span class="badge badge-${o.status}">${o.status}</span></td>
+              <td class="td-mono">${esc(o.order_number)}</td>
+              <td class="td-name">${esc(o.customer_name)}</td>
+              <td class="td-amount">&pound;${parseFloat(o.total||0).toFixed(2)}</td>
+              <td class="td-date">${fmtDate(o.created_at)}</td>
+            </tr>`).join('')}
+          </tbody></table>
+        ` : '<div class="empty-state">No orders yet.</div>';
+      }
+
+      function renderEnquiries() {
+        const counts = { new: 0, contacted: 0, enrolled: 0, closed: 0 };
+        enquiries.forEach(e => { if (counts[e.status] !== undefined) counts[e.status]++; });
+
+        $('enquiry-stats').innerHTML = `
+          <div class="stat-card teal"><div class="stat-label">New</div><div class="stat-value teal">${counts.new}</div></div>
+          <div class="stat-card blue"><div class="stat-label">Contacted</div><div class="stat-value blue">${counts.contacted}</div></div>
+          <div class="stat-card green"><div class="stat-label">Enrolled</div><div class="stat-value green">${counts.enrolled}</div></div>
+          <div class="stat-card"><div class="stat-label">Closed</div><div class="stat-value" style="color:var(--text-muted);">${counts.closed}</div></div>
+        `;
+
+        // Update pill counts
+        document.querySelectorAll('[data-target="enquiry"].pill').forEach(p => {
+          const f = p.dataset.filter;
+          const c = f === 'all' ? enquiries.length : counts[f] || 0;
+          const existing = p.querySelector('.count');
+          if (existing) existing.textContent = c;
+          else p.innerHTML += ` <span class="count">${c}</span>`;
+        });
+
+        let filtered = enqFilter === 'all' ? enquiries : enquiries.filter(e => e.status === enqFilter);
+        if (enqSearch) {
+          const q = enqSearch.toLowerCase();
+          filtered = filtered.filter(e =>
+            (e.name||'').toLowerCase().includes(q) ||
+            (e.email||'').toLowerCase().includes(q) ||
+            (e.course_interest||'').toLowerCase().includes(q) ||
+            (e.message||'').toLowerCase().includes(q)
+          );
+        }
+
+        $('enquiry-loading').style.display = 'none';
+        if (!filtered.length) {
+          $('enquiry-table').style.display = 'none';
+          $('enquiry-empty').style.display = 'block';
+          return;
+        }
+        $('enquiry-empty').style.display = 'none';
+        $('enquiry-table').style.display = 'table';
+
+        $('enquiry-body').innerHTML = filtered.map(e => `
+          <tr style="cursor:pointer;" onclick="openEnquiryDrawer(${e.id})">
+            <td class="status-cell" onclick="event.stopPropagation();">
+              <span class="badge badge-${e.status}" onclick="toggleDrop('enq-${e.id}')">${e.status}</span>
+              <div class="status-dropdown" id="drop-enq-${e.id}">
+                ${['new','contacted','enrolled','closed'].map(s => `<div class="status-option" onclick="updateEnqStatus(${e.id},'${s}')">${s}</div>`).join('')}
+              </div>
+            </td>
+            <td class="td-name">${esc(e.name)}</td>
+            <td class="td-email"><a href="mailto:${esc(e.email)}" onclick="event.stopPropagation();">${esc(e.email)}</a></td>
+            <td class="td-phone">${e.phone ? `<a href="tel:${esc(e.phone)}" onclick="event.stopPropagation();">${esc(e.phone)}</a>` : '<span style="color:var(--text-muted);">\u2014</span>'}</td>
+            <td>${esc(e.course_interest) || '<span style="color:var(--text-muted);">\u2014</span>'}</td>
+            <td class="td-message" title="${esc(e.message||'')}">${esc(e.message) || '<span style="color:var(--text-muted);">\u2014</span>'}</td>
+            <td class="td-page">${esc(e.page) || '\u2014'}</td>
+            <td class="td-date">${fmtDate(e.created_at)}</td>
+          </tr>
+        `).join('');
+      }
+
+      function renderOrders() {
+        const counts = { pending: 0, paid: 0, fulfilled: 0, refunded: 0, cancelled: 0 };
+        let totalRev = 0;
+        orders.forEach(o => {
+          if (counts[o.status] !== undefined) counts[o.status]++;
+          if (o.status === 'paid' || o.status === 'fulfilled') totalRev += parseFloat(o.total || 0);
+        });
+
+        $('order-stats').innerHTML = `
+          <div class="stat-card green"><div class="stat-label">Paid</div><div class="stat-value green">${counts.paid}</div></div>
+          <div class="stat-card teal"><div class="stat-label">Fulfilled</div><div class="stat-value teal">${counts.fulfilled}</div></div>
+          <div class="stat-card amber"><div class="stat-label">Pending</div><div class="stat-value amber">${counts.pending}</div></div>
+          <div class="stat-card coral"><div class="stat-label">Refunded</div><div class="stat-value coral">${counts.refunded}</div></div>
+          <div class="stat-card green"><div class="stat-label">Total Revenue</div><div class="stat-value green">&pound;${totalRev.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2})}</div></div>
+        `;
+
+        document.querySelectorAll('[data-target="order"].pill').forEach(p => {
+          const f = p.dataset.filter;
+          const c = f === 'all' ? orders.length : counts[f] || 0;
+          const existing = p.querySelector('.count');
+          if (existing) existing.textContent = c;
+          else p.innerHTML += ` <span class="count">${c}</span>`;
+        });
+
+        let filtered = ordFilter === 'all' ? orders : orders.filter(o => o.status === ordFilter);
+        if (ordSearch) {
+          const q = ordSearch.toLowerCase();
+          filtered = filtered.filter(o =>
+            (o.order_number||'').toLowerCase().includes(q) ||
+            (o.customer_name||'').toLowerCase().includes(q) ||
+            (o.customer_email||'').toLowerCase().includes(q) ||
+            (o.courses||'').toLowerCase().includes(q)
+          );
+        }
+
+        $('order-loading').style.display = 'none';
+        if (!filtered.length) {
+          $('order-table').style.display = 'none';
+          $('order-empty').style.display = 'block';
+          return;
+        }
+        $('order-empty').style.display = 'none';
+        $('order-table').style.display = 'table';
+
+        $('order-body').innerHTML = filtered.map(o => `
+          <tr style="cursor:pointer;" onclick="openOrderDrawer(${o.id})">
+            <td class="status-cell" onclick="event.stopPropagation();">
+              <span class="badge badge-${o.status}" onclick="toggleDrop('ord-${o.id}')">${o.status}</span>
+              <div class="status-dropdown" id="drop-ord-${o.id}">
+                ${['pending','paid','fulfilled','refunded','cancelled'].map(s => `<div class="status-option" onclick="updateOrdStatus(${o.id},'${s}')">${s}</div>`).join('')}
+              </div>
+            </td>
+            <td class="td-mono">${esc(o.order_number)}</td>
+            <td class="td-name">${esc(o.customer_name)}</td>
+            <td class="td-email"><a href="mailto:${esc(o.customer_email)}" onclick="event.stopPropagation();">${esc(o.customer_email)}</a></td>
+            <td class="td-phone">${o.customer_phone ? `<a href="tel:${esc(o.customer_phone)}" onclick="event.stopPropagation();">${esc(o.customer_phone)}</a>` : '\u2014'}</td>
+            <td class="td-courses" title="${esc(o.courses||'')}">${esc(o.courses) || '\u2014'}</td>
+            <td><span class="badge badge-${o.payment_type||'one_time'}">${(o.payment_type||'one_time').replace('_',' ')}</span></td>
+            <td class="td-amount">&pound;${parseFloat(o.total||0).toFixed(2)}</td>
+            <td class="td-date">${fmtDate(o.created_at)}</td>
+          </tr>
+        `).join('');
+      }
+
+      // ==================== FILTERS & SEARCH ====================
+      document.addEventListener('click', (e) => {
+        const pill = e.target.closest('.pill');
+        if (pill) {
+          const target = pill.dataset.target;
+          const filter = pill.dataset.filter;
+          pill.parentElement.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          if (target === 'enquiry') { enqFilter = filter; renderEnquiries(); }
+          else if (target === 'order') { ordFilter = filter; renderOrders(); }
+        }
+        // Close dropdowns
+        if (!e.target.classList.contains('badge')) {
+          document.querySelectorAll('.status-dropdown.open').forEach(d => d.classList.remove('open'));
+        }
+      });
+
+      $('enquiry-search').addEventListener('input', (e) => { enqSearch = e.target.value; renderEnquiries(); });
+      $('order-search').addEventListener('input', (e) => { ordSearch = e.target.value; renderOrders(); });
+
+      // ==================== STATUS UPDATES ====================
+      function toggleDrop(id) {
+        document.querySelectorAll('.status-dropdown.open').forEach(d => d.classList.remove('open'));
+        const dd = $('drop-' + id);
+        if (dd) dd.classList.toggle('open');
+      }
+
+      async function updateEnqStatus(id, status) {
+        document.querySelectorAll('.status-dropdown.open').forEach(d => d.classList.remove('open'));
+        try {
+          const res = await fetch('/api/admin/enquiries', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
+            body: JSON.stringify({ id, status }),
+          });
+          if (res.ok) {
+            const item = enquiries.find(e => e.id === id);
+            if (item) item.status = status;
+            renderAll();
+          }
+        } catch {}
+      }
+
+      async function updateOrdStatus(id, status) {
+        document.querySelectorAll('.status-dropdown.open').forEach(d => d.classList.remove('open'));
+        try {
+          const res = await fetch('/api/admin/orders', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
+            body: JSON.stringify({ id, status }),
+          });
+          if (res.ok) {
+            const item = orders.find(o => o.id === id);
+            if (item) item.status = status;
+            renderAll();
+          }
+        } catch {}
+      }
+
+      // ==================== DETAIL DRAWER ====================
+      const overlay = $('drawer-overlay');
+      const drawer = $('drawer');
+
+      function openDrawer() { overlay.classList.add('open'); drawer.classList.add('open'); }
+      function closeDrawer() { overlay.classList.remove('open'); drawer.classList.remove('open'); }
+      overlay.addEventListener('click', closeDrawer);
+      $('drawer-close').addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+
+      function openEnquiryDrawer(id) {
+        const e = enquiries.find(x => x.id === id);
+        if (!e) return;
+        $('drawer-title').textContent = 'Enquiry Details';
+        $('drawer-body').innerHTML = `
+          <div class="detail-group">
+            <div class="detail-group-title">Contact Info</div>
+            <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${esc(e.name)}</span></div>
+            <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:${esc(e.email)}">${esc(e.email)}</a></span></div>
+            <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${e.phone ? `<a href="tel:${esc(e.phone)}">${esc(e.phone)}</a>` : '\u2014'}</span></div>
+          </div>
+          <div class="detail-group">
+            <div class="detail-group-title">Enquiry</div>
+            <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value"><span class="badge badge-${e.status}">${e.status}</span></span></div>
+            <div class="detail-row"><span class="detail-label">Course Interest</span><span class="detail-value">${esc(e.course_interest) || '\u2014'}</span></div>
+            <div class="detail-row"><span class="detail-label">Source Page</span><span class="detail-value">${esc(e.page) || '\u2014'}</span></div>
+            ${e.utm_source ? `<div class="detail-row"><span class="detail-label">UTM Source</span><span class="detail-value">${esc(e.utm_source)}</span></div>` : ''}
+            ${e.utm_campaign ? `<div class="detail-row"><span class="detail-label">UTM Campaign</span><span class="detail-value">${esc(e.utm_campaign)}</span></div>` : ''}
+            <div class="detail-row"><span class="detail-label">Received</span><span class="detail-value">${fmtDateFull(e.created_at)}</span></div>
+          </div>
+          ${e.message ? `<div class="detail-group"><div class="detail-group-title">Message</div><div class="detail-message">${esc(e.message)}</div></div>` : ''}
+        `;
+        openDrawer();
+      }
+
+      function openOrderDrawer(id) {
+        const o = orders.find(x => x.id === id);
+        if (!o) return;
+        $('drawer-title').textContent = 'Order Details';
+        $('drawer-body').innerHTML = `
+          <div class="detail-group">
+            <div class="detail-group-title">Order Info</div>
+            <div class="detail-row"><span class="detail-label">Order Number</span><span class="detail-value" style="font-family:var(--mono);">${esc(o.order_number)}</span></div>
+            <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value"><span class="badge badge-${o.status}">${o.status}</span></span></div>
+            <div class="detail-row"><span class="detail-label">Payment Type</span><span class="detail-value"><span class="badge badge-${o.payment_type||'one_time'}">${(o.payment_type||'one_time').replace('_',' ')}</span></span></div>
+            <div class="detail-row"><span class="detail-label">Amount</span><span class="detail-value" style="font-size:1.125rem;font-weight:700;color:var(--green);">&pound;${parseFloat(o.total||0).toFixed(2)}</span></div>
+            ${o.monthly_amount ? `<div class="detail-row"><span class="detail-label">Monthly Amount</span><span class="detail-value">&pound;${parseFloat(o.monthly_amount).toFixed(2)}/mo</span></div>` : ''}
+            ${o.subscription_months ? `<div class="detail-row"><span class="detail-label">Subscription Length</span><span class="detail-value">${o.subscription_months} months</span></div>` : ''}
+            ${o.subscription_status ? `<div class="detail-row"><span class="detail-label">Subscription Status</span><span class="detail-value">${esc(o.subscription_status)}</span></div>` : ''}
+            <div class="detail-row"><span class="detail-label">Date</span><span class="detail-value">${fmtDateFull(o.created_at)}</span></div>
+          </div>
+          <div class="detail-group">
+            <div class="detail-group-title">Customer</div>
+            <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${esc(o.customer_name)}</span></div>
+            <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value"><a href="mailto:${esc(o.customer_email)}">${esc(o.customer_email)}</a></span></div>
+            <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${o.customer_phone ? `<a href="tel:${esc(o.customer_phone)}">${esc(o.customer_phone)}</a>` : '\u2014'}</span></div>
+          </div>
+          <div class="detail-group">
+            <div class="detail-group-title">Courses</div>
+            <div class="detail-message">${esc(o.courses) || '\u2014'}</div>
+          </div>
+          ${o.stripe_payment_id ? `
+          <div class="detail-group">
+            <div class="detail-group-title">Stripe</div>
+            <div class="detail-row"><span class="detail-label">Payment ID</span><span class="detail-value" style="font-family:var(--mono);font-size:0.75rem;">${esc(o.stripe_payment_id)}</span></div>
+            ${o.stripe_subscription_id ? `<div class="detail-row"><span class="detail-label">Subscription ID</span><span class="detail-value" style="font-family:var(--mono);font-size:0.75rem;">${esc(o.stripe_subscription_id)}</span></div>` : ''}
+          </div>` : ''}
+        `;
+        openDrawer();
+      }
+
+      // ==================== CSV EXPORT ====================
+      function exportEnquiries() {
+        if (!enquiries.length) return;
+        const h = ['Name','Email','Phone','Course Interest','Message','Page','Status','UTM Source','UTM Campaign','Date'];
+        const rows = enquiries.map(e => [e.name,e.email,e.phone||'',e.course_interest||'',(e.message||'').replace(/"/g,'""'),e.page||'',e.status,e.utm_source||'',e.utm_campaign||'',e.created_at||'']);
+        downloadCSV('enquiries', h, rows);
+      }
+
+      function exportOrders() {
+        if (!orders.length) return;
+        const h = ['Order #','Customer','Email','Phone','Courses','Total','Payment Type','Monthly','Status','Stripe Payment ID','Date'];
+        const rows = orders.map(o => [o.order_number,o.customer_name,o.customer_email,o.customer_phone||'',o.courses||'',o.total,o.payment_type||'one_time',o.monthly_amount||'',o.status,o.stripe_payment_id||'',o.created_at||'']);
+        downloadCSV('orders', h, rows);
+      }
+
+      function downloadCSV(name, headers, rows) {
+        const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${v}"`).join(','))].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `${name}-${new Date().toISOString().slice(0,10)}.csv`;
+        a.click(); URL.revokeObjectURL(url);
+      }
+
+      // ==================== NORMALIZE ====================
+      function normalizeEnquiry(e) {
+        if (!e.status || !['new','contacted','enrolled','closed'].includes(e.status)) e.status = 'new';
+        return e;
+      }
+      function normalizeOrder(o) {
+        if (!o.status || !['pending','paid','fulfilled','refunded','cancelled','subscription_active'].includes(o.status)) o.status = 'pending';
+        if (!o.payment_type) o.payment_type = 'one_time';
+        return o;
+      }
+
+      // ==================== HELPERS ====================
+      function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+      function fmtDate(iso) {
+        if (!iso) return '\u2014';
+        const d = new Date(iso);
+        return `${d.getDate().toString().padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
+      }
+
+      function fmtDateFull(iso) {
+        if (!iso) return '\u2014';
+        const d = new Date(iso);
+        return `${d.getDate().toString().padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}, ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+      }
+    </script>
+  </body>
+</html>

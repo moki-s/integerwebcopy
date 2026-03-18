@@ -36,7 +36,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    // Store in Supabase
+    // Store in Supabase — this is the critical operation
     const { supabaseInsert } = await import("../../lib/supabase");
     const dbResult = await supabaseInsert("enquiries", {
       name,
@@ -50,36 +50,36 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!dbResult.ok) {
       console.error("[SUPABASE INSERT FAILED] enquiries:", dbResult.status, dbResult.body);
+      return new Response(
+        JSON.stringify({ error: "Failed to submit enquiry. Please try again or call us directly." }),
+        { status: 500, headers: { "Content-Type": "application/json" } },
+      );
     }
 
-    // Send email via Resend
+    // Send email notification via Resend (non-critical — enquiry already stored)
     const resendKey = import.meta.env.RESEND_API_KEY;
     if (resendKey) {
-      const { Resend } = await import("resend");
-      const resend = new Resend(resendKey);
+      try {
+        const { Resend } = await import("resend");
+        const resend = new Resend(resendKey);
 
-      const { error } = await resend.emails.send({
-        from: "Website Contact Form <noreply@integertraining.com>",
-        to: ["info@integertraining.com"],
-        subject: `New enquiry from ${name}${service ? ` - ${service}` : ""}`,
-        html: `
-          <h2>New Contact Form Submission</h2>
-          <p><strong>Name:</strong> ${escapeHtml(name)}</p>
-          <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-          <p><strong>Phone:</strong> ${escapeHtml(phone) || "Not provided"}</p>
-          <p><strong>Course Interest:</strong> ${escapeHtml(service) || "Not specified"}</p>
-          <p><strong>Message:</strong></p>
-          <p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>
-        `,
-      });
-
-      if (error) {
-        return new Response(
-          JSON.stringify({
-            error: "Failed to send message. Please try again.",
-          }),
-          { status: 500, headers: { "Content-Type": "application/json" } },
-        );
+        await resend.emails.send({
+          from: "Website Contact Form <noreply@integertraining.com>",
+          to: ["info@integertraining.com"],
+          subject: `New enquiry from ${name}${service ? ` - ${service}` : ""}`,
+          html: `
+            <h2>New Contact Form Submission</h2>
+            <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+            <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+            <p><strong>Phone:</strong> ${escapeHtml(phone) || "Not provided"}</p>
+            <p><strong>Course Interest:</strong> ${escapeHtml(service) || "Not specified"}</p>
+            <p><strong>Message:</strong></p>
+            <p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>
+          `,
+        });
+      } catch (emailErr) {
+        console.error("[RESEND EMAIL FAILED]", emailErr);
+        // Non-critical — enquiry is already stored in Supabase
       }
     }
 
