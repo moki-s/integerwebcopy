@@ -5,11 +5,12 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "start": "node dist/server/entry.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/node": "^9.5.5",
     "@astrojs/sitemap": "^3.7.0",
     "@supabase/supabase-js": "^2.98.0",
     "@tailwindcss/vite": "^4.2.1",
@@ -17,7 +18,8 @@
     "gsap": "^3.14.2",
     "resend": "^6.9.3",
     "stripe": "^20.4.0",
-    "tailwindcss": "^4.2.1"
+    "tailwindcss": "^4.2.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "astro-robots-txt": "^1.0.0"
