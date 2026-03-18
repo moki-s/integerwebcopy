@@ -148,29 +148,6 @@ const breadcrumbs = [
               </div>
             </div>
 
-            <!-- Discount Code -->
-            <div class="bg-white rounded-2xl border border-neutral-100 shadow-brand-sm p-4 sm:p-6">
-              <div class="flex items-center gap-2 mb-3">
-                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"/></svg>
-                <h3 class="font-semibold text-neutral-800 text-sm">Discount Code</h3>
-              </div>
-              <div class="flex gap-2">
-                <input
-                  type="text"
-                  id="discount-input"
-                  placeholder="Enter discount code"
-                  class="flex-1 px-4 py-2.5 border border-neutral-200 rounded-xl text-sm text-neutral-700 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
-                />
-                <button
-                  id="apply-discount-btn"
-                  class="px-5 py-2.5 bg-neutral-900 text-white rounded-xl text-sm font-semibold hover:bg-neutral-800 transition-colors"
-                >
-                  Apply
-                </button>
-              </div>
-              <p id="discount-message" class="text-xs text-neutral-400 mt-2 hidden"></p>
-            </div>
-
             <!-- Continue Shopping -->
             <a href="/courses" class="inline-flex items-center gap-2 text-primary-500 font-semibold text-sm hover:text-primary-600 transition-colors group">
               <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/></svg>
@@ -206,7 +183,15 @@ const breadcrumbs = [
               <div id="summary-monthly" class="hidden">
                 <div class="space-y-3 mb-4">
                   <div class="flex justify-between text-neutral-600 text-sm">
-                    <span>Monthly payment</span>
+                    <span>Monthly subtotal (ex. VAT)</span>
+                    <span id="cart-monthly-subtotal" class="font-medium">--</span>
+                  </div>
+                  <div class="flex justify-between text-neutral-500 text-sm">
+                    <span>VAT (20%)</span>
+                    <span id="cart-monthly-vat">--</span>
+                  </div>
+                  <div class="flex justify-between text-neutral-600 text-sm">
+                    <span>Monthly payment (inc. VAT)</span>
                     <span id="cart-monthly-amount" class="font-semibold text-primary-600">--</span>
                   </div>
                   <div class="flex justify-between text-neutral-500 text-sm">
@@ -386,10 +371,14 @@ const breadcrumbs = [
     document.getElementById('cart-vat')!.textContent = formatCurrency(vat);
     document.getElementById('cart-total')!.textContent = formatCurrency(total);
 
-    // -- Monthly totals --
-    const monthlyTotal = getCartMonthlyTotal();
+    // -- Monthly totals (with VAT) --
+    const monthlySubtotal = getCartMonthlyTotal();
+    const monthlyVat = monthlySubtotal * 0.2;
+    const monthlyTotal = monthlySubtotal + monthlyVat;
     const monthlyGrandTotal = monthlyTotal * 12;
 
+    document.getElementById('cart-monthly-subtotal')!.textContent = `${formatCurrency(monthlySubtotal)}/mo`;
+    document.getElementById('cart-monthly-vat')!.textContent = `${formatCurrency(monthlyVat)}/mo`;
     document.getElementById('cart-monthly-amount')!.textContent = `${formatCurrency(monthlyTotal)}/mo`;
     document.getElementById('cart-monthly-total')!.textContent = formatCurrency(monthlyGrandTotal);
 
@@ -465,24 +454,6 @@ const breadcrumbs = [
       renderCart();
     });
 
-    // Discount code button (UI only)
-    document.getElementById('apply-discount-btn')?.addEventListener('click', () => {
-      const input = document.getElementById('discount-input') as HTMLInputElement;
-      const msg = document.getElementById('discount-message')!;
-      const code = input.value.trim();
-
-      if (!code) {
-        msg.textContent = 'Please enter a discount code.';
-        msg.classList.remove('hidden', 'text-green-600');
-        msg.classList.add('text-red-500');
-        return;
-      }
-
-      // No backend yet - show a generic message
-      msg.textContent = 'Sorry, this discount code is not valid.';
-      msg.classList.remove('hidden', 'text-green-600');
-      msg.classList.add('text-red-500');
-    });
   }
 
   document.addEventListener('astro:page-load', initCart);

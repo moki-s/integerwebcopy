@@ -40,41 +40,24 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const supabaseUrl = import.meta.env.SUPABASE_URL;
-  const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    return new Response(JSON.stringify({ error: "Service not configured" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
   try {
-    const response = await fetch(`${supabaseUrl}/rest/v1/enquiries`, {
-      method: "POST",
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        phone,
-        course_interest: courseInterest,
-        message,
-        page,
-        source: "website",
-        ...(utmSource && { utm_source: utmSource }),
-        ...(utmCampaign && { utm_campaign: utmCampaign }),
-      }),
+    const { supabaseInsert } = await import("../../lib/supabase");
+    const dbResult = await supabaseInsert("enquiries", {
+      name,
+      email,
+      phone,
+      course_interest: courseInterest,
+      message,
+      page,
+      source: "website",
+      ...(utmSource && { utm_source: utmSource }),
+      ...(utmCampaign && { utm_campaign: utmCampaign }),
     });
 
-    if (!response.ok) {
+    if (!dbResult.ok) {
+      console.error("[SUPABASE INSERT FAILED] enquiries:", dbResult.status, dbResult.body);
       return new Response(
-        JSON.stringify({ error: "Failed to submit enquiry" }),
+        JSON.stringify({ error: "Failed to submit enquiry. Please try again or call us directly." }),
         {
           status: 500,
           headers: { "Content-Type": "application/json" },

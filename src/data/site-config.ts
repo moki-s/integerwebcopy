@@ -26,9 +26,9 @@ export const siteConfig = {
     { day: "Sunday", open: "Closed", close: "Closed" },
   ],
   social: {
-    facebook: "",
-    instagram: "",
-    linkedin: "",
+    facebook: "https://www.facebook.com/integertraining",
+    instagram: "https://www.instagram.com/integertraining",
+    linkedin: "https://www.linkedin.com/company/integer-training",
     google: "",
     trustpilot: "https://www.trustpilot.com/review/integertraining.com",
   },

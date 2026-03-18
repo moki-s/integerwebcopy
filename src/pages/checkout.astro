@@ -178,8 +178,16 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
 
             <!-- Monthly Payment Summary -->
             <div id="summary-monthly" class="hidden border-t border-neutral-200 pt-4 space-y-2">
+              <div class="flex justify-between text-sm text-neutral-600">
+                <span>Monthly subtotal (ex. VAT)</span>
+                <span id="checkout-monthly-subtotal">--</span>
+              </div>
+              <div class="flex justify-between text-sm text-neutral-500">
+                <span>VAT (20%)</span>
+                <span id="checkout-monthly-vat">--</span>
+              </div>
               <div class="flex justify-between text-sm font-semibold text-neutral-900">
-                <span>Monthly Payment</span>
+                <span>Monthly Payment (inc. VAT)</span>
                 <span id="checkout-monthly-amount">--</span>
               </div>
               <div class="flex justify-between text-sm text-neutral-600">
@@ -252,7 +260,9 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
 
     // Calculate totals
     const total = getCartTotal();
-    const monthlyTotal = getCartMonthlyTotal();
+    const monthlySubtotal = getCartMonthlyTotal();
+    const monthlyVat = monthlySubtotal * 0.2;
+    const monthlyTotal = monthlySubtotal + monthlyVat;
     const subtotalExVat = total / 1.2;
     const vat = total - subtotalExVat;
 
@@ -262,6 +272,8 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
     document.getElementById('checkout-total')!.textContent = `\u00A3${total.toFixed(2)}`;
 
     // Populate monthly payment summary
+    document.getElementById('checkout-monthly-subtotal')!.textContent = `\u00A3${monthlySubtotal.toFixed(2)}/mo`;
+    document.getElementById('checkout-monthly-vat')!.textContent = `\u00A3${monthlyVat.toFixed(2)}/mo`;
     document.getElementById('checkout-monthly-amount')!.textContent = `\u00A3${monthlyTotal.toFixed(2)}/mo`;
     document.getElementById('checkout-monthly-total-12')!.textContent = `\u00A3${(monthlyTotal * 12).toFixed(2)}`;
 

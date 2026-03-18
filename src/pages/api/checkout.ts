@@ -39,9 +39,27 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
+  // Name validation
+  if (first_name.length < 2 || first_name.length > 100 || last_name.length < 2 || last_name.length > 100) {
+    return new Response(JSON.stringify({ error: "Name must be between 2 and 100 characters" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // Phone validation
+  const phoneRegex = /^[+]?[0-9\s\-()]{7,20}$/;
+  if (!phoneRegex.test(phone)) {
+    return new Response(JSON.stringify({ error: "Please enter a valid phone number" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   // Server-side total calculation (prevents client tampering)
   let total = 0;
   const courseNames: string[] = [];
+  const validCourses: typeof COURSES[string][] = [];
   for (const id of course_ids) {
     const course = COURSES[id];
     if (!course) {
@@ -50,8 +68,18 @@ export const POST: APIRoute = async ({ request }) => {
         headers: { "Content-Type": "application/json" },
       });
     }
+    validCourses.push(course);
     total += course.price;
     courseNames.push(course.title);
+  }
+
+  // Reject enquiry-only courses
+  const enquiryOnlyCourses = validCourses.filter(c => c.isEnquiryOnly);
+  if (enquiryOnlyCourses.length > 0) {
+    return new Response(JSON.stringify({ error: "Some courses require enquiry only and cannot be purchased online." }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   if (total <= 0) {
@@ -95,6 +123,7 @@ export const POST: APIRoute = async ({ request }) => {
       "metadata[course_ids]": course_ids.join(","),
       "metadata[courses]": courseNames.join(", "),
       "metadata[order_number]": orderNumber,
+      "metadata[terms_accepted]": new Date().toISOString(),
     });
 
     // Idempotency key derived from email + cart + amount to prevent duplicate charges
@@ -146,6 +175,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (paymentIntent.status === "succeeded") {
       // Payment successful - store order in Supabase
+      const totalWithVat = amountInPence;
       await storeOrder({
         orderNumber,
         customerName: `${first_name} ${last_name}`,
@@ -155,7 +185,37 @@ export const POST: APIRoute = async ({ request }) => {
         courseIds: course_ids.join(","),
         total,
         stripePaymentId: paymentIntent.id,
+        termsAcceptedAt: new Date().toISOString(),
       });
+
+      // Send confirmation email
+      const resendKey = import.meta.env.RESEND_API_KEY;
+      if (resendKey) {
+        try {
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${resendKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: 'Integer Training <noreply@integertraining.com>',
+              to: [email],
+              subject: `Order Confirmation - ${orderNumber}`,
+              html: `<h2>Thank you for your order!</h2>
+                <p>Hi ${first_name},</p>
+                <p>Your order <strong>${orderNumber}</strong> has been confirmed.</p>
+                <p><strong>Courses:</strong> ${courseNames.join(", ")}</p>
+                <p><strong>Amount:</strong> \u00A3${(totalWithVat / 100).toFixed(2)}</p>
+                <p>Our team will be in touch within 24 hours with your course access details.</p>
+                <p>If you have any questions, contact us at info@integertraining.com or call 0121 690 9563.</p>
+                <p>Best regards,<br>Integer Training Team</p>`
+            }),
+          });
+        } catch (emailErr) {
+          console.error('[EMAIL SEND FAILED]', emailErr);
+        }
+      }
 
       return new Response(
         JSON.stringify({
@@ -225,33 +285,23 @@ async function storeOrder(order: {
   courseIds: string;
   total: number;
   stripePaymentId: string;
+  termsAcceptedAt: string;
 }) {
-  const supabaseUrl = import.meta.env.SUPABASE_URL;
-  const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseKey) return;
+  const { supabaseInsert } = await import("../../lib/supabase");
+  const result = await supabaseInsert("orders", {
+    order_number: order.orderNumber,
+    customer_name: order.customerName,
+    customer_email: order.customerEmail,
+    customer_phone: order.customerPhone,
+    courses: order.courses,
+    course_ids: order.courseIds,
+    total: order.total,
+    stripe_payment_id: order.stripePaymentId,
+    status: "paid",
+    terms_accepted_at: order.termsAcceptedAt,
+  });
 
-  try {
-    await fetch(`${supabaseUrl}/rest/v1/orders`, {
-      method: "POST",
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify({
-        order_number: order.orderNumber,
-        customer_name: order.customerName,
-        customer_email: order.customerEmail,
-        customer_phone: order.customerPhone,
-        courses: order.courses,
-        course_ids: order.courseIds,
-        total: order.total,
-        stripe_payment_id: order.stripePaymentId,
-        status: "paid",
-      }),
-    });
-  } catch {
-    // Silently fail - payment already succeeded
+  if (!result.ok) {
+    console.error("[SUPABASE INSERT FAILED] orders:", result.status, result.body);
   }
 }

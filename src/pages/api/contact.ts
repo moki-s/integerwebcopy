@@ -36,32 +36,20 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    // Store in Supabase if configured
-    const supabaseUrl = import.meta.env.SUPABASE_URL;
-    const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
-    if (supabaseUrl && supabaseKey) {
-      try {
-        await fetch(`${supabaseUrl}/rest/v1/enquiries`, {
-          method: "POST",
-          headers: {
-            apikey: supabaseKey,
-            Authorization: `Bearer ${supabaseKey}`,
-            "Content-Type": "application/json",
-            Prefer: "return=minimal",
-          },
-          body: JSON.stringify({
-            name,
-            email,
-            phone,
-            course_interest: service,
-            message,
-            page: "contact",
-            source: "website",
-          }),
-        });
-      } catch {
-        // Supabase failure is non-critical
-      }
+    // Store in Supabase
+    const { supabaseInsert } = await import("../../lib/supabase");
+    const dbResult = await supabaseInsert("enquiries", {
+      name,
+      email,
+      phone,
+      course_interest: service,
+      message,
+      page: "contact",
+      source: "website",
+    });
+
+    if (!dbResult.ok) {
+      console.error("[SUPABASE INSERT FAILED] enquiries:", dbResult.status, dbResult.body);
     }
 
     // Send email via Resend

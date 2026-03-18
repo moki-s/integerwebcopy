@@ -56,34 +56,22 @@ export const POST: APIRoute = async ({ request }) => {
       // Reuse the order number from the original PaymentIntent metadata (generated in checkout.ts)
       const orderNumber = metadata.order_number || "INT-UNKNOWN";
 
-      const supabaseUrl = import.meta.env.SUPABASE_URL;
-      const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
+      const { supabaseInsert } = await import("../../lib/supabase");
+      const dbResult = await supabaseInsert("orders", {
+        order_number: orderNumber,
+        customer_name: metadata.customer_name || "",
+        customer_email: metadata.customer_email || "",
+        customer_phone: metadata.customer_phone || "",
+        courses: metadata.courses || "",
+        course_ids: metadata.course_ids || "",
+        total: paymentIntent.amount / 100,
+        stripe_payment_id: paymentIntent.id,
+        status: "paid",
+        terms_accepted_at: metadata.terms_accepted || null,
+      });
 
-      if (supabaseUrl && supabaseKey) {
-        try {
-          await fetch(`${supabaseUrl}/rest/v1/orders`, {
-            method: "POST",
-            headers: {
-              apikey: supabaseKey,
-              Authorization: `Bearer ${supabaseKey}`,
-              "Content-Type": "application/json",
-              Prefer: "return=minimal",
-            },
-            body: JSON.stringify({
-              order_number: orderNumber,
-              customer_name: metadata.customer_name || "",
-              customer_email: metadata.customer_email || "",
-              customer_phone: metadata.customer_phone || "",
-              courses: metadata.courses || "",
-              course_ids: metadata.course_ids || "",
-              total: paymentIntent.amount / 100,
-              stripe_payment_id: paymentIntent.id,
-              status: "paid",
-            }),
-          });
-        } catch {
-          // Silently fail - payment already succeeded
-        }
+      if (!dbResult.ok) {
+        console.error("[SUPABASE INSERT FAILED] orders (3DS confirm):", dbResult.status, dbResult.body);
       }
 
       return new Response(
