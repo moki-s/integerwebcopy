@@ -23,5 +23,8 @@
   },
   "devDependencies": {
     "astro-robots-txt": "^1.0.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.59.0"
   }
 }
