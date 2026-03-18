@@ -11,24 +11,28 @@ const breadcrumbs = [
 
 <BaseLayout
   title="Terms & Conditions | Integer Training Enrolment Policy"
-  description="Read Integer Training's terms and conditions covering enrolment, course delivery, payment plans, refund policies, and learner responsibilities."
+  description="Read Integer Training's terms and conditions covering enrolment, course delivery, payment plans, refund policies, withdrawal procedures, and learner responsibilities."
 >
   <Breadcrumb items={breadcrumbs} />
 
   <section class="py-24 lg:py-32">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <h1 class="font-display font-bold text-4xl md:text-5xl text-neutral-900 mb-8">Terms & Conditions</h1>
-      <p class="text-neutral-500 text-sm mb-12">Last updated: March 2026</p>
+      <p class="text-neutral-500 text-sm mb-6">Last updated: March 2026</p>
+
+      <p class="text-neutral-600 text-sm mb-12">
+        For our complete set of policies, visit our <a href="/policies" class="text-primary-500 hover:text-primary-600 font-medium transition-colors duration-300">Policies page</a>.
+      </p>
 
       <div class="prose prose-lg text-neutral-600 space-y-8">
         <section>
           <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">1. Company Information</h2>
-          <p>These terms and conditions apply to all courses and services provided by {siteConfig.companyName} (Company Number: {siteConfig.companyNumber}), trading as {siteConfig.name}. Our registered address is {siteConfig.address.street}, {siteConfig.address.city}, {siteConfig.address.zip}, United Kingdom.</p>
+          <p>These terms and conditions apply to all courses and services provided by {siteConfig.companyName} (Company Number: {siteConfig.companyNumber}), trading as {siteConfig.name}. Our registered address is {siteConfig.address.street}, {siteConfig.address.city}, {siteConfig.address.state}, {siteConfig.address.zip}, United Kingdom.</p>
         </section>
 
         <section>
           <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">2. Course Enrolment</h2>
-          <p>By enrolling on a course with Integer Training, you agree to these terms and conditions. Enrolment is subject to availability and confirmation by our admissions team. We reserve the right to decline enrolment where we believe a course is not suitable for a candidate's current level of experience or qualifications.</p>
+          <p>By enrolling on a course with {siteConfig.name}, you agree to these terms and conditions. Enrolment is subject to availability and confirmation by our admissions team. We reserve the right to decline enrolment where we believe a course is not suitable for a candidate's current level of experience or qualifications.</p>
         </section>
 
         <section>
@@ -42,33 +46,73 @@ const breadcrumbs = [
         </section>
 
         <section>
-          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">5. Course Delivery</h2>
-          <p>Courses are delivered through our online learning platform and, where applicable, at our training centres. We endeavour to provide uninterrupted access to course materials but cannot guarantee continuous availability due to maintenance or technical issues. Tutor support is available during normal business hours (Monday to Friday, 9am to 5pm).</p>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">5. Withdrawal Policy</h2>
+          <p>{siteConfig.name} operates a three-stage withdrawal process for learners who are not engaging with their programme:</p>
+          <ul class="list-disc pl-6 space-y-2">
+            <li><strong>Stage 1:</strong> Where a learner has produced no work or insufficient work for one month, they will receive verbal notice from their tutor that they are at risk of withdrawal.</li>
+            <li><strong>Stage 2:</strong> Where a learner has produced no work or insufficient work for two consecutive months, they will be invited to a formal interview with the programme manager to discuss their continued participation.</li>
+            <li><strong>Stage 3:</strong> Where a learner has produced no work or insufficient work for three consecutive months, they will be withdrawn from the programme.</li>
+          </ul>
+          <p class="mt-4">For learners who have been enrolled for fewer than 6 weeks, the above timescales are measured in weeks rather than months.</p>
         </section>
 
         <section>
-          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">6. Assessment and Certification</h2>
-          <p>Qualifications are awarded by the relevant accrediting body (AAT, NCFE, HABC, Pearson, or ATHE) upon successful completion of all required assessments. Integer Training acts as a registered centre and delivers courses on behalf of these awarding organisations. Certification timescales are determined by the awarding body.</p>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">6. Assessment</h2>
+          <p>Assessment includes both formative and summative assessment throughout the programme. Key assessment standards include:</p>
+          <ul class="list-disc pl-6 space-y-2">
+            <li>All submitted work will be marked within 2 working weeks of receipt</li>
+            <li>Internal verification will take place within 2 working weeks of marking</li>
+            <li>Assessment for Learning principles are applied throughout all programmes</li>
+            <li>Qualifications are awarded by the relevant accrediting body upon successful completion of all required assessments</li>
+          </ul>
         </section>
 
         <section>
-          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">7. Student Responsibilities</h2>
-          <p>Students are expected to engage with course materials, submit assignments within agreed timeframes, and maintain respectful communication with tutors and staff. Plagiarism, academic misconduct, or abusive behaviour may result in removal from a course without refund.</p>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">7. Learner Responsibilities</h2>
+          <p>Learners enrolled on a programme with {siteConfig.name} are expected to:</p>
+          <ul class="list-disc pl-6 space-y-2">
+            <li>Engage actively with course materials and learning activities</li>
+            <li>Submit assignments within agreed deadlines</li>
+            <li>Proof-read all work before submission</li>
+            <li>Follow the rules and regulations of the relevant awarding body</li>
+            <li>Correctly reference all sources used in their work</li>
+            <li>Keep all work safe and secure to avoid potential plagiarism issues</li>
+          </ul>
         </section>
 
         <section>
-          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">8. Intellectual Property</h2>
-          <p>All course materials, content, and resources provided by Integer Training are protected by copyright and remain the property of Integer Training or our content partners. Materials may not be reproduced, distributed, or shared without written permission.</p>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">8. Plagiarism & Academic Misconduct</h2>
+          <p>Plagiarism, academic misconduct, or abusive behaviour towards staff or other learners may result in removal from a programme without refund. {siteConfig.name} takes a zero-tolerance approach to plagiarism and will investigate all suspected cases in accordance with our <a href="/policies/plagiarism-policy.pdf" target="_blank" rel="noopener noreferrer" class="text-primary-500 hover:text-primary-600 transition-colors duration-300">Plagiarism Policy</a>.</p>
         </section>
 
         <section>
-          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">9. Limitation of Liability</h2>
-          <p>Integer Training provides educational services and qualifications but does not guarantee employment outcomes. Our liability is limited to the course fees paid. We are not liable for any indirect, consequential, or incidental damages arising from the use of our services.</p>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">9. Complaints & Appeals</h2>
+          <p>If you have a concern or complaint, we encourage you to first raise it informally with your tutor or assessor. If the matter cannot be resolved informally, you may submit a formal complaint in writing within 6 weeks to:</p>
+          <ul class="list-none pl-0 space-y-1 mt-4 mb-4">
+            <li><strong>Ms Jacky Maynard</strong></li>
+            <li>{siteConfig.companyName}</li>
+            <li>{siteConfig.address.street}</li>
+            <li>{siteConfig.address.city}, {siteConfig.address.state}, {siteConfig.address.zip}</li>
+            <li>Email: <a href="mailto:jacky@integer.co.uk" class="text-primary-500 hover:text-primary-600 transition-colors duration-300">jacky@integer.co.uk</a></li>
+            <li>Phone: 01288 356263</li>
+          </ul>
+          <p>A written response will be provided within 10 working days. If you remain unsatisfied, the complaint may be escalated to the Managing Director, Jasbir Behal.</p>
+          <p class="mt-4">Further escalation options include your funding college, the relevant awarding body, Ofqual (<a href="mailto:complaints@ofqual.gov.uk" class="text-primary-500 hover:text-primary-600 transition-colors duration-300">complaints@ofqual.gov.uk</a>), or the GLA (<a href="mailto:aebcomplaints@London.gov.uk" class="text-primary-500 hover:text-primary-600 transition-colors duration-300">aebcomplaints@London.gov.uk</a>).</p>
         </section>
 
         <section>
-          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">10. Contact</h2>
-          <p>For questions about these terms, contact us at {siteConfig.email} or call {siteConfig.phone}.</p>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">10. Intellectual Property</h2>
+          <p>All course materials, content, and resources provided by {siteConfig.name} are protected by copyright and remain the property of {siteConfig.companyName}. Materials may not be reproduced, distributed, or shared without written permission.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">11. Limitation of Liability</h2>
+          <p>{siteConfig.name} provides educational services and qualifications but does not guarantee employment outcomes. Our liability is limited to the course fees paid. We are not liable for any indirect, consequential, or incidental damages arising from the use of our services.</p>
+        </section>
+
+        <section>
+          <h2 class="font-display font-bold text-2xl text-neutral-900 mb-4">12. Contact</h2>
+          <p>For questions about these terms, contact us at <a href={`mailto:${siteConfig.email}`} class="text-primary-500 hover:text-primary-600 transition-colors duration-300">{siteConfig.email}</a> or call {siteConfig.phone}.</p>
         </section>
       </div>
     </div>

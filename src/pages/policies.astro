@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { siteConfig } from '../data/site-config';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Policies', href: '/policies' },
+];
+
+const policyGroups = [
+  {
+    title: 'Learner Policies',
+    policies: [
+      { name: 'Assessment Policy', href: '/policies/assessment-policy.pdf' },
+      { name: 'Complaints & Appeals Policy', href: '/policies/complaints-appeals-policy.pdf' },
+      { name: 'Plagiarism Policy', href: '/policies/plagiarism-policy.pdf' },
+      { name: 'Withdrawal Policy', href: '/policies/withdrawal-policy.pdf' },
+    ],
+  },
+  {
+    title: 'Safeguarding & Wellbeing',
+    policies: [
+      { name: 'Safeguarding of Children & Vulnerable Adults Policy', href: '/policies/safeguarding-policy.pdf' },
+      { name: 'Equality, Diversity & Inclusion Policy', href: '/policies/equality-diversity-inclusion-policy.pdf' },
+      { name: 'Health & Safety Policy', href: '/policies/health-safety-policy.pdf' },
+      { name: 'Whistleblowing Policy', href: '/policies/whistleblowing-policy.pdf' },
+    ],
+  },
+  {
+    title: 'Data & Security',
+    policies: [
+      { name: 'Data Protection & Procedure Policy', href: '/policies/data-protection-policy.pdf' },
+      { name: 'ICT Use, Information Security & Social Media Policy', href: '/policies/ict-information-security-policy.pdf' },
+    ],
+  },
+  {
+    title: 'Organisational',
+    policies: [
+      { name: 'Business Continuity Policy', href: '/policies/business-continuity-policy.pdf' },
+      { name: 'Code of Professional Practice', href: '/policies/code-of-professional-practice.pdf' },
+      { name: 'Environmental, Carbon Reduction & Sustainability Policy', href: '/policies/environmental-sustainability-policy.pdf' },
+      { name: 'Grievance & Disciplinary Procedure', href: '/policies/grievance-disciplinary-procedure.pdf' },
+    ],
+  },
+  {
+    title: 'Certificates',
+    policies: [
+      { name: 'Employer Liability Certificate', href: '/policies/employer-liability-certificate.pdf' },
+      { name: 'Matrix Quality Standard Certificate', href: '/policies/matrix-certificate.pdf' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Policies & Certificates | Integer Training"
+  description="Access Integer Training's key policies, procedures, and certificates. Download our assessment, safeguarding, data protection, and other organisational policies."
+>
+  <Breadcrumb items={breadcrumbs} />
+
+  <section class="py-24 lg:py-32">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="font-display font-bold text-4xl md:text-5xl text-neutral-900 mb-4">Our Policies & Certificates</h1>
+      <p class="text-neutral-500 text-lg mb-16 max-w-2xl">
+        {siteConfig.name} is committed to transparency. Below you will find our key policies, procedures, and certificates.
+      </p>
+
+      <div class="space-y-12">
+        {policyGroups.map((group) => (
+          <div>
+            <h2 class="font-display font-bold text-2xl text-neutral-900 mb-6">{group.title}</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {group.policies.map((policy) => (
+                <a
+                  href={policy.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group flex items-start gap-4 p-5 bg-white border border-neutral-200 rounded-xl hover:border-primary-300 hover:shadow-md transition-all duration-300"
+                >
+                  <div class="flex-shrink-0 w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition-colors duration-300">
+                    <svg class="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="12" y1="18" x2="12" y2="12" />
+                      <line x1="9" y1="15" x2="12" y2="18" />
+                      <line x1="15" y1="15" x2="12" y2="18" />
+                    </svg>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-medium text-neutral-900 text-sm leading-snug mb-1">{policy.name}</p>
+                    <p class="text-xs text-primary-500 group-hover:text-primary-600 font-medium transition-colors duration-300">Download PDF</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
