@@ -296,9 +296,9 @@ const courseSchema = {
   <!-- Main Content + Sidebar -->
   <section class="py-12 lg:py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="lg:grid lg:grid-cols-3 lg:gap-12">
-        <!-- Main Content (2 cols) -->
-        <div class="lg:col-span-2">
+      <div class="flex flex-col lg:grid lg:grid-cols-3 lg:gap-12">
+        <!-- Main Content (2 cols) — order-2 on mobile so sidebar shows first -->
+        <div class="lg:col-span-2 order-2 lg:order-1">
           <!-- Tabs -->
           <div class="border-b border-neutral-200 mb-8">
             <div class="flex gap-0" role="tablist">
@@ -565,8 +565,8 @@ const courseSchema = {
           </div>
         </div>
 
-        <!-- Sidebar -->
-        <div class="mt-8 lg:mt-0">
+        <!-- Sidebar — order-1 on mobile so it shows above main content -->
+        <div class="mb-8 lg:mb-0 order-1 lg:order-2">
           <div id="course-sidebar" class="lg:sticky lg:top-24 space-y-6">
             <!-- Course Image + Pricing Card -->
             <div class="rounded-2xl overflow-hidden border border-neutral-200 bg-white relative">
@@ -601,43 +601,70 @@ const courseSchema = {
                     </a>
                   </div>
                 ) : (
-                  <!-- Priced course: payment toggle + cart -->
+                  <!-- Priced course: selectable pricing rows + cart -->
                   <>
-                    <!-- Payment toggle -->
-                    <div class="flex bg-neutral-100 rounded-xl p-1 mb-6">
-                      <button
-                        class="payment-toggle flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 bg-white shadow-sm text-neutral-900"
-                        data-mode="full"
-                      >
-                        Pay in Full
-                      </button>
-                      {course.monthlyPrice > 0 && (
-                        <button
-                          class="payment-toggle flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-neutral-500"
-                          data-mode="monthly"
-                        >
-                          Monthly
-                        </button>
-                      )}
-                    </div>
-
-                    <!-- Full Price -->
-                    <div id="price-full" class="text-center">
-                      <div class="text-sm text-neutral-400 line-through mb-1">Was &pound;{course.oldPrice}</div>
-                      <div class="text-4xl font-bold text-neutral-900 mb-1">Now &pound;{course.price}</div>
-                      <div class="text-xs text-neutral-600 mb-4">Inc. VAT &middot; One-time payment</div>
-                    </div>
-
-                    <!-- Monthly Price -->
-                    {course.monthlyPrice > 0 && (
-                      <div id="price-monthly" class="text-center hidden">
-                        {course.oldMonthlyPrice > 0 && (
-                          <div class="text-sm text-neutral-400 line-through mb-1">Was &pound;{course.oldMonthlyPrice}/mo</div>
+                    <!-- Row 1: Online Learning (selected by default) -->
+                    <div
+                      class="pricing-option cursor-pointer bg-primary-50 border-2 border-primary-500 rounded-xl p-4 mb-3 transition-all duration-200"
+                      data-tier="online"
+                      data-tier-price={course.price}
+                      data-tier-label="Online"
+                    >
+                      <div class="flex items-center gap-2 mb-3">
+                        <div class="w-5 h-5 rounded-full border-2 border-primary-500 flex items-center justify-center flex-shrink-0">
+                          <div class="w-2.5 h-2.5 rounded-full bg-primary-500 pricing-radio"></div>
+                        </div>
+                        <span class="text-sm font-bold text-neutral-900">Online Learning</span>
+                      </div>
+                      <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                          <div class="text-xs text-neutral-500 mb-1">Pay in Full</div>
+                          <div class="text-2xl font-bold text-neutral-900">&pound;{course.price}</div>
+                          {course.oneOffDiscount > 0 && (
+                            <div class="mt-2 bg-green-50 border border-green-200 rounded-lg px-2 py-1 text-xs text-green-700 font-semibold">
+                              Save &pound;{course.oneOffDiscount} &mdash; &pound;{course.price - course.oneOffDiscount}
+                            </div>
+                          )}
+                        </div>
+                        {course.monthlyPrice > 0 && (
+                          <div class="text-center">
+                            <div class="text-xs text-neutral-500 mb-1">Monthly</div>
+                            <div class="text-2xl font-bold text-neutral-900">&pound;{course.monthlyPrice}<span class="text-sm text-neutral-500 font-normal">/mo</span></div>
+                            <div class="mt-1 text-xs text-neutral-500">&pound;50 deposit + 12mo 0% APR</div>
+                          </div>
                         )}
-                        <div class="text-4xl font-bold text-neutral-900 mb-1">&pound;{course.monthlyPrice}<span class="text-lg text-neutral-500 font-normal">/month</span></div>
-                        <div class="text-xs text-neutral-500 mb-2">&pound;50 deposit + 12 monthly interest-free payments</div>
-                        <div class="inline-block bg-teal-50 border border-teal-200 rounded-lg px-3 py-1 text-xs text-teal-700 font-semibold mb-4">
-                          0% APR &middot; Interest-free
+                      </div>
+                    </div>
+
+                    <!-- Row 2: Tutor-Led Learning -->
+                    {course.tutorPrice > 0 && (
+                      <div
+                        class="pricing-option cursor-pointer bg-neutral-50 border-2 border-neutral-200 rounded-xl p-4 mb-4 transition-all duration-200 hover:border-neutral-300"
+                        data-tier="tutor"
+                        data-tier-price={course.tutorPrice}
+                        data-tier-label="Tutor-Led"
+                      >
+                        <div class="flex items-center gap-2 mb-3">
+                          <div class="w-5 h-5 rounded-full border-2 border-neutral-300 flex items-center justify-center flex-shrink-0">
+                            <div class="w-2.5 h-2.5 rounded-full bg-transparent pricing-radio"></div>
+                          </div>
+                          <span class="text-sm font-bold text-neutral-900">Tutor-Led Learning</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                          <div class="text-center">
+                            <div class="text-xs text-neutral-500 mb-1">Pay in Full</div>
+                            <div class="text-2xl font-bold text-neutral-900">&pound;{course.tutorPrice}</div>
+                            {course.oneOffDiscount > 0 && (
+                              <div class="mt-2 bg-green-50 border border-green-200 rounded-lg px-2 py-1 text-xs text-green-700 font-semibold">
+                                Save &pound;{course.oneOffDiscount} &mdash; &pound;{course.tutorPrice - course.oneOffDiscount}
+                              </div>
+                            )}
+                          </div>
+                          <div class="text-center">
+                            <div class="text-xs text-neutral-500 mb-1">Monthly</div>
+                            <div class="text-2xl font-bold text-neutral-900">&pound;{Math.round(((course.tutorPrice - 50) / 12) * 100) / 100}<span class="text-sm text-neutral-500 font-normal">/mo</span></div>
+                            <div class="mt-1 text-xs text-neutral-500">&pound;50 deposit + 12mo 0% APR</div>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -650,7 +677,7 @@ const courseSchema = {
                       data-course-price={course.price}
                       data-course-title={course.title}
                     >
-                      Add to Basket
+                      Add to Basket &mdash; &pound;{course.price} (Online)
                     </button>
                     <a
                       id="sidebar-view-cart"
@@ -837,11 +864,8 @@ const courseSchema = {
       <div class="min-w-0 flex-1">
         <p class="font-bold text-neutral-900 text-sm truncate">{course.title}</p>
         <div class="flex items-center gap-2">
-          <span class="text-xs text-neutral-400 line-through">&pound;{course.oldPrice}</span>
-          <span class="text-primary-600 font-bold text-lg">&pound;{course.price}</span>
-          {savings > 0 && (
-            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-red-500 text-white">SAVE &pound;{savings}</span>
-          )}
+          <span id="desktop-sticky-price" class="text-primary-600 font-bold text-lg">&pound;{course.price}</span>
+          <span id="desktop-sticky-label" class="text-xs text-neutral-500">Online</span>
         </div>
       </div>
       <div class="flex items-center gap-3 flex-shrink-0">
@@ -867,14 +891,11 @@ const courseSchema = {
     <div class="px-4 py-3">
       <div class="flex items-center gap-2">
         <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2">
-            {savings > 0 && <span class="text-xs text-neutral-400 line-through">&pound;{course.oldPrice}</span>}
-            <span class="text-neutral-900 font-bold text-lg">&pound;{course.price}</span>
-            {savings > 0 && <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white">-{Math.round((savings / course.oldPrice) * 100)}%</span>}
+          <div class="flex items-center gap-1">
+            <span id="mobile-sticky-price" class="text-neutral-900 font-bold text-lg">&pound;{course.price}</span>
+            <span id="mobile-sticky-label" class="text-[10px] text-neutral-500">Online</span>
           </div>
-          {course.monthlyPrice > 0 && (
-            <p class="text-xs text-neutral-500">or &pound;{course.monthlyPrice}/mo</p>
-          )}
+          <p id="mobile-sticky-monthly" class="text-xs text-neutral-500" data-online-monthly={course.monthlyPrice}>or &pound;{course.monthlyPrice}/mo</p>
         </div>
         <a
           href="#enquiry-section"
@@ -931,34 +952,74 @@ const courseSchema = {
       });
     });
 
-    // --- Payment Toggle ---
-    const toggleBtns = document.querySelectorAll('.payment-toggle');
-    const priceFull = document.getElementById('price-full');
-    const priceMonthly = document.getElementById('price-monthly');
+    // --- Pricing Tier Selection ---
+    const pricingOptions = document.querySelectorAll('.pricing-option');
+    const addBtn = document.getElementById('sidebar-add-to-cart') as HTMLButtonElement;
+    const viewCartLink = document.getElementById('sidebar-view-cart') as HTMLAnchorElement;
 
-    toggleBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const mode = (btn as HTMLElement).dataset.mode;
-        toggleBtns.forEach((b) => {
-          b.classList.remove('bg-white', 'shadow-sm', 'text-neutral-900');
-          b.classList.add('text-neutral-500');
+    pricingOptions.forEach((option) => {
+      option.addEventListener('click', () => {
+        // Deselect all
+        pricingOptions.forEach((opt) => {
+          opt.classList.remove('bg-primary-50', 'border-primary-500');
+          opt.classList.add('bg-neutral-50', 'border-neutral-200');
+          const radio = opt.querySelector('.pricing-radio') as HTMLElement;
+          if (radio) {
+            radio.classList.remove('bg-primary-500');
+            radio.classList.add('bg-transparent');
+          }
+          const ring = radio?.parentElement as HTMLElement;
+          if (ring) {
+            ring.classList.remove('border-primary-500');
+            ring.classList.add('border-neutral-300');
+          }
         });
-        btn.classList.add('bg-white', 'shadow-sm', 'text-neutral-900');
-        btn.classList.remove('text-neutral-500');
-
-        if (mode === 'monthly') {
-          priceFull?.classList.add('hidden');
-          priceMonthly?.classList.remove('hidden');
-        } else {
-          priceFull?.classList.remove('hidden');
-          priceMonthly?.classList.add('hidden');
+        // Select clicked
+        option.classList.remove('bg-neutral-50', 'border-neutral-200');
+        option.classList.add('bg-primary-50', 'border-primary-500');
+        const radio = option.querySelector('.pricing-radio') as HTMLElement;
+        if (radio) {
+          radio.classList.remove('bg-transparent');
+          radio.classList.add('bg-primary-500');
         }
+        const ring = radio?.parentElement as HTMLElement;
+        if (ring) {
+          ring.classList.remove('border-neutral-300');
+          ring.classList.add('border-primary-500');
+        }
+        // Update all price displays to match selected tier
+        const price = (option as HTMLElement).dataset.tierPrice || '';
+        const label = (option as HTMLElement).dataset.tierLabel || '';
+        const monthly = label === 'Tutor-Led'
+          ? Math.round(((parseFloat(price) - 50) / 12) * 100) / 100
+          : parseFloat((document.querySelector('#price-full')?.closest('.pricing-option') as HTMLElement)?.dataset.tierPrice || price);
+        const onlineMonthly = parseFloat(addBtn?.dataset.courseMonthly || '0');
+
+        if (addBtn && price) {
+          addBtn.dataset.coursePrice = price;
+          addBtn.textContent = `Add to Basket — £${price} (${label})`;
+        }
+        // Update mobile sticky bar
+        const mobilePrice = document.getElementById('mobile-sticky-price');
+        const mobileLabel = document.getElementById('mobile-sticky-label');
+        const mobileMonthly = document.getElementById('mobile-sticky-monthly');
+        if (mobilePrice) mobilePrice.textContent = `£${price}`;
+        if (mobileLabel) mobileLabel.textContent = label;
+        if (mobileMonthly) {
+          const mo = label === 'Tutor-Led'
+            ? (Math.round(((parseFloat(price) - 50) / 12) * 100) / 100).toFixed(2)
+            : mobileMonthly.dataset.onlineMonthly || '0';
+          mobileMonthly.textContent = `or £${mo}/mo`;
+        }
+        // Update desktop sticky bar
+        const desktopPrice = document.getElementById('desktop-sticky-price');
+        const desktopLabel = document.getElementById('desktop-sticky-label');
+        if (desktopPrice) desktopPrice.textContent = `£${price}`;
+        if (desktopLabel) desktopLabel.textContent = label;
       });
     });
 
     // --- Add to Cart (sidebar) ---
-    const addBtn = document.getElementById('sidebar-add-to-cart') as HTMLButtonElement;
-    const viewCartLink = document.getElementById('sidebar-view-cart') as HTMLAnchorElement;
     if (addBtn) {
       const courseId = addBtn.dataset.courseId || '';
 
