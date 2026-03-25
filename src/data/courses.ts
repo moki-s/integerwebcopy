@@ -2130,7 +2130,7 @@ export const COURSES: Record<string, Course> = {
     students: 380,
     badge: "DIPLOMA",
     badgeColor: "#38B2AC",
-    image: "/images/courses/access-to-he/supporting-teaching-diploma-level-3.png",
+    image: "/images/courses/access-to-he/supporting-teaching-diploma-level-3.jpg",
     overview:
       "The comprehensive Level 3 qualification for teaching assistants. Covers all aspects of supporting teaching and learning, including specialist areas such as SEN support, behaviour management, and assessment.",
     curriculum: [

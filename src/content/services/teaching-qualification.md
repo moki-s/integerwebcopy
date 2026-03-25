@@ -7,7 +7,7 @@ heroHeading: "Teaching & Education Qualifications"
 heroSubheading: "Accredited qualifications for aspiring and practising educators, assessors, and teaching assistants. From the introductory Award in Education and Training to specialist SEND and assessment qualifications, our fully online courses with dedicated tutor support help you build a career in education."
 shortDescription: "Accredited teaching, assessing, and SEND qualifications for educators, trainers, and teaching assistants."
 longDescription: "Our Teaching Qualification courses are designed for anyone who wants to teach, train, assess, or support learning. Whether you are an aspiring teacher looking to enter further education, a workplace assessor needing formal recognition, or a teaching assistant wanting to progress your career, we offer nationally recognised qualifications that employers and educational institutions trust. All courses are fully online with flexible study options and one-to-one tutor support."
-thumbnail: "/images/courses/teaching/teach-thumb.png"
+thumbnail: "/images/courses/teaching/teach-thumb.jpg"
 thumbnailAlt: "Teacher leading a classroom session with adult learners"
 courses:
   - name: "Level 3 Award in Education and Training"

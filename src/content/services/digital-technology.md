@@ -7,7 +7,7 @@ heroHeading: "Digital Technology Qualifications"
 heroSubheading: "Industry-recognised cyber security qualifications designed to launch your career in one of the UK's fastest-growing sectors. Our fully online courses cover network security, threat intelligence, and incident response -- with dedicated tutor support every step of the way."
 shortDescription: "Industry-recognised cyber security qualifications preparing you for one of the UK's fastest-growing sectors."
 longDescription: "The digital technology sector is experiencing unprecedented demand for skilled professionals, particularly in cyber security. Our accredited qualifications provide the technical knowledge and practical skills needed to protect organisations from digital threats. Whether you are looking to enter the industry or upskill in your current IT role, our flexible online courses with dedicated tutor support make it achievable around your existing commitments."
-thumbnail: "/images/courses/digital-technology/dt-thumb.png"
+thumbnail: "/images/courses/digital-technology/dt-thumb.jpg"
 thumbnailAlt: "Cyber security professional monitoring network security dashboards"
 courses:
   - name: "Level 4 Diploma: Cyber Security Engineer"

@@ -7,7 +7,7 @@ heroHeading: "Access to Higher Education & Teaching Qualifications"
 heroSubheading: "University-recognised Access to HE Diplomas in Nursing and Midwifery, alongside nationally accredited teaching and assessment qualifications. Our flexible online courses with dedicated tutor support provide the academic foundation you need to progress into higher education or advance your career in education."
 shortDescription: "Access to Higher Education diplomas and teaching qualifications providing university-entry pathways for adult learners."
 longDescription: "Our Access to HE courses are designed for adult learners who want to progress into university or advance their careers in education and training. Whether you dream of becoming a nurse or midwife, or you want to gain a recognised teaching or assessment qualification, our flexible online programmes provide the knowledge, skills, and academic confidence you need. With dedicated one-to-one tutor support and interest-free payment plans, we make returning to education achievable."
-thumbnail: "/images/courses/access-to-he/access-thumb.png"
+thumbnail: "/images/courses/access-to-he/access-thumb.jpg"
 thumbnailAlt: "Mature student studying online Access to HE course on laptop"
 courses:
   - name: "Level 3 Access To HE Diploma (Nursing)"
@@ -50,7 +50,7 @@ courses:
     duration: "12-18 months"
     price: "From £1,300"
     accreditor: "NCFE"
-    image: "/images/courses/access-to-he/supporting-teaching-diploma-level-3.png"
+    image: "/images/courses/access-to-he/supporting-teaching-diploma-level-3.jpg"
     description: "The comprehensive teaching assistant qualification. Covers SEN support, behaviour management, assessment, and professional practice."
 benefits:
   - "University-recognised Access to HE Diplomas accepted across the UK"
