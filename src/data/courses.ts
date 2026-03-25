@@ -1244,12 +1244,12 @@ export const COURSES: Record<string, Course> = {
       "Wounds and bleeding",
     ],
     description:
-      "The HABC Level 3 Award in Emergency First Aid at Work (RQF) is a one-day course covering the essentials of emergency first aid in the workplace. It meets Health and Safety Executive (HSE) requirements for appointed first aiders in low-risk workplaces. Covering the roles and responsibilities of a first aider, assessing incidents, managing unresponsive casualties, and dealing with wounds and bleeding, this qualification is valid for three years.",
+      "The HABC Level 3 Award in Emergency First Aid at Work (RQF) is a one-day classroom-based course covering the essentials of emergency first aid in the workplace. In-person attendance is mandatory, with hands-on practical training delivered by experienced tutors. It meets Health and Safety Executive (HSE) requirements for appointed first aiders in low-risk workplaces. Covering the roles and responsibilities of a first aider, assessing incidents, managing unresponsive casualties, and dealing with wounds and bleeding, this qualification is valid for three years.",
     glancePoints: [
       "HSE-compliant first aid qualification",
-      "One-day course — valid for 3 years",
-      "Covers emergency procedures and casualty management",
-      "Required for low-risk workplace first aid compliance",
+      "One-day classroom course — valid for 3 years",
+      "Classroom-based with practical assessment",
+      "In-person attendance required — hands-on training with experienced tutors",
       "Nationally recognised by employers",
     ],
     faqs: [
@@ -1293,12 +1293,12 @@ export const COURSES: Record<string, Course> = {
       "Physical Intervention Skills",
     ],
     description:
-      "The HABC Level 2 Award for Door Supervisors in the Private Security Industry is the standard qualification required to apply for an SIA (Security Industry Authority) Door Supervisor licence. Covering four mandatory units over approximately 38 guided learning hours, you will learn about working in the private security industry, the specific role of a door supervisor, conflict management techniques, and physical intervention skills. This qualification is essential for anyone wanting to work as a door supervisor at licensed premises.",
+      "The HABC Level 2 Award for Door Supervisors in the Private Security Industry is the standard qualification required to apply for an SIA (Security Industry Authority) Door Supervisor licence. This is a classroom-based course with mandatory in-person attendance, delivered over 4-6 days. Covering four mandatory units over approximately 38 guided learning hours, you will receive hands-on training in working in the private security industry, the specific role of a door supervisor, conflict management techniques, and physical intervention skills. This qualification is essential for anyone wanting to work as a door supervisor at licensed premises.",
     glancePoints: [
       "Required for SIA Door Supervisor licence application",
       "38 guided learning hours across 4 mandatory units",
       "Covers conflict management and physical intervention",
-      "Nationally recognised by SIA and employers",
+      "In-person attendance required — hands-on training with experienced tutors",
       "Classroom-based with practical assessment",
     ],
     faqs: [
@@ -1342,12 +1342,12 @@ export const COURSES: Record<string, Course> = {
       "Deal with crowd problems",
     ],
     description:
-      "The HABC Level 2 Certificate in Spectator Safety (RQF) is the required qualification for working as a steward at sports grounds, stadiums, and events. Covering how to prepare for spectator events, control entry and exit of people, monitor spectators, and deal with crowd problems, this qualification meets the requirements of the Guide to Safety at Sports Grounds (the Green Guide). It is essential for anyone wanting to work in event stewarding.",
+      "The HABC Level 2 Certificate in Spectator Safety (RQF) is the required qualification for working as a steward at sports grounds, stadiums, and events. This is a classroom-based course with mandatory in-person attendance, featuring hands-on practical training delivered by experienced tutors. Covering how to prepare for spectator events, control entry and exit of people, monitor spectators, and deal with crowd problems, this qualification meets the requirements of the Guide to Safety at Sports Grounds (the Green Guide). It is essential for anyone wanting to work in event stewarding.",
     glancePoints: [
       "Required qualification for event and sports ground stewards",
       "Meets Green Guide safety requirements",
       "Covers crowd management and emergency procedures",
-      "Nationally recognised by sports venues and event organisers",
+      "In-person attendance required — hands-on training with experienced tutors",
       "Classroom-based with practical scenarios",
     ],
     faqs: [
@@ -1390,13 +1390,13 @@ export const COURSES: Record<string, Course> = {
       "Manage info for decision making",
     ],
     description:
-      "The HABC Level 4 Diploma in Spectator Safety Management (RQF) is a management-level qualification for Safety Officers and Senior Stewards at sports grounds and events. Covering planning and management of spectator safety, developing and managing stewarding resources, and using information for decision-making, this diploma prepares you for senior safety management roles at stadiums, arenas, and large-scale events.",
+      "The HABC Level 4 Diploma in Spectator Safety Management (RQF) is a management-level qualification for Safety Officers and Senior Stewards at sports grounds and events. This is a classroom-based programme with mandatory in-person attendance, featuring hands-on training delivered by experienced tutors. Covering planning and management of spectator safety, developing and managing stewarding resources, and using information for decision-making, this diploma prepares you for senior safety management roles at stadiums, arenas, and large-scale events.",
     glancePoints: [
       "Management-level spectator safety qualification",
       "For Safety Officers and Senior Stewards",
-      "Covers safety planning, resource management, and decision-making",
+      "Classroom-based with hands-on training from experienced tutors",
+      "In-person attendance required — portfolio-based assessment",
       "Meets requirements for senior safety roles at venues",
-      "Portfolio-based assessment",
     ],
     faqs: [
       { question: "Do I need the Level 2 Certificate first?", answer: "While not a formal requirement, it is strongly recommended that you have completed the Level 2 Certificate in Spectator Safety and have significant experience in stewarding before undertaking this management-level qualification." },
@@ -1439,13 +1439,13 @@ export const COURSES: Record<string, Course> = {
       "Customer Service in Security",
     ],
     description:
-      "The HABC Level 2 Certificate in Event Security Operations (RQF) provides specific training for security operatives working at events and festivals. Covering event security guidelines, crowd management, patrolling and searching, and customer service in security, this qualification prepares you for the unique challenges of securing events. It is relevant to anyone working in event security, from music festivals to corporate events.",
+      "The HABC Level 2 Certificate in Event Security Operations (RQF) provides specific classroom-based training for security operatives working at events and festivals. In-person attendance is mandatory, with hands-on practical training delivered by experienced tutors. Covering event security guidelines, crowd management, patrolling and searching, and customer service in security, this qualification prepares you for the unique challenges of securing events. It is relevant to anyone working in event security, from music festivals to corporate events.",
     glancePoints: [
       "Specialist qualification for event security operatives",
       "Covers crowd management, searching, and patrolling",
       "Relevant to festivals, concerts, and corporate events",
-      "Nationally recognised by event organisers and security firms",
-      "Practical and classroom-based learning",
+      "In-person attendance required — hands-on training with experienced tutors",
+      "Classroom-based with practical assessment",
     ],
     faqs: [
       { question: "Do I need an SIA licence for event security?", answer: "If you are performing licensable security activities at events (such as door supervision or security guarding), you will need an SIA licence. This qualification provides relevant knowledge for event security roles but check whether your specific role requires an SIA licence." },
@@ -2077,7 +2077,7 @@ export const COURSES: Record<string, Course> = {
   "teaching-fe-skills-level-5": {
     id: "teaching-fe-skills-level-5",
     title: "NCFE Level 5 Diploma in Teaching (FE and Skills)",
-    category: "Access To HE",
+    category: "Teaching Qualification",
     price: 1500,
     oldPrice: 1600,
     tutorPrice: 1600,
@@ -2123,7 +2123,7 @@ export const COURSES: Record<string, Course> = {
   "assessing-competence-level-3": {
     id: "assessing-competence-level-3",
     title: "Level 3 Award in Assessing Competence in the Work Environment",
-    category: "Access To HE",
+    category: "Teaching Qualification",
     price: 1300,
     oldPrice: 1400,
     tutorPrice: 1400,
@@ -2168,7 +2168,7 @@ export const COURSES: Record<string, Course> = {
   "supporting-teaching-level-2": {
     id: "supporting-teaching-level-2",
     title: "Level 2 Certificate in Supporting Teaching and Learning",
-    category: "Access To HE",
+    category: "Teaching Qualification",
     price: 1000,
     oldPrice: 1100,
     tutorPrice: 1100,
@@ -2214,7 +2214,7 @@ export const COURSES: Record<string, Course> = {
   "supporting-teaching-diploma-level-3": {
     id: "supporting-teaching-diploma-level-3",
     title: "Level 3 Diploma in Supporting Teaching and Learning",
-    category: "Access To HE",
+    category: "Teaching Qualification",
     price: 1300,
     oldPrice: 1400,
     tutorPrice: 1400,
