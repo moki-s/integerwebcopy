@@ -258,12 +258,11 @@ export const siteConfig = {
     { name: "HABC", logo: "/images/partners/habc.webp" },
     { name: "NCFE", logo: "/images/partners/ncfe.webp" },
     { name: "AAT", logo: "/images/partners/aat.webp" },
-    {
-      name: "Mindful Education",
-      logo: "/images/partners/mindful-education.webp",
-    },
     { name: "Pearson", logo: "/images/partners/pearson.webp" },
-    { name: "ATHE", logo: "/images/partners/athe.webp" },
+    { name: "Greater London Authority", logo: "/images/partners/gla.png" },
+    { name: "Turing Scheme", logo: "/images/partners/turing-scheme.png" },
+    { name: "Skills & Education Group", logo: "/images/partners/skills-education-group.png" },
+    { name: "Advanced Learner Loan", logo: "/images/partners/advanced-learner-loan.png" },
     {
       name: "National Careers Service",
       logo: "/images/partners/national-careers.webp",
