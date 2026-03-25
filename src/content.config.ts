@@ -20,6 +20,7 @@ const services = defineCollection({
         level: z.string(),
         duration: z.string(),
         price: z.string(),
+        tutorPrice: z.string().optional(),
         accreditor: z.string(),
         image: z.string().optional(),
         description: z.string(),

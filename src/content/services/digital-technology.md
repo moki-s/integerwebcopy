@@ -14,6 +14,7 @@ courses:
     level: "Level 4"
     duration: "12-18 months"
     price: "From £1,500"
+    tutorPrice: "£1,600"
     accreditor: "NCFE"
     image: "/images/courses/digital-technology/cyber-security-level-4.png"
     description: "Develop the technical skills to work as a cyber security engineer. Covers network security, threat analysis, incident response, and security governance."

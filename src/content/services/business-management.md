@@ -14,6 +14,7 @@ courses:
     level: "Level 2"
     duration: "8-12 weeks"
     price: "Enquire"
+    tutorPrice: "Enquire"
     accreditor: "NCFE"
     image: "/images/courses/business/team-leading-cert.webp"
     description: "Develop essential team leadership skills including communication, motivation, delegation, conflict resolution, and performance management."
