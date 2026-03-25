@@ -475,17 +475,29 @@ const homepageFAQs = [
     gsap.registerPlugin(ScrollTrigger);
 
     // Service card stagger
-    // @ts-ignore
-    gsap.fromTo('.services-grid .service-card',
-      { y: 30, opacity: 0 },
-      { // @ts-ignore
-        scrollTrigger: { trigger: '.services-grid', start: 'top 85%' },
-        y: 0, opacity: 1,
-        duration: 0.4,
-        stagger: 0.08,
-        ease: 'power2.out',
-      }
-    );
+    const serviceCards = document.querySelectorAll('.services-grid .service-card');
+    if (serviceCards.length > 0) {
+      // @ts-ignore
+      gsap.set('.services-grid .service-card', { y: 30, opacity: 0 });
+      // @ts-ignore
+      gsap.to('.services-grid .service-card',
+        { // @ts-ignore
+          scrollTrigger: { trigger: '.services-grid', start: 'top 85%' },
+          y: 0, opacity: 1,
+          duration: 0.4,
+          stagger: 0.08,
+          ease: 'power2.out',
+        }
+      );
+      setTimeout(() => {
+        serviceCards.forEach((card) => {
+          if (getComputedStyle(card).opacity === '0') {
+            (card as HTMLElement).style.opacity = '1';
+            (card as HTMLElement).style.transform = 'none';
+          }
+        });
+      }, 3000);
+    }
 
     // Stats count up
     // @ts-ignore

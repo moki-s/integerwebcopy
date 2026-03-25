@@ -186,16 +186,28 @@ const serviceNameToSlug: Record<string, string> = {
     // @ts-ignore
     gsap.registerPlugin(ScrollTrigger);
 
-    // @ts-ignore
-    gsap.fromTo('.services-grid .service-card',
-      { y: 40, opacity: 0 },
-      { // @ts-ignore
-        scrollTrigger: { trigger: '.services-grid', start: 'top 85%' },
-        y: 0, opacity: 1,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: 'power2.out',
-      }
-    );
+    const svcCards = document.querySelectorAll('.services-grid .service-card');
+    if (svcCards.length > 0) {
+      // @ts-ignore
+      gsap.set('.services-grid .service-card', { y: 40, opacity: 0 });
+      // @ts-ignore
+      gsap.to('.services-grid .service-card',
+        { // @ts-ignore
+          scrollTrigger: { trigger: '.services-grid', start: 'top 85%' },
+          y: 0, opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: 'power2.out',
+        }
+      );
+      setTimeout(() => {
+        svcCards.forEach((card) => {
+          if (getComputedStyle(card).opacity === '0') {
+            (card as HTMLElement).style.opacity = '1';
+            (card as HTMLElement).style.transform = 'none';
+          }
+        });
+      }, 3000);
+    }
   });
 </script>

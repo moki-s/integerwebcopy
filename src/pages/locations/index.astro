@@ -78,16 +78,28 @@ const breadcrumbs = [
     // @ts-ignore
     gsap.registerPlugin(ScrollTrigger);
 
-    // @ts-ignore
-    gsap.fromTo('.location-grid .service-card',
-      { y: 40, opacity: 0 },
-      { // @ts-ignore
-        scrollTrigger: { trigger: '.location-grid', start: 'top 85%' },
-        y: 0, opacity: 1,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: 'power2.out',
-      }
-    );
+    const locCards = document.querySelectorAll('.location-grid .service-card');
+    if (locCards.length > 0) {
+      // @ts-ignore
+      gsap.set('.location-grid .service-card', { y: 40, opacity: 0 });
+      // @ts-ignore
+      gsap.to('.location-grid .service-card',
+        { // @ts-ignore
+          scrollTrigger: { trigger: '.location-grid', start: 'top 85%' },
+          y: 0, opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: 'power2.out',
+        }
+      );
+      setTimeout(() => {
+        locCards.forEach((card) => {
+          if (getComputedStyle(card).opacity === '0') {
+            (card as HTMLElement).style.opacity = '1';
+            (card as HTMLElement).style.transform = 'none';
+          }
+        });
+      }, 3000);
+    }
   });
 </script>
