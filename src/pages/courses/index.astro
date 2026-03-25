@@ -215,6 +215,31 @@ const breadcrumbs = [
     // Select All checkbox
     const selectAllCb = document.getElementById('select-all-cats') as HTMLInputElement;
 
+    // --- Restore filters from URL params ---
+    const params = new URLSearchParams(window.location.search);
+    const savedSearch = params.get('q');
+    const savedSort = params.get('sort');
+    const savedCats = params.get('cats');
+
+    if (savedSearch && searchInput) searchInput.value = savedSearch;
+    if (savedSort && sortSelect) sortSelect.value = savedSort;
+    if (savedCats !== null) {
+      // savedCats is a comma-separated list of checked categories (empty = none checked)
+      const checkedCats = savedCats ? savedCats.split(',') : [];
+      categoryCheckboxes.forEach((cb) => {
+        cb.checked = checkedCats.includes(cb.value);
+      });
+    }
+
+    // Sync Select All checkbox state on load
+    function syncSelectAll() {
+      const allChecked = Array.from(categoryCheckboxes).every((c) => c.checked);
+      const noneChecked = Array.from(categoryCheckboxes).every((c) => !c.checked);
+      selectAllCb.checked = allChecked;
+      selectAllCb.indeterminate = !allChecked && !noneChecked;
+    }
+    syncSelectAll();
+
     selectAllCb?.addEventListener('change', () => {
       categoryCheckboxes.forEach((cb) => (cb.checked = selectAllCb.checked));
       filterAndSort();
@@ -223,10 +248,7 @@ const breadcrumbs = [
     // Keep "Select All" in sync when individual checkboxes change
     categoryCheckboxes.forEach((cb) => {
       cb.addEventListener('change', () => {
-        const allChecked = Array.from(categoryCheckboxes).every((c) => c.checked);
-        const noneChecked = Array.from(categoryCheckboxes).every((c) => !c.checked);
-        selectAllCb.checked = allChecked;
-        selectAllCb.indeterminate = !allChecked && !noneChecked;
+        syncSelectAll();
       });
     });
 
@@ -234,6 +256,28 @@ const breadcrumbs = [
     filterToggle?.addEventListener('click', () => {
       filterPanel?.classList.toggle('hidden');
     });
+
+    // --- Save filters to URL params ---
+    function saveFiltersToUrl() {
+      const url = new URL(window.location.href);
+      const search = searchInput?.value.trim() || '';
+      const sort = sortSelect?.value || 'popularity';
+      const cats = Array.from(categoryCheckboxes)
+        .filter((cb) => cb.checked)
+        .map((cb) => cb.value);
+      const allChecked = cats.length === categoryCheckboxes.length;
+
+      if (search) url.searchParams.set('q', search);
+      else url.searchParams.delete('q');
+
+      if (sort !== 'popularity') url.searchParams.set('sort', sort);
+      else url.searchParams.delete('sort');
+
+      if (!allChecked) url.searchParams.set('cats', cats.join(','));
+      else url.searchParams.delete('cats');
+
+      window.history.replaceState({}, '', url.toString());
+    }
 
     function filterAndSort() {
       const search = searchInput?.value.toLowerCase().trim() || '';
@@ -276,10 +320,17 @@ const breadcrumbs = [
       if (resultsCount) {
         resultsCount.textContent = `Showing ${visibleCount} course${visibleCount !== 1 ? 's' : ''}`;
       }
+
+      saveFiltersToUrl();
     }
 
     searchInput?.addEventListener('input', filterAndSort);
     sortSelect?.addEventListener('change', filterAndSort);
     categoryCheckboxes.forEach((cb) => cb.addEventListener('change', filterAndSort));
+
+    // Apply filters on load if params exist
+    if (savedSearch || savedSort || savedCats !== null) {
+      filterAndSort();
+    }
   });
 </script>
