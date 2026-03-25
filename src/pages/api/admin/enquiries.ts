@@ -2,7 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 
-const ADMIN_PASSWORD = import.meta.env.ADMIN_PASSWORD || "integer2026";
+const ADMIN_PASSWORD = import.meta.env.ADMIN_PASSWORD;
 
 function unauthorized() {
   return new Response(JSON.stringify({ error: "Unauthorized" }), {
