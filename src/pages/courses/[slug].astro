@@ -72,7 +72,7 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
   </div>
 
   <!-- Introduction -->
-  <section class="py-24 lg:py-32">
+  <section class="py-12 lg:py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="max-w-3xl">
         <p class="text-lg md:text-xl text-neutral-600 leading-relaxed">
@@ -83,9 +83,9 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
   </section>
 
   <!-- Benefits -->
-  <section class="py-16 lg:py-24 bg-neutral-50">
+  <section class="py-10 lg:py-14 bg-neutral-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="section-heading font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-12">
+      <h2 class="section-heading font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-8">
         Why Study <span class="text-primary-500">{data.title}</span>?
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -102,9 +102,9 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
   </section>
 
   <!-- Course Listings -->
-  <section class="py-24 lg:py-32">
+  <section class="py-12 lg:py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
+      <div class="text-center mb-8">
         <h2 class="section-heading font-display font-bold text-3xl md:text-4xl lg:text-5xl text-neutral-900 mb-6">
           Available <span class="text-primary-500">Courses</span>
         </h2>
@@ -117,7 +117,7 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
         {data.courses.map((course) => (
           <div class="course-card group bg-white rounded-2xl overflow-hidden shadow-brand-sm hover:shadow-brand-lg border border-neutral-100 hover:border-primary-200 transition-all duration-300 hover:-translate-y-1">
             {course.image && (
-              <a href={`/course/${course.image?.split('/').pop()?.replace('.webp', '') || ''}`} class="block relative h-44 overflow-hidden">
+              <a href={`/course/${course.image?.split('/').pop()?.replace(/\.(webp|png|jpg)$/, '') || ''}`} class="block relative h-44 overflow-hidden">
                 <div class="absolute inset-0 animate-pulse bg-neutral-200"></div>
                 <img
                   src={course.image}
@@ -137,7 +137,7 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
               </div>
 
               <h3 class="font-display font-bold text-lg text-neutral-900 mb-2 group-hover:text-primary-600 transition-colors duration-300 leading-tight">
-                <a href={`/course/${course.image?.split('/').pop()?.replace('.webp', '') || ''}`} class="hover:text-primary-600">
+                <a href={`/course/${course.image?.split('/').pop()?.replace(/\.(webp|png|jpg)$/, '') || ''}`} class="hover:text-primary-600">
                   {course.name}
                 </a>
               </h3>
@@ -164,7 +164,7 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
 
               <div class="flex gap-2">
                 <a
-                  href={`/course/${course.image?.split('/').pop()?.replace('.webp', '') || ''}`}
+                  href={`/course/${course.image?.split('/').pop()?.replace(/\.(webp|png|jpg)$/, '') || ''}`}
                   class="flex-1 text-center bg-gradient-to-r from-primary-500 to-primary-600 text-white px-4 py-2.5 rounded-xl font-semibold text-sm shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                 >
                   View Details
@@ -179,7 +179,7 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
                 ) : (
                   <button
                     class="add-to-cart-btn px-4 py-2.5 rounded-xl font-semibold text-sm border border-neutral-200 text-neutral-700 hover:border-primary-200 hover:text-primary-600 transition-all duration-300"
-                    data-course-id={course.image?.split('/').pop()?.replace('.webp', '').replace('.png', '') || ''}
+                    data-course-id={course.image?.split('/').pop()?.replace(/\.(webp|png|jpg)$/, '') || ''}
                   >
                     Add to Cart
                   </button>
@@ -209,9 +209,9 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
   )}
 
   <!-- Related Services -->
-  <section class="py-24 lg:py-32 bg-neutral-50">
+  <section class="py-12 lg:py-16 bg-neutral-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="section-heading font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-12 text-center">
+      <h2 class="section-heading font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-8 text-center">
         Explore Other <span class="text-primary-500">Categories</span>
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -303,16 +303,38 @@ const serviceImages: Record<string, { thumbnail: string; thumbnailAlt: string }>
     // @ts-ignore
     gsap.registerPlugin(ScrollTrigger);
 
+    // Only animate if cards are visible and grid exists
+    const courseCards = document.querySelectorAll('.course-card');
+    if (courseCards.length === 0) return;
+
     // @ts-ignore
-    gsap.fromTo('.course-card',
-      { y: 40, opacity: 0 },
+    gsap.set('.course-card', { y: 40, opacity: 0 });
+    // @ts-ignore
+    gsap.to('.course-card',
       { // @ts-ignore
         scrollTrigger: { trigger: '.courses-grid', start: 'top 85%' },
         y: 0, opacity: 1,
         duration: 0.5,
         stagger: 0.08,
         ease: 'power2.out',
+        onComplete: () => {
+          // Ensure all cards are visible after animation
+          courseCards.forEach((card) => {
+            (card as HTMLElement).style.opacity = '1';
+            (card as HTMLElement).style.transform = 'none';
+          });
+        },
       }
     );
+
+    // Fallback: if cards are still invisible after 3s, force show them
+    setTimeout(() => {
+      courseCards.forEach((card) => {
+        if (getComputedStyle(card).opacity === '0') {
+          (card as HTMLElement).style.opacity = '1';
+          (card as HTMLElement).style.transform = 'none';
+        }
+      });
+    }, 3000);
   });
 </script>
