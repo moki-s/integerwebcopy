@@ -70,6 +70,7 @@ courses:
     level: "Level 1"
     duration: "4-6 weeks"
     price: "Enquire"
+    tutorPrice: "Enquire"
     accreditor: "HABC"
     image: "/images/courses/occupational/health-safety-award.webp"
     description: "Essential health and safety knowledge for any workplace. Covers risk assessment, fire safety, and accident prevention."
