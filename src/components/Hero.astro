@@ -148,6 +148,16 @@ const {
     // @ts-ignore
     if (typeof gsap === 'undefined') return;
 
+    // Reset hero elements to visible first (fix for back-navigation)
+    const heroEls = ['.hero-heading', '.hero-subheading', '.hero-ctas', '.hero-trust'];
+    heroEls.forEach((sel) => {
+      const el = document.querySelector(sel) as HTMLElement;
+      if (el) {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      }
+    });
+
     // Hero text animation
     const heroHeading = document.querySelector('.hero-heading');
     if (heroHeading) {
@@ -159,12 +169,6 @@ const {
             `<span class="inline-block overflow-hidden"><span class="hero-word inline-block">${word}</span></span>`
         )
         .join(' ');
-
-      // Re-apply gradient class to all word spans in homepage variant
-      const isHomepage = heroHeading.closest('.hero-heading')?.querySelector('.hero-word');
-      if (heroHeading.classList.contains('text-transparent') || heroHeading.querySelector('[class*="text-transparent"]')) {
-        // The gradient was on the whole heading; we need to re-apply to the wrapper
-      }
 
       // @ts-ignore
       const tl = gsap.timeline();
@@ -183,15 +187,18 @@ const {
         .from('.hero-trust', { y: 20, opacity: 0, duration: 0.5 }, '-=0.2');
     }
 
-    // Ken Burns effect for inner hero
-    const heroBg = document.querySelector('.hero-bg-image img');
-    if (heroBg) {
-      // @ts-ignore
-      gsap.fromTo(
-        heroBg,
-        { scale: 1.08 },
-        { scale: 1, duration: 12, ease: 'none' }
-      );
-    }
+    // Fallback: ensure hero elements are visible
+    setTimeout(() => {
+      heroEls.forEach((sel) => {
+        const el = document.querySelector(sel) as HTMLElement;
+        if (el && getComputedStyle(el).opacity === '0') {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        }
+      });
+      document.querySelectorAll('.hero-word').forEach((el) => {
+        (el as HTMLElement).style.transform = 'none';
+      });
+    }, 2000);
   });
 </script>

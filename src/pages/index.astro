@@ -512,6 +512,17 @@ const homepageFAQs = [
     });
 
     // Hero animations
+    const heroElements = ['.hero-heading', '.hero-subheading', '.hero-ctas', '.hero-trust'];
+
+    // Reset all hero elements to visible first (fix for back-navigation)
+    heroElements.forEach((sel) => {
+      const el = document.querySelector(sel) as HTMLElement;
+      if (el) {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      }
+    });
+
     const heroHeading = document.querySelector('.hero-heading');
     if (heroHeading) {
       // @ts-ignore
@@ -525,5 +536,16 @@ const homepageFAQs = [
       // @ts-ignore
         .from('.hero-trust', { y: 15, opacity: 0, duration: 0.4 }, '-=0.1');
     }
+
+    // Fallback: ensure hero is visible even if GSAP fails
+    setTimeout(() => {
+      heroElements.forEach((sel) => {
+        const el = document.querySelector(sel) as HTMLElement;
+        if (el && getComputedStyle(el).opacity === '0') {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        }
+      });
+    }, 2000);
   });
 </script>
