@@ -133,6 +133,9 @@ const courseSchema = {
     }
   }
 };
+
+const onlineLabel = course.onlinePriceLabel || 'Online Learning';
+const tutorLabel = course.tutorPriceLabel || 'Tutor-Led Learning';
 ---
 
 <BaseLayout
@@ -666,13 +669,13 @@ const courseSchema = {
                       class="pricing-option cursor-pointer bg-primary-50 border-2 border-primary-500 rounded-xl p-4 mb-3 transition-all duration-200"
                       data-tier="online"
                       data-tier-price={course.price}
-                      data-tier-label="Online"
+                      data-tier-label={course.onlinePriceLabel ? onlineLabel : 'Online'}
                     >
                       <div class="flex items-center gap-2 mb-3">
                         <div class="w-5 h-5 rounded-full border-2 border-primary-500 flex items-center justify-center flex-shrink-0">
                           <div class="w-2.5 h-2.5 rounded-full bg-primary-500 pricing-radio"></div>
                         </div>
-                        <span class="text-sm font-bold text-neutral-900">Online Learning</span>
+                        <span class="text-sm font-bold text-neutral-900">{onlineLabel}</span>
                       </div>
                       <div class="grid grid-cols-2 gap-4">
                         <div class="text-center">
@@ -700,13 +703,13 @@ const courseSchema = {
                         class="pricing-option cursor-pointer bg-neutral-50 border-2 border-neutral-200 rounded-xl p-4 mb-4 transition-all duration-200 hover:border-neutral-300"
                         data-tier="tutor"
                         data-tier-price={course.tutorPrice}
-                        data-tier-label="Tutor-Led"
+                        data-tier-label={course.tutorPriceLabel ? tutorLabel : 'Tutor-Led'}
                       >
                         <div class="flex items-center gap-2 mb-3">
                           <div class="w-5 h-5 rounded-full border-2 border-neutral-300 flex items-center justify-center flex-shrink-0">
                             <div class="w-2.5 h-2.5 rounded-full bg-transparent pricing-radio"></div>
                           </div>
-                          <span class="text-sm font-bold text-neutral-900">Tutor-Led Learning</span>
+                          <span class="text-sm font-bold text-neutral-900">{tutorLabel}</span>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                           <div class="text-center">
@@ -735,7 +738,7 @@ const courseSchema = {
                       data-course-price={course.price}
                       data-course-title={course.title}
                     >
-                      Add to Basket &mdash; &pound;{course.price} (Online)
+                      Add to Basket &mdash; &pound;{course.price} ({course.onlinePriceLabel ? onlineLabel : 'Online'})
                     </button>
                     <a
                       id="sidebar-view-cart"
@@ -923,7 +926,7 @@ const courseSchema = {
         <p class="font-bold text-neutral-900 text-sm truncate">{course.title}</p>
         <div class="flex items-center gap-2">
           <span id="desktop-sticky-price" class="text-primary-600 font-bold text-lg">&pound;{course.price}</span>
-          <span id="desktop-sticky-label" class="text-xs text-neutral-500">Online</span>
+          <span id="desktop-sticky-label" class="text-xs text-neutral-500">{course.onlinePriceLabel ? onlineLabel : 'Online'}</span>
         </div>
       </div>
       <div class="flex items-center gap-3 flex-shrink-0">
@@ -951,7 +954,7 @@ const courseSchema = {
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1">
             <span id="mobile-sticky-price" class="text-neutral-900 font-bold text-lg">&pound;{course.price}</span>
-            <span id="mobile-sticky-label" class="text-[10px] text-neutral-500">Online</span>
+            <span id="mobile-sticky-label" class="text-[10px] text-neutral-500">{course.onlinePriceLabel ? onlineLabel : 'Online'}</span>
           </div>
           <p id="mobile-sticky-monthly" class="text-xs text-neutral-500" data-online-monthly={course.monthlyPrice}>or &pound;{course.monthlyPrice}/mo</p>
         </div>
