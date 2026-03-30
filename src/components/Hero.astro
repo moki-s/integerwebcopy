@@ -118,20 +118,12 @@ const {
     </div>
   </section>
 ) : (
-  <section class="relative min-h-[50vh] md:min-h-[60vh] flex items-end overflow-hidden">
-    <!-- Background image with Ken Burns -->
-    <div class="absolute inset-0 hero-bg-image">
-      <img
-        src={image}
-        alt={imageAlt}
-        width="1920"
-        height="1080"
-        class="w-full h-full object-cover"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </div>
-
+  <section
+    class="relative min-h-[50vh] md:min-h-[60vh] flex items-end overflow-hidden bg-neutral-900 bg-cover bg-center bg-no-repeat"
+    style={`background-image: url('${image}');`}
+    role="img"
+    aria-label={imageAlt}
+  >
     <!-- Gradient overlay -->
     <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/90 via-neutral-900/50 to-neutral-900/20"></div>
 

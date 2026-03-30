@@ -83,20 +83,12 @@ const homepageFAQs = [
   </div>
 
   <!-- ========== HERO ========== -->
-  <section class="relative min-h-[60vh] md:min-h-[80vh] flex items-center overflow-hidden">
-    <!-- Full-width background image -->
-    <div class="absolute inset-0">
-      <img
-        src="/images/hero-banner.webp"
-        alt="Adult learner studying accredited online course on laptop at home"
-        width="1920"
-        height="1080"
-        class="w-full h-full object-cover"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </div>
-
+  <section
+    class="relative min-h-[60vh] md:min-h-[80vh] flex items-center overflow-hidden bg-neutral-900 bg-cover bg-center bg-no-repeat"
+    style="background-image: url('/images/hero-banner.webp');"
+    role="img"
+    aria-label="Adult learner studying accredited online course on laptop at home"
+  >
     <!-- Gradient overlay for text readability -->
     <div class="absolute inset-0 bg-gradient-to-r from-neutral-900/85 via-neutral-900/70 to-neutral-900/40"></div>
 
