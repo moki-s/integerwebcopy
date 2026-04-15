@@ -2917,7 +2917,7 @@ export const COURSES: Record<string, Course> = {
     students: 180,
     badge: "CHILDCARE",
     badgeColor: "#38B2AC",
-    image: "/images/courses/health-social/ncfe-level-3-residential-childcare.png",
+    image: "/images/courses/health-social/ncfe-level-3-residential-childcare.webp",
     overview:
       "Gain the skills and knowledge required to work in residential childcare settings. This qualification covers the care, well-being, and development of children and young people in residential environments.",
     curriculum: [
@@ -3070,7 +3070,7 @@ export const COURSES: Record<string, Course> = {
     students: 150,
     badge: "CHILDREN",
     badgeColor: "#38B2AC",
-    image: "/images/courses/health-social/ncfe-level-3-children-young-people.png",
+    image: "/images/courses/health-social/ncfe-level-3-children-young-people.webp",
     overview:
       "A comprehensive qualification for those working with children and young people across a range of settings including schools, nurseries, and youth services.",
     curriculum: [
@@ -3183,7 +3183,7 @@ export const COURSES: Record<string, Course> = {
     students: 90,
     badge: "LEADERSHIP",
     badgeColor: "#805AD5",
-    image: "/images/courses/health-social/ncfe-level-5-hsc-cyp-leadership.png",
+    image: "/images/courses/health-social/ncfe-level-5-hsc-cyp-leadership.webp",
     overview:
       "A senior management qualification for leaders in health and social care or children and young people's services. Covers strategic leadership, governance, and quality improvement.",
     curriculum: [
@@ -3279,7 +3279,7 @@ export const COURSES: Record<string, Course> = {
     students: 75,
     badge: "CYBER",
     badgeColor: "#2A4365",
-    image: "/images/courses/digital-technology/cyber-security-level-4.png",
+    image: "/images/courses/digital-technology/cyber-security-level-4.webp",
     overview:
       "Develop the technical skills and knowledge required to work as a cyber security engineer. Covers network security, threat analysis, incident response, and security architecture.",
     curriculum: [
@@ -3395,7 +3395,7 @@ export const COURSES: Record<string, Course> = {
     students: 820,
     badge: "TEACHING",
     badgeColor: "#D69E2E",
-    image: "/images/courses/teaching/education-training-level-3.png",
+    image: "/images/courses/teaching/education-training-level-3.webp",
     overview:
       "The essential introductory teaching qualification. Gain the skills to plan, deliver, and assess inclusive teaching sessions in the further education and skills sector.",
     curriculum: [
@@ -3464,7 +3464,7 @@ export const COURSES: Record<string, Course> = {
     students: 640,
     badge: "ASSESSING",
     badgeColor: "#D69E2E",
-    image: "/images/courses/teaching/assessing-vocational-level-3.png",
+    image: "/images/courses/teaching/assessing-vocational-level-3.webp",
     overview:
       "Become a qualified vocational assessor. Learn to plan assessments, make assessment decisions, and provide constructive feedback to learners in vocational settings.",
     curriculum: [
@@ -3548,7 +3548,7 @@ export const COURSES: Record<string, Course> = {
     students: 420,
     badge: "SUPPORT",
     badgeColor: "#38B2AC",
-    image: "/images/courses/teaching/supporting-teaching-cert-level-3.png",
+    image: "/images/courses/teaching/supporting-teaching-cert-level-3.webp",
     overview:
       "Develop the skills needed to support teaching and learning in schools. Covers child development, supporting literacy and numeracy, and working with teachers to create effective learning environments.",
     curriculum: [
@@ -3667,7 +3667,7 @@ export const COURSES: Record<string, Course> = {
     students: 110,
     badge: "SEND",
     badgeColor: "#805AD5",
-    image: "/images/courses/teaching/send-leadership-level-4.png",
+    image: "/images/courses/teaching/send-leadership-level-4.webp",
     overview:
       "Develop the leadership and management skills needed to lead SEND provision in early years settings. Covers policy, practice, and multi-agency working for children with special educational needs.",
     curriculum: [
@@ -3756,7 +3756,7 @@ export const COURSES: Record<string, Course> = {
     students: 95,
     badge: "ADVANCED",
     badgeColor: "#805AD5",
-    image: "/images/courses/teaching/advanced-practitioner-level-4.png",
+    image: "/images/courses/teaching/advanced-practitioner-level-4.webp",
     overview:
       "Advance your career in education with this Level 4 qualification. Develop higher-level skills in supporting teaching, leading staff, and improving outcomes for learners.",
     curriculum: [
@@ -3845,7 +3845,7 @@ export const COURSES: Record<string, Course> = {
     students: 130,
     badge: "SENCO",
     badgeColor: "#38B2AC",
-    image: "/images/courses/teaching/sen-coordinators-level-3.png",
+    image: "/images/courses/teaching/sen-coordinators-level-3.webp",
     overview:
       "Prepare for the SENCO role in early years settings. Covers the SEND Code of Practice, assessment and planning for children with SEN, and working with families and professionals.",
     curriculum: [
@@ -3936,7 +3936,7 @@ export const COURSES: Record<string, Course> = {
     students: 950,
     badge: "ACCESS",
     badgeColor: "#3182CE",
-    image: "/images/courses/access-to-he/access-he-nursing.png",
+    image: "/images/courses/access-to-he/access-he-nursing.webp",
     overview:
       "A nationally recognised route into university nursing programmes. Covers human biology, health studies, and academic skills needed for higher education entry.",
     curriculum: [
@@ -4056,7 +4056,7 @@ export const COURSES: Record<string, Course> = {
     students: 680,
     badge: "ACCESS",
     badgeColor: "#3182CE",
-    image: "/images/courses/access-to-he/access-he-midwifery.png",
+    image: "/images/courses/access-to-he/access-he-midwifery.webp",
     overview:
       "Prepare for university midwifery programmes with this Access to HE Diploma. Covers biology, reproductive health, psychology, and the academic skills required for degree-level study.",
     curriculum: [
@@ -4175,7 +4175,7 @@ export const COURSES: Record<string, Course> = {
     students: 350,
     badge: "TEACHING",
     badgeColor: "#805AD5",
-    image: "/images/courses/access-to-he/teaching-fe-skills-level-5.png",
+    image: "/images/courses/teaching/teaching-fe-skills-level-5.webp",
     overview:
       "The full teaching qualification for the further education and skills sector. Achieve Qualified Teacher Learning and Skills (QTLS) status and teach across FE colleges, adult education, and training providers.",
     curriculum: [
@@ -4269,7 +4269,7 @@ export const COURSES: Record<string, Course> = {
     students: 290,
     badge: "ASSESSING",
     badgeColor: "#D69E2E",
-    image: "/images/courses/access-to-he/assessing-competence-level-3.png",
+    image: "/images/courses/teaching/assessing-competence-level-3.webp",
     overview:
       "Qualify to assess learner competence in their workplace. Covers observation, questioning, and professional discussion techniques for workplace assessment.",
     curriculum: [
@@ -4342,7 +4342,7 @@ export const COURSES: Record<string, Course> = {
     students: 540,
     badge: "SUPPORT",
     badgeColor: "#38B2AC",
-    image: "/images/courses/access-to-he/supporting-teaching-level-2.png",
+    image: "/images/courses/teaching/supporting-teaching-level-2.webp",
     overview:
       "An introductory qualification for those wanting to support teaching and learning in schools. Covers the fundamentals of working with children and young people in educational settings.",
     curriculum: [
@@ -4425,7 +4425,7 @@ export const COURSES: Record<string, Course> = {
     students: 380,
     badge: "DIPLOMA",
     badgeColor: "#38B2AC",
-    image: "/images/courses/access-to-he/supporting-teaching-diploma-level-3.jpg",
+    image: "/images/courses/teaching/supporting-teaching-diploma-level-3.webp",
     overview:
       "The comprehensive Level 3 qualification for teaching assistants. Covers all aspects of supporting teaching and learning, including specialist areas such as SEN support, behaviour management, and assessment.",
     curriculum: [
