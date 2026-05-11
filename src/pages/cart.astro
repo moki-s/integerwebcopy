@@ -102,7 +102,7 @@ const breadcrumbs = [
                   class="payment-mode-btn flex-1 py-3 px-4 rounded-xl font-semibold text-sm border-2 transition-all duration-200 text-center"
                 >
                   <span class="block text-base">Pay Monthly</span>
-                  <span class="block text-xs mt-0.5 opacity-70">Spread the cost</span>
+                  <span class="block text-xs mt-0.5 opacity-70">£20 reg + 12 installments</span>
                 </button>
               </div>
             </div>
@@ -179,31 +179,27 @@ const breadcrumbs = [
                 </div>
               </div>
 
-              <!-- Pay Monthly Summary -->
+              <!-- Pay Monthly Summary (13 payments: £20 reg + 12 installments) -->
               <div id="summary-monthly" class="hidden">
                 <div class="space-y-3 mb-4">
-                  <div class="flex justify-between text-neutral-600 text-sm">
-                    <span>Monthly subtotal (ex. VAT)</span>
-                    <span id="cart-monthly-subtotal" class="font-medium">--</span>
+                  <div class="flex justify-between text-neutral-700 text-sm">
+                    <span>Registration fee (today)</span>
+                    <span id="cart-reg-fee" class="font-medium">£20.00</span>
                   </div>
-                  <div class="flex justify-between text-neutral-500 text-sm">
-                    <span>VAT (20%)</span>
-                    <span id="cart-monthly-vat">--</span>
-                  </div>
-                  <div class="flex justify-between text-neutral-600 text-sm">
-                    <span>Monthly payment (inc. VAT)</span>
+                  <div class="flex justify-between text-neutral-700 text-sm">
+                    <span>Monthly installment <span class="text-neutral-400">(inc. VAT)</span></span>
                     <span id="cart-monthly-amount" class="font-semibold text-primary-600">--</span>
                   </div>
                   <div class="flex justify-between text-neutral-500 text-sm">
-                    <span>Duration</span>
-                    <span>12 months</span>
+                    <span>Number of installments</span>
+                    <span>12</span>
                   </div>
                 </div>
                 <div class="flex justify-between font-bold text-lg text-neutral-900 border-t border-neutral-200 pt-4 mb-2">
-                  <span>Total over 12 months</span>
+                  <span>Total (13 payments)</span>
                   <span id="cart-monthly-total">--</span>
                 </div>
-                <p class="text-xs text-neutral-400 mb-6">Interest-free, no credit check required.</p>
+                <p class="text-xs text-neutral-400 mb-6">Same total as one-time payment. Card or Direct Debit available at checkout.</p>
               </div>
 
               <!-- Checkout Button -->
@@ -371,18 +367,19 @@ const breadcrumbs = [
     document.getElementById('cart-vat')!.textContent = formatCurrency(vat);
     document.getElementById('cart-total')!.textContent = formatCurrency(total);
 
-    // -- Monthly totals (with VAT) --
-    const monthlySubtotal = getCartMonthlyTotal();
-    const monthlyVat = monthlySubtotal * 0.2;
-    const monthlyTotal = monthlySubtotal + monthlyVat;
-    const monthlyGrandTotal = monthlyTotal * 12;
+    // -- Monthly: £20 registration today + 12 installments, total = course.price (inc VAT) --
+    // Same source of truth as pay-in-full. (Ignore course.monthlyPrice — legacy.)
+    // Round installment to 2dp BEFORE computing total so the displayed total matches what
+    // Stripe actually charges (£149.96 not £150.00 for a £150 course). (M6)
+    const REG_FEE = 20;
+    const courseTotalIncVat = total; // total is already sum of course.price (inc VAT)
+    const installment = Math.round((courseTotalIncVat - REG_FEE) / 12 * 100) / 100;
+    const monthlyGrandTotal = REG_FEE + installment * 12;
 
-    document.getElementById('cart-monthly-subtotal')!.textContent = `${formatCurrency(monthlySubtotal)}/mo`;
-    document.getElementById('cart-monthly-vat')!.textContent = `${formatCurrency(monthlyVat)}/mo`;
-    document.getElementById('cart-monthly-amount')!.textContent = `${formatCurrency(monthlyTotal)}/mo`;
+    document.getElementById('cart-monthly-amount')!.textContent = `${formatCurrency(installment)}/mo`;
     document.getElementById('cart-monthly-total')!.textContent = formatCurrency(monthlyGrandTotal);
 
-    // -- Monthly table rows --
+    // -- Monthly table rows: show per-course total (= course.price inc VAT) --
     const monthlyTableBody = document.getElementById('monthly-table-body')!;
     monthlyTableBody.innerHTML = items
       .map(
@@ -391,14 +388,14 @@ const breadcrumbs = [
           <td class="px-4 sm:px-6 py-3">
             <div class="font-medium text-neutral-900">${course.title}</div>
           </td>
-          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap">${formatCurrency(course.monthlyPrice)}/mo</td>
-          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap">12 months</td>
-          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap font-medium">${formatCurrency(course.monthlyPrice * 12)}</td>
+          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap">${formatCurrency(course.price)}</td>
+          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap">over 13 payments</td>
+          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap font-medium">${formatCurrency(course.price)}</td>
         </tr>`
       )
       .join('');
 
-    document.getElementById('monthly-table-total-monthly')!.textContent = `${formatCurrency(monthlyTotal)}/mo`;
+    document.getElementById('monthly-table-total-monthly')!.textContent = `${formatCurrency(installment)}/mo`;
     document.getElementById('monthly-table-total-cost')!.textContent = formatCurrency(monthlyGrandTotal);
 
     // -- Render cart item rows --
@@ -413,9 +410,8 @@ const breadcrumbs = [
           <h4 class="font-semibold text-neutral-900 text-sm sm:text-base leading-snug mb-1">${course.title}</h4>
           <p class="text-xs text-neutral-500 mb-1">${course.category}${course.qualificationLevel ? ' | ' + course.qualificationLevel : ''} | Online</p>
           <div class="flex items-center gap-2">
-            <span class="item-price-full text-sm font-bold text-neutral-900 ${mode === 'monthly' ? 'hidden' : ''}">${formatCurrency(course.price)}</span>
-            <span class="item-price-monthly text-sm font-bold text-primary-600 ${mode === 'full' ? 'hidden' : ''}">${formatCurrency(course.monthlyPrice)}/mo</span>
-            ${course.oldPrice > course.price ? `<span class="text-xs text-neutral-400 line-through">${formatCurrency(mode === 'monthly' ? course.oldMonthlyPrice : course.oldPrice)}</span>` : ''}
+            <span class="text-sm font-bold text-neutral-900">${formatCurrency(course.price)}</span>
+            ${course.oldPrice > course.price ? `<span class="text-xs text-neutral-400 line-through">${formatCurrency(course.oldPrice)}</span>` : ''}
           </div>
         </div>
         <div class="flex-shrink-0">
