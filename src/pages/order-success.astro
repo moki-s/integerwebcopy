@@ -78,24 +78,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </div>
 
-        <!-- Subscription payment info -->
-        <div id="subscription-info" class="hidden">
+        <!-- Monthly plan info (card OR DD — same shape, different wording) -->
+        <div id="monthly-info" class="hidden">
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
             </div>
             <div>
-              <p class="text-sm text-neutral-500 font-medium">Monthly Plan Set Up</p>
-              <p id="subscription-monthly" class="text-lg font-bold text-neutral-900"></p>
+              <p class="text-sm text-neutral-500 font-medium" id="monthly-info-heading">Monthly plan set up</p>
+              <p id="monthly-total-amount" class="text-lg font-bold text-neutral-900"></p>
             </div>
           </div>
-          <div class="bg-primary-50/50 rounded-xl p-4 mb-3">
-            <p class="text-sm text-neutral-700">Your first payment has been taken. Future payments will be charged automatically each month.</p>
+          <div class="bg-green-50/50 rounded-xl p-4 mb-3 space-y-2">
+            <p class="text-sm text-neutral-700"><strong>Today:</strong> <span id="monthly-today-line"></span></p>
+            <p class="text-sm text-neutral-700"><strong>First installment:</strong> <span id="monthly-first-date" class="font-semibold"></span> &mdash; <span id="monthly-installment-amount"></span></p>
+            <p class="text-sm text-neutral-700"><strong>After that:</strong> 11 more monthly installments on the same date.</p>
+            <p id="monthly-bacs-note" class="hidden text-xs text-neutral-500 pt-2 border-t border-green-100">Your bank's Direct Debit Guarantee applies. Allow 3–5 working days for each collection to clear — you'll receive separate emails from Stripe.</p>
           </div>
-          <p id="subscription-duration" class="text-sm text-neutral-500 flex items-center gap-2">
-            <svg class="w-4 h-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-            <span></span>
-          </p>
         </div>
 
         <!-- Enrolled courses (shared) -->
@@ -117,15 +116,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <ol class="space-y-3">
           <li class="flex items-start gap-3">
             <span class="w-6 h-6 rounded-full bg-white text-primary-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 border border-primary-200">1</span>
-            <span class="text-sm text-neutral-700">Check your email for login credentials</span>
+            <span class="text-sm text-neutral-700">Our admin team will call you within 24 hours to complete your enrolment procedures</span>
           </li>
           <li class="flex items-start gap-3">
             <span class="w-6 h-6 rounded-full bg-white text-primary-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 border border-primary-200">2</span>
-            <span class="text-sm text-neutral-700">Access your course materials at any time</span>
+            <span class="text-sm text-neutral-700">Once the procedures are complete, you'll receive your login credentials by email</span>
           </li>
           <li class="flex items-start gap-3">
             <span class="w-6 h-6 rounded-full bg-white text-primary-600 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 border border-primary-200">3</span>
-            <span class="text-sm text-neutral-700">Your dedicated tutor will be in touch within 24 hours</span>
+            <span class="text-sm text-neutral-700">Your dedicated tutor will then be in touch to start your course</span>
           </li>
         </ol>
       </div>
@@ -156,7 +155,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </style>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
+  document.addEventListener('astro:page-load', async () => {
+    // Promote pending_dd_order → last_order if customer just returned from Stripe with session_id
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    if (sessionId) {
+      const pending = sessionStorage.getItem('pending_dd_order');
+      if (pending) {
+        sessionStorage.setItem('last_order', pending);
+        sessionStorage.removeItem('pending_dd_order');
+        // Now safe to clear the cart — payment flow really completed
+        try {
+          const { clearCart } = await import('../lib/cart');
+          clearCart();
+        } catch {}
+      }
+    }
+
     const raw = sessionStorage.getItem('last_order');
     if (!raw) {
       window.location.href = '/courses';
@@ -184,24 +199,46 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         emailEl.textContent = `A confirmation email has been sent to ${order.customer_email}`;
       }
 
-      // Determine payment type
+      // Determine payment type / method
       const isSubscription = order.payment_type === 'monthly';
+      const isDD = isSubscription && order.payment_method === 'bacs_debit';
 
       if (isSubscription) {
-        // Subscription display
-        const subInfo = document.getElementById('subscription-info');
-        if (subInfo) subInfo.classList.remove('hidden');
+        // Unified monthly display \u2014 card or DD, both = \u00A320 reg + 12 installments
+        const monthlyInfo = document.getElementById('monthly-info');
+        if (monthlyInfo) monthlyInfo.classList.remove('hidden');
 
-        const monthlyEl = document.getElementById('subscription-monthly');
-        if (monthlyEl) {
-          monthlyEl.textContent = `\u00A3${Number(order.monthly_amount).toFixed(2)}/mo`;
+        const heading = document.getElementById('monthly-info-heading');
+        if (heading) {
+          heading.textContent = isDD ? 'Direct Debit plan set up' : 'Monthly card plan set up';
         }
 
-        const durationEl = document.getElementById('subscription-duration');
-        const durationSpan = durationEl?.querySelector('span');
-        if (durationSpan && order.subscription_months) {
-          durationSpan.textContent = `Plan duration: ${order.subscription_months} months`;
+        const totalAmountEl = document.getElementById('monthly-total-amount');
+        if (totalAmountEl) {
+          const total = 20 + (Number(order.monthly_amount) * 12);
+          totalAmountEl.textContent = `\u00A3${total.toFixed(2)} across 13 payments`;
         }
+
+        const todayLineEl = document.getElementById('monthly-today-line');
+        if (todayLineEl) {
+          todayLineEl.textContent = isDD
+            ? '\u00A320.00 registration fee submitted via Direct Debit (settles in 3\u20135 working days)'
+            : '\u00A320.00 registration fee charged to your card';
+        }
+
+        const firstDateEl = document.getElementById('monthly-first-date');
+        if (firstDateEl && order.first_payment_date) {
+          const d = new Date(order.first_payment_date + 'T00:00:00');
+          firstDateEl.textContent = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        const installmentEl = document.getElementById('monthly-installment-amount');
+        if (installmentEl && order.monthly_amount) {
+          installmentEl.textContent = `\u00A3${Number(order.monthly_amount).toFixed(2)}`;
+        }
+
+        const bacsNoteEl = document.getElementById('monthly-bacs-note');
+        if (bacsNoteEl && isDD) bacsNoteEl.classList.remove('hidden');
       } else {
         // One-time payment display
         const oneInfo = document.getElementById('onetime-info');
