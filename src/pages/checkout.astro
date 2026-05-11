@@ -104,11 +104,51 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
               </div>
             </div>
 
-            <!-- Payment Details -->
-            <div class="bg-white rounded-2xl border border-neutral-100 shadow-brand-sm p-6">
+            <!-- Monthly Plan Setup (visible only when Pay Monthly mode) -->
+            <div id="monthly-plan-section" class="hidden bg-white rounded-2xl border border-neutral-100 shadow-brand-sm p-6 mb-6">
               <h3 class="font-display font-bold text-lg text-neutral-900 mb-4 flex items-center gap-3">
                 <span class="w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center text-sm font-bold">2</span>
-                Payment Details
+                Choose Monthly Payment Method
+              </h3>
+
+              <!-- Method radio -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label id="dd-card-option" class="dd-method-card flex flex-col p-4 border-2 border-primary-500 bg-primary-50 rounded-xl cursor-pointer transition-all">
+                  <input type="radio" name="dd_method" value="card" checked class="sr-only" />
+                  <div class="flex items-center gap-2 mb-1">
+                    <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                    <span class="font-bold text-sm">Pay by Card</span>
+                  </div>
+                  <span class="text-xs text-neutral-600">£20 registration today + 12 monthly card payments.</span>
+                </label>
+                <label id="dd-debit-option" class="dd-method-card flex flex-col p-4 border-2 border-neutral-200 rounded-xl cursor-pointer transition-all">
+                  <input type="radio" name="dd_method" value="bacs_debit" class="sr-only" />
+                  <div class="flex items-center gap-2 mb-1">
+                    <svg class="w-5 h-5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                    <span class="font-bold text-sm">Pay by Direct Debit</span>
+                  </div>
+                  <span class="text-xs text-neutral-600">£20 registration + 12 Direct Debits. Allow 3–5 working days to clear.</span>
+                </label>
+              </div>
+
+              <!-- First installment date (always visible when monthly) -->
+              <div id="first-payment-date-section" class="mt-4 pt-4 border-t border-neutral-100">
+                <label for="first_payment_date" class="block text-sm font-medium text-neutral-700 mb-1">
+                  First installment date <span class="text-red-500">*</span>
+                </label>
+                <input type="date" id="first_payment_date" class="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all text-base" />
+                <p id="first-payment-help" class="text-xs text-neutral-500 mt-2">
+                  <svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Today we charge the £20 registration fee. Your 12 monthly installments of <span id="installment-amount">--</span> start on this date.
+                </p>
+              </div>
+            </div>
+
+            <!-- Payment Details (card element) — hidden when DD selected -->
+            <div id="card-section" class="bg-white rounded-2xl border border-neutral-100 shadow-brand-sm p-6">
+              <h3 class="font-display font-bold text-lg text-neutral-900 mb-4 flex items-center gap-3">
+                <span id="payment-step-num" class="w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center text-sm font-bold">2</span>
+                <span id="payment-step-label">Payment Details</span>
               </h3>
 
               <div id="stripe-card-element" class="bg-white border border-neutral-200 px-4 py-3 rounded-xl"></div>
@@ -133,6 +173,39 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
               >
                 <span id="btn-text">Pay Now</span>
                 <span id="btn-spinner" class="hidden">Processing...</span>
+              </button>
+            </div>
+
+            <!-- DD redirect notice — visible only when DD selected -->
+            <div id="dd-redirect-section" class="hidden bg-white rounded-2xl border border-neutral-100 shadow-brand-sm p-6">
+              <h3 class="font-display font-bold text-lg text-neutral-900 mb-4 flex items-center gap-3">
+                <span class="w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center text-sm font-bold">3</span>
+                Bank Details (via Stripe)
+              </h3>
+              <div class="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 mb-4">
+                <p class="text-sm text-amber-900 leading-relaxed">
+                  <svg class="w-4 h-4 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  After clicking <strong>Continue to bank details</strong>, you'll be redirected to Stripe to securely enter your sort code and account number. The £20 registration fee and your 12 monthly Direct Debits will be collected from this account. <strong>Allow 3–5 working days</strong> for the first Direct Debit to clear.
+                </p>
+              </div>
+              <div class="space-y-3 mb-4">
+                <label class="flex items-center gap-3 cursor-pointer text-sm text-neutral-700">
+                  <input type="checkbox" id="terms-agree-dd" class="w-5 h-5 rounded border-neutral-300 text-primary-500 focus:ring-primary-500" />
+                  I agree to the <a href="/terms" target="_blank" class="text-primary-500 underline font-semibold">Terms and Conditions</a>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer text-sm text-neutral-700">
+                  <input type="checkbox" id="privacy-agree-dd" class="w-5 h-5 rounded border-neutral-300 text-primary-500 focus:ring-primary-500" />
+                  I agree to the <a href="/privacy-policy" target="_blank" class="text-primary-500 underline font-semibold">Privacy Policy</a>
+                </label>
+                <div id="terms-error-dd" class="hidden text-red-500 text-xs">You must agree to both policies to proceed.</div>
+              </div>
+              <button
+                type="button"
+                id="submit-btn-dd"
+                class="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span id="btn-text-dd">Continue to bank details</span>
+                <span id="btn-spinner-dd" class="hidden">Redirecting...</span>
               </button>
 
               <!-- Trust Elements -->
@@ -176,32 +249,32 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
               </div>
             </div>
 
-            <!-- Monthly Payment Summary -->
+            <!-- Monthly Payment Summary (£20 reg + 12 installments) -->
             <div id="summary-monthly" class="hidden border-t border-neutral-200 pt-4 space-y-2">
-              <div class="flex justify-between text-sm text-neutral-600">
-                <span>Monthly subtotal (ex. VAT)</span>
+              <div class="flex justify-between text-sm text-neutral-700">
+                <span>Registration fee (today)</span>
                 <span id="checkout-monthly-subtotal">--</span>
               </div>
-              <div class="flex justify-between text-sm text-neutral-500">
-                <span>VAT (20%)</span>
-                <span id="checkout-monthly-vat">--</span>
+              <div class="flex justify-between text-sm text-neutral-400">
+                <span class="text-xs">VAT status</span>
+                <span id="checkout-monthly-vat" class="text-xs">--</span>
               </div>
               <div class="flex justify-between text-sm font-semibold text-neutral-900">
-                <span>Monthly Payment (inc. VAT)</span>
+                <span>Monthly installment</span>
                 <span id="checkout-monthly-amount">--</span>
               </div>
               <div class="flex justify-between text-sm text-neutral-600">
-                <span>Plan Duration</span>
-                <span class="font-medium">12 months</span>
+                <span>Number of installments</span>
+                <span class="font-medium">12</span>
               </div>
-              <div class="flex justify-between text-sm text-neutral-500 border-t border-neutral-200 pt-3 mt-3">
-                <span>Total over 12 months</span>
+              <div class="flex justify-between text-sm font-bold text-neutral-900 border-t border-neutral-200 pt-3 mt-3">
+                <span>Total (13 payments)</span>
                 <span id="checkout-monthly-total-12">--</span>
               </div>
               <div class="bg-green-50 border border-green-100 rounded-lg px-3 py-2 mt-3">
-                <p class="text-xs text-green-700 leading-relaxed">
+                <p id="monthly-summary-note" class="text-xs text-green-700 leading-relaxed">
                   <svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                  First payment taken today, then monthly by Direct Debit.
+                  First payment today, then monthly card auto-billing for 12 months.
                 </p>
               </div>
             </div>
@@ -258,13 +331,15 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
       summaryMonthly.classList.add('hidden');
     }
 
-    // Calculate totals
+    // Calculate totals — `total` is sum of course.price (inc VAT, same value as pay-in-full)
     const total = getCartTotal();
-    const monthlySubtotal = getCartMonthlyTotal();
-    const monthlyVat = monthlySubtotal * 0.2;
-    const monthlyTotal = monthlySubtotal + monthlyVat;
     const subtotalExVat = total / 1.2;
     const vat = total - subtotalExVat;
+    // Monthly = same total, split as £20 reg + 12 installments.
+    // Round installment to match server-side pricing.calculatePlan (M6).
+    const REG_FEE = 20;
+    const monthlyInstallment = Math.round((total - REG_FEE) / 12 * 100) / 100;
+    const monthlyTotal = monthlyInstallment; // backwards-compat alias for places that reference it
 
     // Populate full payment summary
     document.getElementById('checkout-subtotal')!.textContent = `\u00A3${subtotalExVat.toFixed(2)}`;
@@ -272,17 +347,93 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
     document.getElementById('checkout-total')!.textContent = `\u00A3${total.toFixed(2)}`;
 
     // Populate monthly payment summary
-    document.getElementById('checkout-monthly-subtotal')!.textContent = `\u00A3${monthlySubtotal.toFixed(2)}/mo`;
-    document.getElementById('checkout-monthly-vat')!.textContent = `\u00A3${monthlyVat.toFixed(2)}/mo`;
-    document.getElementById('checkout-monthly-amount')!.textContent = `\u00A3${monthlyTotal.toFixed(2)}/mo`;
-    document.getElementById('checkout-monthly-total-12')!.textContent = `\u00A3${(monthlyTotal * 12).toFixed(2)}`;
+    document.getElementById('checkout-monthly-subtotal')!.textContent = `\u00A320.00`;
+    document.getElementById('checkout-monthly-vat')!.textContent = `inc VAT`;
+    document.getElementById('checkout-monthly-amount')!.textContent = `\u00A3${monthlyInstallment.toFixed(2)}/mo`;
+    document.getElementById('checkout-monthly-total-12')!.textContent = `\u00A3${(20 + monthlyInstallment * 12).toFixed(2)}`;
 
-    // Set button text
+    // Set initial button text (may be updated by DD radio handler below)
     const btnTextEl = document.getElementById('btn-text')!;
     if (isMonthly) {
       btnTextEl.textContent = `Start Monthly Plan - \u00A3${monthlyTotal.toFixed(2)}/mo`;
     } else {
       btnTextEl.textContent = `Pay \u00A3${total.toFixed(2)}`;
+    }
+
+    // ====================================================================
+    // Monthly plan: registration fee + 12 installments, card or DD
+    // ====================================================================
+    let ddMethod: 'card' | 'bacs_debit' = 'card';
+    const monthlyPlanSection = document.getElementById('monthly-plan-section')!;
+    const cardSection = document.getElementById('card-section')!;
+    const ddRedirectSection = document.getElementById('dd-redirect-section')!;
+    const firstPaymentDateInput = document.getElementById('first_payment_date') as HTMLInputElement;
+    const installmentAmountSpan = document.getElementById('installment-amount')!;
+    const monthlyNote = document.getElementById('monthly-summary-note')!;
+    const cardOption = document.getElementById('dd-card-option')!;
+    const debitOption = document.getElementById('dd-debit-option')!;
+
+    function pad(n: number) { return n.toString().padStart(2, '0'); }
+    function isoDate(d: Date) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+
+    // Installment for display (same as monthlyInstallment computed above).
+    const installmentDisplay = monthlyInstallment;
+
+    if (isMonthly) {
+      monthlyPlanSection.classList.remove('hidden');
+      installmentAmountSpan.textContent = `\u00A3${installmentDisplay.toFixed(2)}`;
+
+      // Date constraints: today+5 .. today+30 calendar days (1 month max from today).
+      // Use UTC midnight to match server-side validateFirstPaymentDate. (H9)
+      const today = new Date();
+      today.setUTCHours(0,0,0,0);
+      const min = new Date(today); min.setUTCDate(today.getUTCDate() + 5);
+      const max = new Date(today); max.setUTCDate(today.getUTCDate() + 30);
+      const minIso = isoDate(min);
+      const maxIso = isoDate(max);
+      firstPaymentDateInput.min = minIso;
+      firstPaymentDateInput.max = maxIso;
+      firstPaymentDateInput.value = minIso;
+
+      // Show valid range in the help text
+      const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      const helpEl = document.getElementById('first-payment-help');
+      if (helpEl) {
+        helpEl.innerHTML = `<svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Pick any date between <strong>${fmt(min)}</strong> and <strong>${fmt(max)}</strong>. Today we charge the \u00A320 registration fee. Your 12 monthly installments of <span id="installment-amount">\u00A3${installmentDisplay.toFixed(2)}</span> start on this date.`;
+      }
+
+      // Snap any out-of-range typed/picked values back into range
+      firstPaymentDateInput.addEventListener('input', () => {
+        const v = firstPaymentDateInput.value;
+        if (!v) return;
+        if (v < minIso) firstPaymentDateInput.value = minIso;
+        else if (v > maxIso) firstPaymentDateInput.value = maxIso;
+      });
+
+      function selectMethod(method: 'card' | 'bacs_debit') {
+        ddMethod = method;
+        if (method === 'card') {
+          cardOption.classList.add('border-primary-500', 'bg-primary-50');
+          cardOption.classList.remove('border-neutral-200');
+          debitOption.classList.remove('border-primary-500', 'bg-primary-50');
+          debitOption.classList.add('border-neutral-200');
+          cardSection.classList.remove('hidden');
+          ddRedirectSection.classList.add('hidden');
+          btnTextEl.textContent = `Pay \u00A320 registration & start plan`;
+          monthlyNote.innerHTML = `<svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> \u00A320 registration today + 12 monthly card payments of \u00A3${installmentDisplay.toFixed(2)}.`;
+        } else {
+          debitOption.classList.add('border-primary-500', 'bg-primary-50');
+          debitOption.classList.remove('border-neutral-200');
+          cardOption.classList.remove('border-primary-500', 'bg-primary-50');
+          cardOption.classList.add('border-neutral-200');
+          cardSection.classList.add('hidden');
+          ddRedirectSection.classList.remove('hidden');
+          monthlyNote.innerHTML = `<svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> \u00A320 registration + 12 Direct Debits of \u00A3${installmentDisplay.toFixed(2)}. Allow 3\u20135 working days for first DD to clear.`;
+        }
+      }
+
+      cardOption.addEventListener('click', () => selectMethod('card'));
+      debitOption.addEventListener('click', () => selectMethod('bacs_debit'));
     }
 
     // Render cart items - show per-item price based on mode
@@ -297,7 +448,7 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
           <p class="text-sm font-semibold text-neutral-900 truncate">${course.title}</p>
           <p class="text-xs text-neutral-500">Qty: 1</p>
         </div>
-        <p class="text-sm font-semibold text-neutral-900">${isMonthly ? `\u00A3${course.monthlyPrice.toFixed(2)}/mo` : `\u00A3${course.price.toFixed(2)}`}</p>
+        <p class="text-sm font-semibold text-neutral-900">\u00A3${course.price.toFixed(2)}</p>
       </div>`,
       )
       .join('');
@@ -339,22 +490,114 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
       btnSpinner.classList.toggle('hidden', !loading);
     }
 
-    function storeOrderAndRedirect(orderNumber: string, firstName: string, lastName: string, email: string, orderTotal: number) {
+    function storeOrderAndRedirect(orderNumber: string, firstName: string, lastName: string, email: string, orderTotal: number, extras: Record<string, unknown> = {}) {
       const orderData: Record<string, unknown> = {
         order_number: orderNumber,
         customer_name: `${firstName} ${lastName}`,
         customer_email: email,
         courses: items.map((i) => i.course.title),
         total: orderTotal,
+        ...extras,
       };
-      if (isMonthly) {
+      if (isMonthly && !orderData.payment_type) {
         orderData.payment_type = 'monthly';
-        orderData.monthly_amount = monthlyTotal;
         orderData.subscription_months = 12;
       }
       sessionStorage.setItem('last_order', JSON.stringify(orderData));
       clearCart();
       window.location.href = '/order-success';
+    }
+
+    // ====================================================================
+    // DD button — separate from form submit. Posts to DD endpoint and redirects.
+    // ====================================================================
+    const submitBtnDd = document.getElementById('submit-btn-dd') as HTMLButtonElement | null;
+    const btnTextDd = document.getElementById('btn-text-dd');
+    const btnSpinnerDd = document.getElementById('btn-spinner-dd');
+
+    if (submitBtnDd && btnTextDd && btnSpinnerDd) {
+      submitBtnDd.addEventListener('click', async (e: Event) => {
+        e.preventDefault();
+        if (isProcessing) return;
+
+        const firstName = (document.getElementById('first_name') as HTMLInputElement).value.trim();
+        const lastName = (document.getElementById('last_name') as HTMLInputElement).value.trim();
+        const email = (document.getElementById('checkout_email') as HTMLInputElement).value.trim();
+        const phone = (document.getElementById('checkout_phone') as HTMLInputElement).value.trim();
+        const firstPaymentDate = firstPaymentDateInput.value;
+
+        if (!firstName || !lastName || !email || !phone) {
+          alert('Please fill in your name, email and phone before continuing.');
+          return;
+        }
+        if (!firstPaymentDate) {
+          alert('Please pick your first installment date.');
+          return;
+        }
+
+        const termsBox = document.getElementById('terms-agree-dd') as HTMLInputElement;
+        const privacyBox = document.getElementById('privacy-agree-dd') as HTMLInputElement;
+        const termsErr = document.getElementById('terms-error-dd')!;
+        if (!termsBox.checked || !privacyBox.checked) {
+          termsErr.classList.remove('hidden');
+          return;
+        }
+        termsErr.classList.add('hidden');
+
+        isProcessing = true;
+        submitBtnDd.disabled = true;
+        btnTextDd.classList.add('hidden');
+        btnSpinnerDd.classList.remove('hidden');
+
+        try {
+          const response = await fetch('/api/checkout-direct-debit-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              first_name: firstName,
+              last_name: lastName,
+              email,
+              phone,
+              course_ids: getCartCourseIds(),
+              first_payment_date: firstPaymentDate,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.success && data.checkout_url) {
+            // Stash details for /order-success but DON'T clear cart yet — if customer
+            // cancels on Stripe and hits Back, they should see their cart intact. (H8)
+            // The order-success page pops `pending_dd_order` only when session_id is
+            // present in the URL (i.e. Stripe redirected back, not a Back-button hit).
+            sessionStorage.setItem('pending_dd_order', JSON.stringify({
+              order_number: data.order_number,
+              customer_name: `${firstName} ${lastName}`,
+              customer_email: email,
+              courses: items.map((i) => i.course.title),
+              total: 20 + installmentDisplay * 12,
+              payment_type: 'monthly',
+              payment_method: 'bacs_debit',
+              registration_fee: 20,
+              monthly_amount: installmentDisplay,
+              subscription_months: 12,
+              first_payment_date: data.first_payment_date,
+              session_id: data.session_id,
+            }));
+            window.location.href = data.checkout_url;
+            return;
+          }
+
+          alert(data.error || 'Could not set up Direct Debit. Please try again.');
+        } catch {
+          alert('An error occurred. Please try again or call us on 0121 690 9563 for assistance.');
+        } finally {
+          isProcessing = false;
+          submitBtnDd.disabled = false;
+          btnTextDd.classList.remove('hidden');
+          btnSpinnerDd.classList.add('hidden');
+        }
+      });
     }
 
     form.addEventListener('submit', async (e: Event) => {
@@ -396,7 +639,13 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
           return;
         }
 
-        const payload = {
+        if (isMonthly && !firstPaymentDateInput.value) {
+          errorEl.textContent = 'Please pick your first installment date.';
+          setLoading(false);
+          return;
+        }
+
+        const payload: Record<string, unknown> = {
           payment_method_id: result.paymentMethod.id,
           first_name: firstName,
           last_name: lastName,
@@ -404,9 +653,15 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
           phone,
           course_ids: getCartCourseIds(),
         };
+        if (isMonthly) {
+          payload.first_payment_date = firstPaymentDateInput.value;
+        }
 
-        // Choose endpoint based on payment mode
+        // Endpoint routing:
+        //   one-time card → /api/checkout
+        //   monthly card → /api/checkout-subscription (DD has its own button below)
         const endpoint = isMonthly ? '/api/checkout-subscription' : '/api/checkout';
+
         const response = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -416,8 +671,15 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
         const data = await response.json();
 
         if (data.success) {
-          const orderTotal = isMonthly ? monthlyTotal : total;
-          storeOrderAndRedirect(data.order_number, firstName, lastName, email, orderTotal);
+          const orderTotal = isMonthly ? (20 + installmentDisplay * 12) : total;
+          const extras: Record<string, unknown> = {};
+          if (isMonthly) {
+            extras.registration_fee = 20;
+            extras.monthly_amount = installmentDisplay;
+            extras.first_payment_date = firstPaymentDateInput.value;
+            extras.payment_method = 'card';
+          }
+          storeOrderAndRedirect(data.order_number, firstName, lastName, email, orderTotal, extras);
           return;
         }
 
@@ -431,22 +693,47 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
             return;
           }
 
-          // Confirm after 3DS - use the correct confirm endpoint for each mode
-          const confirmEndpoint = isMonthly ? '/api/checkout-subscription-confirm' : '/api/checkout-confirm';
+          // Confirm endpoint differs by flow:
+          //   one-time card → /api/checkout-confirm (just payment_intent_id)
+          //   monthly card → /api/checkout-subscription-confirm (full stashed params)
+          let confirmBody: Record<string, unknown>;
+          let confirmEndpoint: string;
+          if (isMonthly) {
+            confirmEndpoint = '/api/checkout-subscription-confirm';
+            confirmBody = {
+              payment_intent_id: actionResult.paymentIntent.id,
+              order_number: data.order_number,
+              customer_id: data.customer_id,
+              payment_method_id: data.payment_method_id,
+              first_payment_date: data.first_payment_date,
+              course_ids: getCartCourseIds(),
+              customer_name: `${firstName} ${lastName}`,
+              customer_email: email,
+              customer_phone: phone,
+            };
+          } else {
+            confirmEndpoint = '/api/checkout-confirm';
+            confirmBody = { payment_intent_id: actionResult.paymentIntent.id };
+          }
+
           const confirmResponse = await fetch(confirmEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              payment_intent_id: actionResult.paymentIntent.id,
-              ...(isMonthly && { subscription_id: data.subscription_id, order_number: data.order_number }),
-            }),
+            body: JSON.stringify(confirmBody),
           });
 
           const confirmData = await confirmResponse.json();
 
           if (confirmData.success) {
-            const orderTotal = isMonthly ? monthlyTotal : total;
-            storeOrderAndRedirect(confirmData.order_number, firstName, lastName, email, orderTotal);
+            const orderTotal = isMonthly ? (20 + installmentDisplay * 12) : total;
+            const extras: Record<string, unknown> = {};
+            if (isMonthly) {
+              extras.registration_fee = 20;
+              extras.monthly_amount = installmentDisplay;
+              extras.first_payment_date = firstPaymentDateInput.value;
+              extras.payment_method = 'card';
+            }
+            storeOrderAndRedirect(confirmData.order_number, firstName, lastName, email, orderTotal, extras);
             return;
           }
 
