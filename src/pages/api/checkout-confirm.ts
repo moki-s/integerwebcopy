@@ -56,22 +56,24 @@ export const POST: APIRoute = async ({ request }) => {
       // Reuse the order number from the original PaymentIntent metadata (generated in checkout.ts)
       const orderNumber = metadata.order_number || "INT-UNKNOWN";
 
-      const { supabaseInsert } = await import("../../lib/supabase");
-      const dbResult = await supabaseInsert("orders", {
-        order_number: orderNumber,
-        customer_name: metadata.customer_name || "",
-        customer_email: metadata.customer_email || "",
-        customer_phone: metadata.customer_phone || "",
-        courses: metadata.courses || "",
-        course_ids: metadata.course_ids || "",
-        total: paymentIntent.amount / 100,
-        stripe_payment_id: paymentIntent.id,
-        status: "paid",
-        terms_accepted_at: metadata.terms_accepted || null,
-      });
-
-      if (!dbResult.ok) {
-        console.error("[SUPABASE INSERT FAILED] orders (3DS confirm):", dbResult.status, dbResult.body);
+      const { insertOrder, paymentReceivedButDbFailedResponse } = await import("../../lib/orders");
+      try {
+        await insertOrder({
+          orderNumber,
+          customerName: metadata.customer_name || "",
+          customerEmail: metadata.customer_email || "",
+          customerPhone: metadata.customer_phone || "",
+          courses: metadata.courses || "",
+          courseIds: metadata.course_ids || "",
+          total: paymentIntent.amount / 100,
+          stripePaymentId: paymentIntent.id,
+          status: "paid",
+          paymentType: "one_time",
+          paymentMethod: "card",
+          termsAcceptedAt: metadata.terms_accepted || null,
+        });
+      } catch {
+        return paymentReceivedButDbFailedResponse(orderNumber);
       }
 
       return new Response(

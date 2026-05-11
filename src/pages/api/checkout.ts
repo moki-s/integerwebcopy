@@ -38,6 +38,8 @@ export const POST: APIRoute = async ({ request }) => {
       headers: { "Content-Type": "application/json" },
     });
   }
+  // Normalise so Stripe customer lookup matches case-insensitively
+  const emailLower = email.toLowerCase().trim();
 
   // Name validation
   if (first_name.length < 2 || first_name.length > 100 || last_name.length < 2 || last_name.length > 100) {
@@ -118,7 +120,7 @@ export const POST: APIRoute = async ({ request }) => {
       confirmation_method: "manual",
       confirm: "true",
       "metadata[customer_name]": `${first_name} ${last_name}`,
-      "metadata[customer_email]": email,
+      "metadata[customer_email]": emailLower,
       "metadata[customer_phone]": phone,
       "metadata[course_ids]": course_ids.join(","),
       "metadata[courses]": courseNames.join(", "),
@@ -126,8 +128,9 @@ export const POST: APIRoute = async ({ request }) => {
       "metadata[terms_accepted]": new Date().toISOString(),
     });
 
-    // Idempotency key derived from email + cart + amount to prevent duplicate charges
-    const idempotencySource = `${email}-${course_ids.sort().join(",")}-${amountInPence}`;
+    // Idempotency key derived from email + cart + amount + payment_method to prevent duplicate
+    // charges while allowing retries with a different card.
+    const idempotencySource = `${emailLower}-${course_ids.sort().join(",")}-${amountInPence}-${payment_method_id}`;
     const encoder = new TextEncoder();
     const data = encoder.encode(idempotencySource);
     const hashBuffer = await crypto.subtle.digest("SHA-256", data);
@@ -176,17 +179,26 @@ export const POST: APIRoute = async ({ request }) => {
     if (paymentIntent.status === "succeeded") {
       // Payment successful - store order in Supabase
       const totalWithVat = amountInPence;
-      await storeOrder({
-        orderNumber,
-        customerName: `${first_name} ${last_name}`,
-        customerEmail: email,
-        customerPhone: phone,
-        courses: courseNames.join(", "),
-        courseIds: course_ids.join(","),
-        total,
-        stripePaymentId: paymentIntent.id,
-        termsAcceptedAt: new Date().toISOString(),
-      });
+      const { insertOrder, paymentReceivedButDbFailedResponse } = await import("../../lib/orders");
+      try {
+        await insertOrder({
+          orderNumber,
+          customerName: `${first_name} ${last_name}`,
+          customerEmail: email,
+          customerPhone: phone,
+          courses: courseNames.join(", "),
+          courseIds: course_ids.join(","),
+          total,
+          stripePaymentId: paymentIntent.id,
+          status: "paid",
+          paymentType: "one_time",
+          paymentMethod: "card",
+          termsAcceptedAt: new Date().toISOString(),
+        });
+      } catch {
+        // Webhook will recover this. User is told payment succeeded but order is being processed.
+        return paymentReceivedButDbFailedResponse(orderNumber);
+      }
 
       // Send confirmation email
       const resendKey = import.meta.env.RESEND_API_KEY;
@@ -276,32 +288,3 @@ function mapStripeError(error: {
   );
 }
 
-async function storeOrder(order: {
-  orderNumber: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  courses: string;
-  courseIds: string;
-  total: number;
-  stripePaymentId: string;
-  termsAcceptedAt: string;
-}) {
-  const { supabaseInsert } = await import("../../lib/supabase");
-  const result = await supabaseInsert("orders", {
-    order_number: order.orderNumber,
-    customer_name: order.customerName,
-    customer_email: order.customerEmail,
-    customer_phone: order.customerPhone,
-    courses: order.courses,
-    course_ids: order.courseIds,
-    total: order.total,
-    stripe_payment_id: order.stripePaymentId,
-    status: "paid",
-    terms_accepted_at: order.termsAcceptedAt,
-  });
-
-  if (!result.ok) {
-    console.error("[SUPABASE INSERT FAILED] orders:", result.status, result.body);
-  }
-}
