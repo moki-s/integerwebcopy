@@ -2,20 +2,8 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 
-const ADMIN_PASSWORD = import.meta.env.ADMIN_PASSWORD;
-
-function unauthorized() {
-  return new Response(JSON.stringify({ error: "Unauthorized" }), {
-    status: 401,
-    headers: { "Content-Type": "application/json" },
-  });
-}
-
 /** GET — fetch all enquiries, newest first */
-export const GET: APIRoute = async ({ request }) => {
-  const authHeader = request.headers.get("x-admin-password");
-  if (authHeader !== ADMIN_PASSWORD) return unauthorized();
-
+export const GET: APIRoute = async () => {
   const { getSupabaseServerConfig } = await import("../../../lib/supabase");
   const { url, key } = getSupabaseServerConfig();
 
@@ -55,9 +43,6 @@ export const GET: APIRoute = async ({ request }) => {
 
 /** PATCH — update enquiry status */
 export const PATCH: APIRoute = async ({ request }) => {
-  const authHeader = request.headers.get("x-admin-password");
-  if (authHeader !== ADMIN_PASSWORD) return unauthorized();
-
   const body = await request.json();
   const { id, status } = body;
 
