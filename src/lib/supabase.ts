@@ -1,7 +1,15 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = import.meta.env.SUPABASE_URL || "";
-const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY || "";
+// Trim env vars defensively — DO/Cloudflare/etc. dashboards sometimes capture
+// trailing newlines or carriage returns when secrets are pasted, which Node's
+// fetch rejects as invalid HTTP header values. Trim ALL whitespace including \r\n.
+function cleanEnv(name: string): string {
+  const v = (import.meta.env[name] as string | undefined) || "";
+  return v.replace(/[\s\r\n]+/g, "").trim();
+}
+
+const supabaseUrl = cleanEnv("SUPABASE_URL");
+const supabaseAnonKey = cleanEnv("SUPABASE_ANON_KEY");
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -15,9 +23,9 @@ export function getSupabaseServerConfig(): {
   key: string;
   isServiceRole: boolean;
 } {
-  const url = import.meta.env.SUPABASE_URL || "";
-  const serviceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY || "";
-  const anonKey = import.meta.env.SUPABASE_ANON_KEY || "";
+  const url = cleanEnv("SUPABASE_URL");
+  const serviceRoleKey = cleanEnv("SUPABASE_SERVICE_ROLE_KEY");
+  const anonKey = cleanEnv("SUPABASE_ANON_KEY");
 
   if (url && serviceRoleKey) {
     return { url, key: serviceRoleKey, isServiceRole: true };
