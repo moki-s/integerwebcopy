@@ -1,7 +1,28 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import Stripe from "stripe";
+import { getStripe } from "../../lib/stripe";
+import {
+  REG_FEE_PENCE,
+  calculatePlan,
+  courseNames,
+  courseTotalIncVatPence,
+  validateFirstPaymentDate,
+} from "../../lib/pricing";
+import { createInstallmentSubscription } from "../../lib/createInstallmentSubscription";
 import { COURSES } from "../../data/courses";
+
+/**
+ * Monthly card subscription — new model:
+ *   1) Validate inputs + first_payment_date (today+5 to today+30 calendar days)
+ *   2) Find/create Stripe Customer, attach card payment method
+ *   3) Charge £20 registration fee via PaymentIntent (immediate)
+ *   4) If 3DS required → return client_secret + stash params; client posts to
+ *      /api/checkout-subscription-confirm after 3DS challenge succeeds
+ *   5) Else → createInstallmentSubscription (12 monthly card charges from
+ *      customer-picked date) and insertOrder. Webhook handles ongoing collection.
+ */
 
 export const POST: APIRoute = async ({ request }) => {
   const json = (await request.json()) as {
@@ -11,463 +32,277 @@ export const POST: APIRoute = async ({ request }) => {
     email?: string;
     phone?: string;
     course_ids?: string[];
+    first_payment_date?: string;
   };
 
-  const { payment_method_id, first_name, last_name, email, phone, course_ids } =
-    json;
+  const {
+    payment_method_id,
+    first_name,
+    last_name,
+    email,
+    phone,
+    course_ids,
+    first_payment_date,
+  } = json;
 
-  if (
-    !payment_method_id ||
-    !first_name ||
-    !last_name ||
-    !email ||
-    !phone ||
-    !course_ids?.length
-  ) {
-    return new Response(JSON.stringify({ error: "Missing required fields" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (!payment_method_id || !first_name || !last_name || !email || !phone || !course_ids?.length || !first_payment_date) {
+    return jsonError(400, "Missing required fields. Please include first installment date.");
   }
 
-  // Validate email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return new Response(JSON.stringify({ error: "Invalid email address" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  // Name validation
+  if (!emailRegex.test(email)) return jsonError(400, "Invalid email address");
+  // Normalise email so case differences don't fragment Stripe customers
+  const emailLower = email.toLowerCase().trim();
   if (first_name.length < 2 || first_name.length > 100 || last_name.length < 2 || last_name.length > 100) {
-    return new Response(JSON.stringify({ error: "Name must be between 2 and 100 characters" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonError(400, "Name must be between 2 and 100 characters");
   }
-
-  // Phone validation
   const phoneRegex = /^[+]?[0-9\s\-()]{7,20}$/;
-  if (!phoneRegex.test(phone)) {
-    return new Response(JSON.stringify({ error: "Please enter a valid phone number" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  if (!phoneRegex.test(phone)) return jsonError(400, "Please enter a valid phone number");
 
-  // Server-side monthly total calculation (prevents client tampering)
-  let monthlyTotal = 0;
-  const courseNames: string[] = [];
-  const validCourses: typeof COURSES[string][] = [];
+  const dateCheck = validateFirstPaymentDate(first_payment_date, "card");
+  if (!dateCheck.ok) return jsonError(400, dateCheck.reason);
+
+  // Validate courses
   for (const id of course_ids) {
     const course = COURSES[id];
-    if (!course) {
-      return new Response(JSON.stringify({ error: `Invalid course: ${id}` }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    validCourses.push(course);
-    monthlyTotal += course.monthlyPrice;
-    courseNames.push(course.title);
+    if (!course) return jsonError(400, `Invalid course: ${id}`);
+    if (course.isEnquiryOnly) return jsonError(400, "Some courses require enquiry only and cannot be purchased online.");
   }
 
-  // Reject enquiry-only courses
-  const enquiryOnlyCourses = validCourses.filter(c => c.isEnquiryOnly);
-  if (enquiryOnlyCourses.length > 0) {
-    return new Response(JSON.stringify({ error: "Some courses require enquiry only and cannot be purchased online." }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  // Compute total and plan
+  const totalIncVatPence = courseTotalIncVatPence(course_ids);
+  if (totalIncVatPence <= REG_FEE_PENCE) return jsonError(400, "Cart total is too low for monthly plan.");
+  const plan = calculatePlan(totalIncVatPence);
+  const customerName = `${first_name} ${last_name}`;
+  const courseNamesArr = courseNames(course_ids);
+  const courseNamesStr = courseNamesArr.join(", ");
+  const productName = courseNamesArr.length === 1 ? courseNamesArr[0] : `Course Bundle — ${courseNamesStr}`;
 
-  if (monthlyTotal <= 0) {
-    return new Response(JSON.stringify({ error: "Cart is empty" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  if (!import.meta.env.STRIPE_SECRET_KEY) return jsonError(500, "Payment service not configured");
 
-  const stripeSecretKey = import.meta.env.STRIPE_SECRET_KEY;
-  if (!stripeSecretKey) {
-    return new Response(
-      JSON.stringify({ error: "Payment service not configured" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  }
-
-  const stripeHeaders = {
-    Authorization: `Bearer ${stripeSecretKey}`,
-    "Content-Type": "application/x-www-form-urlencoded",
-  };
+  const stripe = getStripe();
 
   try {
-    // Generate order number
-    const now = new Date();
-    const yy = String(now.getFullYear()).slice(-2);
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
-    const dd = String(now.getDate()).padStart(2, "0");
-    const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
-    const orderNumber = `INT-${yy}${mm}${dd}-${rand}`;
-
-    const customerName = `${first_name} ${last_name}`;
-    const monthlyTotalWithVat = Math.round(monthlyTotal * 1.2 * 100); // pence, inc VAT
-    const amountInPence = monthlyTotalWithVat;
-
-    // --- Step 1: Find or create Stripe Customer ---
-    const searchRes = await fetch(
-      `https://api.stripe.com/v1/customers?email=${encodeURIComponent(email)}&limit=1`,
-      { method: "GET", headers: stripeHeaders },
-    );
-    const searchData = await searchRes.json();
-
-    let customerId: string;
-
-    if (searchData.data && searchData.data.length > 0) {
-      customerId = searchData.data[0].id;
-    } else {
-      const createCustomerParams = new URLSearchParams({
-        email,
-        name: customerName,
-        phone,
-        "metadata[source]": "integer-training-website",
-        "metadata[first_order]": orderNumber,
-      });
-
-      const createRes = await fetch("https://api.stripe.com/v1/customers", {
-        method: "POST",
-        headers: stripeHeaders,
-        body: createCustomerParams.toString(),
-      });
-      const customerData = await createRes.json();
-
-      if (customerData.error) {
-        return new Response(
-          JSON.stringify({
-            error: "Could not create customer account. Please try again.",
-          }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
-        );
-      }
-      customerId = customerData.id;
-    }
-
-    // --- Step 2: Attach PaymentMethod to Customer ---
-    const attachParams = new URLSearchParams({
-      customer: customerId,
-    });
-
-    const attachRes = await fetch(
-      `https://api.stripe.com/v1/payment_methods/${payment_method_id}/attach`,
-      {
-        method: "POST",
-        headers: stripeHeaders,
-        body: attachParams.toString(),
-      },
-    );
-    const attachData = await attachRes.json();
-
-    if (attachData.error) {
-      // If already attached to this customer, that's fine - continue
-      if (attachData.error.code !== "resource_already_exists") {
-        const friendlyMessage = mapStripeError(attachData.error);
-        return new Response(JSON.stringify({ error: friendlyMessage }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-    }
-
-    // Set as default payment method
-    const updateCustomerParams = new URLSearchParams({
-      "invoice_settings[default_payment_method]": payment_method_id,
-    });
-
-    await fetch(`https://api.stripe.com/v1/customers/${customerId}`, {
-      method: "POST",
-      headers: stripeHeaders,
-      body: updateCustomerParams.toString(),
-    });
-
-    // --- Step 3: Create Product + Price ---
-    const productName =
-      courseNames.length === 1
-        ? courseNames[0]
-        : `Course Bundle - ${courseNames.join(", ")}`;
-
-    const productParams = new URLSearchParams({
-      name: productName,
-      "metadata[course_ids]": course_ids.join(","),
-      "metadata[order_number]": orderNumber,
-    });
-
-    const productRes = await fetch("https://api.stripe.com/v1/products", {
-      method: "POST",
-      headers: stripeHeaders,
-      body: productParams.toString(),
-    });
-    const productData = await productRes.json();
-
-    if (productData.error) {
-      return new Response(
-        JSON.stringify({
-          error:
-            "Could not set up your subscription. Please try again or call us on 0121 690 9563 for assistance.",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } },
-      );
-    }
-
-    const priceParams = new URLSearchParams({
-      product: productData.id,
-      unit_amount: amountInPence.toString(),
-      currency: "gbp",
-      "recurring[interval]": "month",
-    });
-
-    const priceRes = await fetch("https://api.stripe.com/v1/prices", {
-      method: "POST",
-      headers: stripeHeaders,
-      body: priceParams.toString(),
-    });
-    const priceData = await priceRes.json();
-
-    if (priceData.error) {
-      return new Response(
-        JSON.stringify({
-          error:
-            "Could not set up your subscription. Please try again or call us on 0121 690 9563 for assistance.",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } },
-      );
-    }
-
-    // --- Step 4: Create Subscription ---
-    // Cancel date: 12 months from now (installment plan end)
-    const cancelAt = Math.floor(Date.now() / 1000) + 365 * 24 * 60 * 60;
-
-    // Idempotency key to prevent duplicate subscriptions
-    const idempotencySource = `sub-${email}-${course_ids.sort().join(",")}-${amountInPence}`;
-    const encoder = new TextEncoder();
-    const data = encoder.encode(idempotencySource);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-    const idempotencyKey = Array.from(new Uint8Array(hashBuffer))
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("")
-      .slice(0, 32);
-
-    const subscriptionParams = new URLSearchParams({
-      customer: customerId,
-      "items[0][price]": priceData.id,
-      payment_behavior: "default_incomplete",
-      "payment_settings[payment_method_types][0]": "card",
-      "expand[0]": "latest_invoice.payment_intent",
-      "metadata[order_number]": orderNumber,
-      "metadata[course_ids]": course_ids.join(","),
-      "metadata[courses]": courseNames.join(", "),
-      "metadata[customer_name]": customerName,
-      "metadata[customer_email]": email,
-      "metadata[customer_phone]": phone,
-      "metadata[payment_type]": "monthly",
-      "metadata[terms_accepted]": new Date().toISOString(),
-      cancel_at: cancelAt.toString(),
-    });
-
-    const subscriptionRes = await fetch(
-      "https://api.stripe.com/v1/subscriptions",
-      {
-        method: "POST",
-        headers: {
-          ...stripeHeaders,
-          "Idempotency-Key": idempotencyKey,
+    // Find or create customer
+    const found = await stripe.customers.list({ email: emailLower, limit: 1 });
+    let customer = found.data[0];
+    if (!customer) {
+      customer = await stripe.customers.create(
+        {
+          email: emailLower,
+          name: customerName,
+          phone,
+          metadata: { source: "integer-training-website" },
         },
-        body: subscriptionParams.toString(),
-      },
-    );
-    const subscription = await subscriptionRes.json();
+        { idempotencyKey: `cust-${emailLower}` },
+      );
+    }
 
-    if (subscription.error) {
-      const friendlyMessage = mapStripeError(subscription.error);
-      return new Response(JSON.stringify({ error: friendlyMessage }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
+    // Attach payment method (ignore if already attached)
+    try {
+      await stripe.paymentMethods.attach(payment_method_id, { customer: customer.id });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      if (!msg.includes("already")) throw err;
+    }
+    await stripe.customers.update(customer.id, {
+      invoice_settings: { default_payment_method: payment_method_id },
+    });
+
+    // Order number
+    const orderNumber = generateOrderNumber();
+    const termsAcceptedAt = new Date().toISOString();
+
+    // Stripe metadata shared by PI, sub, and order
+    const metadata = {
+      order_number: orderNumber,
+      customer_name: customerName,
+      customer_email: email,
+      customer_phone: phone,
+      course_ids: course_ids.join(","),
+      courses: courseNamesStr,
+      payment_type: "monthly",
+      payment_method: "card",
+      first_payment_date,
+      installment_pence: String(plan.installmentPence),
+      reg_fee_pence: String(plan.regFeePence),
+      terms_accepted: termsAcceptedAt,
+    };
+
+    // Charge the registration fee
+    const regFeePI = await stripe.paymentIntents.create(
+      {
+        amount: REG_FEE_PENCE,
+        currency: "gbp",
+        customer: customer.id,
+        payment_method: payment_method_id,
+        payment_method_types: ["card"],
+        confirmation_method: "manual",
+        confirm: true,
+        metadata: {
+          ...metadata,
+          purpose: "registration_fee",
+          course_total_inc_vat_pence: String(totalIncVatPence),
+        },
+      },
+      { idempotencyKey: await stableHashSha256(`reg-${email}-${course_ids.sort().join(",")}-${payment_method_id}`) },
+    );
+
+    if (regFeePI.status === "requires_action" && regFeePI.next_action?.type === "use_stripe_sdk") {
+      // 3DS — return everything client needs to call /api/checkout-subscription-confirm
+      return jsonOK({
+        requires_action: true,
+        payment_intent_client_secret: regFeePI.client_secret,
+        flow: "card_reg_fee",
+        order_number: orderNumber,
+        customer_id: customer.id,
+        payment_method_id,
+        first_payment_date,
       });
     }
 
-    // --- Step 5: Handle subscription response ---
-    const latestInvoice = subscription.latest_invoice;
-    const paymentIntent = latestInvoice?.payment_intent;
+    if (regFeePI.status !== "succeeded") {
+      return jsonError(400, "Registration fee could not be charged. Please try a different card.");
+    }
 
-    // Subscription is active (payment succeeded immediately)
-    if (subscription.status === "active") {
-      await storeOrder({
+    // Create the installment subscription
+    const subscription = await createInstallmentSubscription({
+      stripe,
+      customerId: customer.id,
+      paymentMethodId: payment_method_id,
+      productName,
+      installmentPence: plan.installmentPence,
+      firstPaymentDate: dateCheck.date,
+      paymentMethodType: "card",
+      orderNumber,
+      metadata,
+    });
+
+    // Insert order
+    const { insertOrder, paymentReceivedButDbFailedResponse } = await import("../../lib/orders");
+    try {
+      await insertOrder({
         orderNumber,
         customerName,
         customerEmail: email,
         customerPhone: phone,
-        courses: courseNames.join(", "),
+        courses: courseNamesStr,
         courseIds: course_ids.join(","),
-        total: monthlyTotalWithVat / 100,
-        stripePaymentId: subscription.id,
+        total: totalIncVatPence / 100,
+        registrationFee: REG_FEE_PENCE / 100,
+        monthlyAmount: plan.installmentPence / 100,
+        subscriptionMonths: 12,
+        firstPaymentDate: first_payment_date,
         status: "subscription_active",
+        subscriptionStatus: "active",
         paymentType: "monthly",
-        termsAcceptedAt: new Date().toISOString(),
+        paymentMethod: "card",
+        stripeCustomerId: customer.id,
+        stripeSubscriptionId: subscription.id,
+        stripePaymentId: regFeePI.id,
+        termsAcceptedAt,
       });
-
-      // Send confirmation email
-      const resendKey = import.meta.env.RESEND_API_KEY;
-      if (resendKey) {
-        try {
-          await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${resendKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              from: 'Integer Training <noreply@integertraining.com>',
-              to: [email],
-              subject: `Order Confirmation - ${orderNumber}`,
-              html: `<h2>Thank you for your order!</h2>
-                <p>Hi ${first_name},</p>
-                <p>Your order <strong>${orderNumber}</strong> has been confirmed.</p>
-                <p><strong>Plan:</strong> Monthly Plan</p>
-                <p><strong>Courses:</strong> ${courseNames.join(", ")}</p>
-                <p><strong>Monthly Amount:</strong> \u00A3${(monthlyTotalWithVat / 100).toFixed(2)}/mo (inc. VAT)</p>
-                <p><strong>Duration:</strong> 12 months</p>
-                <p>Our team will be in touch within 24 hours with your course access details.</p>
-                <p>If you have any questions, contact us at info@integertraining.com or call 0121 690 9563.</p>
-                <p>Best regards,<br>Integer Training Team</p>`
-            }),
-          });
-        } catch (emailErr) {
-          console.error('[EMAIL SEND FAILED]', emailErr);
-        }
-      }
-
-      return new Response(
-        JSON.stringify({
-          success: true,
-          order_number: orderNumber,
-        }),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
+    } catch {
+      return paymentReceivedButDbFailedResponse(orderNumber);
     }
 
-    // 3DS authentication required
-    if (
-      paymentIntent &&
-      paymentIntent.status === "requires_action" &&
-      paymentIntent.next_action?.type === "use_stripe_sdk"
-    ) {
-      return new Response(
-        JSON.stringify({
-          requires_action: true,
-          payment_intent_client_secret: paymentIntent.client_secret,
-          subscription_id: subscription.id,
-          order_number: orderNumber,
-        }),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
-    }
+    // Send confirmation email — non-critical
+    void sendConfirmationEmail({
+      to: email,
+      firstName: first_name,
+      orderNumber,
+      courseNames: courseNamesStr,
+      installmentPence: plan.installmentPence,
+      firstPaymentDate: first_payment_date,
+    });
 
-    // Payment intent requires payment method (shouldn't happen since we attached one)
-    if (paymentIntent && paymentIntent.status === "requires_payment_method") {
-      return new Response(
-        JSON.stringify({
-          error:
-            "Your card was declined. Please try a different card or contact your bank.",
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } },
-      );
+    return jsonOK({ success: true, order_number: orderNumber });
+  } catch (err) {
+    if (err instanceof Stripe.errors.StripeError) {
+      return jsonError(400, mapStripeError(err));
     }
-
-    // Fallback: unexpected status
-    return new Response(
-      JSON.stringify({
-        error:
-          "Payment could not be processed. Please try again or call us on 0121 690 9563 for assistance.",
-      }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  } catch {
-    return new Response(
-      JSON.stringify({
-        error:
-          "An unexpected error occurred. Please try again or call us on 0121 690 9563 for assistance.",
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    console.error("[CHECKOUT-SUB] Unexpected error:", err);
+    return jsonError(500, "An unexpected error occurred. Please try again or call us on 0121 690 9563 for assistance.");
   }
 };
 
-function mapStripeError(error: {
-  code?: string;
-  decline_code?: string;
-  message?: string;
-}): string {
-  const code = error.decline_code || error.code || "";
-  const messages: Record<string, string> = {
-    card_declined:
-      "Your card was declined. Please try a different card or contact your bank.",
-    expired_card: "Your card has expired. Please use a different card.",
-    incorrect_cvc:
-      "The security code (CVC) is incorrect. Please check and try again.",
-    insufficient_funds:
-      "Insufficient funds on your card. Please try a different payment method.",
-    processing_error:
-      "There was an issue processing your card. Please try again in a moment.",
-    incorrect_number:
-      "The card number is incorrect. Please check and try again.",
-    resource_already_exists:
-      "This payment method is already on file. Please try again.",
-  };
-  return (
-    messages[code] ||
-    error.message ||
-    "Payment failed. Please try again or call us on 0121 690 9563 for assistance."
-  );
+// =====================================================================
+// Helpers
+// =====================================================================
+
+function jsonOK(body: unknown): Response {
+  return new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
 }
 
-async function storeOrder(order: {
-  orderNumber: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  courses: string;
-  courseIds: string;
-  total: number;
-  stripePaymentId: string;
-  status: string;
-  paymentType: string;
-  termsAcceptedAt: string;
-}) {
-  const { supabaseInsert } = await import("../../lib/supabase");
-  const result = await supabaseInsert("orders", {
-    order_number: order.orderNumber,
-    customer_name: order.customerName,
-    customer_email: order.customerEmail,
-    customer_phone: order.customerPhone,
-    courses: order.courses,
-    course_ids: order.courseIds,
-    total: order.total,
-    stripe_payment_id: order.stripePaymentId,
-    status: order.status,
-    payment_type: order.paymentType,
-    terms_accepted_at: order.termsAcceptedAt,
-  });
+function jsonError(status: number, message: string): Response {
+  return new Response(JSON.stringify({ error: message }), { status, headers: { "Content-Type": "application/json" } });
+}
 
-  if (!result.ok) {
-    console.error("[SUPABASE INSERT FAILED] orders (subscription):", result.status, result.body);
+function generateOrderNumber(): string {
+  const now = new Date();
+  const yy = String(now.getFullYear()).slice(-2);
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
+  return `INT-${yy}${mm}${dd}-${rand}`;
+}
+
+async function stableHashSha256(source: string): Promise<string> {
+  const enc = new TextEncoder();
+  const hashBuffer = await crypto.subtle.digest("SHA-256", enc.encode(source));
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+    .slice(0, 32);
+}
+
+function mapStripeError(err: Stripe.errors.StripeError): string {
+  const code = (err.decline_code as string) || err.code || "";
+  const messages: Record<string, string> = {
+    card_declined: "Your card was declined. Please try a different card or contact your bank.",
+    expired_card: "Your card has expired. Please use a different card.",
+    incorrect_cvc: "The security code (CVC) is incorrect. Please check and try again.",
+    insufficient_funds: "Insufficient funds on your card. Please try a different payment method.",
+    processing_error: "There was an issue processing your card. Please try again in a moment.",
+    incorrect_number: "The card number is incorrect. Please check and try again.",
+  };
+  return messages[code] || err.message || "Payment failed. Please try again or call us on 0121 690 9563 for assistance.";
+}
+
+async function sendConfirmationEmail(p: {
+  to: string;
+  firstName: string;
+  orderNumber: string;
+  courseNames: string;
+  installmentPence: number;
+  firstPaymentDate: string;
+}): Promise<void> {
+  const resendKey = import.meta.env.RESEND_API_KEY;
+  if (!resendKey) return;
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: "Integer Training <noreply@integertraining.com>",
+        to: [p.to],
+        subject: `Order Confirmation — ${p.orderNumber}`,
+        html: `<h2>Thank you for your order!</h2>
+          <p>Hi ${escapeHtml(p.firstName)},</p>
+          <p>Your order <strong>${escapeHtml(p.orderNumber)}</strong> is confirmed.</p>
+          <p><strong>Today:</strong> £20.00 registration fee charged to your card.</p>
+          <p><strong>First installment:</strong> £${(p.installmentPence / 100).toFixed(2)} on ${escapeHtml(p.firstPaymentDate)}.</p>
+          <p><strong>Schedule:</strong> 12 monthly card payments of £${(p.installmentPence / 100).toFixed(2)}.</p>
+          <p><strong>Courses:</strong> ${escapeHtml(p.courseNames)}</p>
+          <p>Our team will be in touch within 24 hours with your course access details.</p>
+          <p>Any questions: info@integertraining.com or 0121 690 9563.</p>`,
+      }),
+    });
+  } catch (err) {
+    console.error("[EMAIL] Confirmation send failed:", err);
   }
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
