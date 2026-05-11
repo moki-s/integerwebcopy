@@ -1,151 +1,171 @@
 export const prerender = false;
 
 import type { APIRoute } from "astro";
+import Stripe from "stripe";
+import { getStripe } from "../../lib/stripe";
+import {
+  REG_FEE_PENCE,
+  calculatePlan,
+  courseNames,
+  courseTotalIncVatPence,
+  validateFirstPaymentDate,
+} from "../../lib/pricing";
+import { createInstallmentSubscription } from "../../lib/createInstallmentSubscription";
+
+/**
+ * 3DS confirm — completes the card-monthly flow after the customer cleared the
+ * 3D Secure challenge for the £20 registration-fee PaymentIntent.
+ *
+ * Browser POSTs the stashed parameters back here. We verify the PI succeeded
+ * and that it really is the reg fee, then build the installment subscription
+ * (idempotent on order_number) and insert the order row.
+ */
 
 export const POST: APIRoute = async ({ request }) => {
   const json = (await request.json()) as {
     payment_intent_id?: string;
-    subscription_id?: string;
     order_number?: string;
+    customer_id?: string;
+    payment_method_id?: string;
+    first_payment_date?: string;
+    course_ids?: string[];
+    customer_name?: string;
+    customer_email?: string;
+    customer_phone?: string;
   };
-  const { payment_intent_id, subscription_id, order_number } = json;
 
-  if (!payment_intent_id) {
-    return new Response(
-      JSON.stringify({ error: "Missing payment intent ID" }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+  const {
+    payment_intent_id,
+    order_number,
+    first_payment_date,
+    course_ids,
+    customer_name,
+    customer_email,
+    customer_phone,
+  } = json;
+
+  // We deliberately DO NOT take customer_id / payment_method_id from the request body —
+  // they are read from the verified PaymentIntent below to prevent a stranger from
+  // attaching someone else's successful PI to their own Stripe customer/PM. (H6)
+  if (
+    !payment_intent_id ||
+    !order_number ||
+    !first_payment_date ||
+    !course_ids?.length ||
+    !customer_name ||
+    !customer_email ||
+    !customer_phone
+  ) {
+    return jsonError(400, "Missing required fields");
   }
 
-  const stripeSecretKey = import.meta.env.STRIPE_SECRET_KEY;
-  if (!stripeSecretKey) {
-    return new Response(
-      JSON.stringify({ error: "Payment service not configured" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  }
+  if (!import.meta.env.STRIPE_SECRET_KEY) return jsonError(500, "Payment service not configured");
 
-  const stripeHeaders = {
-    Authorization: `Bearer ${stripeSecretKey}`,
-    "Content-Type": "application/x-www-form-urlencoded",
-  };
+  const dateCheck = validateFirstPaymentDate(first_payment_date, "card");
+  if (!dateCheck.ok) return jsonError(400, dateCheck.reason);
+
+  const stripe = getStripe();
 
   try {
-    // Retrieve the PaymentIntent to check its status after 3DS
-    const piRes = await fetch(
-      `https://api.stripe.com/v1/payment_intents/${payment_intent_id}`,
-      { method: "GET", headers: stripeHeaders },
-    );
-    const paymentIntent = await piRes.json();
-
-    if (paymentIntent.error) {
-      const friendlyMessage = mapStripeError(paymentIntent.error);
-      return new Response(JSON.stringify({ error: friendlyMessage }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+    // Verify the PI succeeded and was for the reg fee
+    const pi = await stripe.paymentIntents.retrieve(payment_intent_id);
+    if (pi.status !== "succeeded") {
+      return jsonError(400, "Registration fee payment did not complete. Please try again.");
+    }
+    if (pi.metadata?.purpose !== "registration_fee") {
+      return jsonError(400, "Invalid payment intent for this flow.");
+    }
+    if (pi.amount !== REG_FEE_PENCE) {
+      return jsonError(400, "Payment amount mismatch.");
+    }
+    if (pi.metadata?.order_number !== order_number) {
+      return jsonError(400, "Order number mismatch.");
     }
 
-    if (paymentIntent.status === "succeeded") {
-      // Payment succeeded after 3DS - store order
-      const metadata = paymentIntent.metadata || {};
-      // Reuse order number from the client (passed through 3DS flow) or from metadata
-      const finalOrderNumber =
-        order_number || metadata.order_number || "INT-UNKNOWN";
+    // Derive customer + payment method from the verified PI, never from request body
+    const customerId = typeof pi.customer === "string" ? pi.customer : pi.customer?.id;
+    const paymentMethodId = typeof pi.payment_method === "string" ? pi.payment_method : pi.payment_method?.id;
+    if (!customerId || !paymentMethodId) {
+      return jsonError(400, "PaymentIntent missing customer or payment method.");
+    }
 
-      const { supabaseInsert } = await import("../../lib/supabase");
-      const dbResult = await supabaseInsert("orders", {
-        order_number: finalOrderNumber,
-        customer_name: metadata.customer_name || "",
-        customer_email: metadata.customer_email || "",
-        customer_phone: metadata.customer_phone || "",
-        courses: metadata.courses || "",
-        course_ids: metadata.course_ids || "",
-        total: paymentIntent.amount / 100,
-        stripe_payment_id: subscription_id || paymentIntent.id,
+    // Re-compute installment server-side
+    const totalIncVatPence = courseTotalIncVatPence(course_ids);
+    const plan = calculatePlan(totalIncVatPence);
+    const courseNamesArr = courseNames(course_ids);
+    const courseNamesStr = courseNamesArr.join(", ");
+    const productName = courseNamesArr.length === 1 ? courseNamesArr[0] : `Course Bundle — ${courseNamesStr}`;
+
+    const termsAcceptedAt = pi.metadata?.terms_accepted || new Date().toISOString();
+
+    const metadata = {
+      order_number,
+      customer_name,
+      customer_email,
+      customer_phone,
+      course_ids: course_ids.join(","),
+      courses: courseNamesStr,
+      payment_type: "monthly",
+      payment_method: "card",
+      first_payment_date,
+      installment_pence: String(plan.installmentPence),
+      reg_fee_pence: String(plan.regFeePence),
+      terms_accepted: termsAcceptedAt,
+    };
+
+    const subscription = await createInstallmentSubscription({
+      stripe,
+      customerId,
+      paymentMethodId,
+      productName,
+      installmentPence: plan.installmentPence,
+      firstPaymentDate: dateCheck.date,
+      paymentMethodType: "card",
+      orderNumber: order_number,
+      metadata,
+    });
+
+    const { insertOrder, paymentReceivedButDbFailedResponse } = await import("../../lib/orders");
+    try {
+      await insertOrder({
+        orderNumber: order_number,
+        customerName: customer_name,
+        customerEmail: customer_email,
+        customerPhone: customer_phone,
+        courses: courseNamesStr,
+        courseIds: course_ids.join(","),
+        total: totalIncVatPence / 100,
+        registrationFee: REG_FEE_PENCE / 100,
+        monthlyAmount: plan.installmentPence / 100,
+        subscriptionMonths: 12,
+        firstPaymentDate: first_payment_date,
         status: "subscription_active",
-        payment_type: "monthly",
-        terms_accepted_at: metadata.terms_accepted || null,
+        subscriptionStatus: "active",
+        paymentType: "monthly",
+        paymentMethod: "card",
+        stripeCustomerId: customerId,
+        stripeSubscriptionId: subscription.id,
+        stripePaymentId: pi.id,
+        termsAcceptedAt,
       });
-
-      if (!dbResult.ok) {
-        console.error("[SUPABASE INSERT FAILED] orders (subscription 3DS confirm):", dbResult.status, dbResult.body);
-      }
-
-      return new Response(
-        JSON.stringify({
-          success: true,
-          order_number: finalOrderNumber,
-        }),
-        { status: 200, headers: { "Content-Type": "application/json" } },
-      );
+    } catch {
+      return paymentReceivedButDbFailedResponse(order_number);
     }
 
-    // If requires_action still, the user may need to retry
-    if (paymentIntent.status === "requires_action") {
-      return new Response(
-        JSON.stringify({
-          error: "3D Secure verification was not completed. Please try again.",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+    return jsonOK({ success: true, order_number });
+  } catch (err) {
+    if (err instanceof Stripe.errors.StripeError) {
+      return jsonError(400, err.message || "Payment failed.");
     }
-
-    return new Response(
-      JSON.stringify({
-        error:
-          "Payment failed. Please try again or call us on 0121 690 9563 for assistance.",
-      }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  } catch {
-    return new Response(
-      JSON.stringify({
-        error:
-          "An unexpected error occurred. Please try again or call us on 0121 690 9563 for assistance.",
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    console.error("[CHECKOUT-SUB-CONFIRM] Unexpected error:", err);
+    return jsonError(500, "An unexpected error occurred.");
   }
 };
 
-function mapStripeError(error: {
-  code?: string;
-  decline_code?: string;
-  message?: string;
-}): string {
-  const code = error.decline_code || error.code || "";
-  const messages: Record<string, string> = {
-    card_declined:
-      "Your card was declined. Please try a different card or contact your bank.",
-    expired_card: "Your card has expired. Please use a different card.",
-    incorrect_cvc:
-      "The security code (CVC) is incorrect. Please check and try again.",
-    insufficient_funds:
-      "Insufficient funds on your card. Please try a different payment method.",
-    processing_error:
-      "There was an issue processing your card. Please try again in a moment.",
-    incorrect_number:
-      "The card number is incorrect. Please check and try again.",
-  };
-  return (
-    messages[code] ||
-    error.message ||
-    "Payment failed. Please try again or call us on 0121 690 9563 for assistance."
-  );
+function jsonOK(body: unknown): Response {
+  return new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
+}
+
+function jsonError(status: number, message: string): Response {
+  return new Response(JSON.stringify({ error: message }), { status, headers: { "Content-Type": "application/json" } });
 }
