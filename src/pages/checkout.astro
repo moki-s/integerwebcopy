@@ -419,32 +419,36 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
         return m;
       }
 
+      // Current min/max iso strings \u2014 updated inside applyDateConstraints so the
+      // input change listener and help-text rebuild can read them via closure.
+      let currentMinIso = '';
+      const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      const helpEl = document.getElementById('first-payment-help');
+
       function applyDateConstraints(method: 'card' | 'bacs_debit') {
         const min = computeMin(method);
         const minIso = isoDate(min);
+        currentMinIso = minIso;
         firstPaymentDateInput.min = minIso;
         firstPaymentDateInput.max = maxIso;
-        // If current value is now out of range, snap to min
+        // Snap out-of-range values forward
         const cur = firstPaymentDateInput.value;
         if (!cur || cur < minIso || cur > maxIso) {
           firstPaymentDateInput.value = minIso;
+        }
+        // Update help text with the current valid range
+        if (helpEl) {
+          helpEl.innerHTML = `<svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Pick any date between <strong>${fmt(min)}</strong> and <strong>${fmt(max)}</strong>. Today we charge the \u00A320 registration fee. Your 12 monthly installments of \u00A3${installmentDisplay.toFixed(2)} start on this date.`;
         }
       }
 
       applyDateConstraints('card'); // initial state (card is default-selected)
 
-      // Show valid range in the help text
-      const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-      const helpEl = document.getElementById('first-payment-help');
-      if (helpEl) {
-        helpEl.innerHTML = `<svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Pick any date between <strong>${fmt(min)}</strong> and <strong>${fmt(max)}</strong>. Today we charge the \u00A320 registration fee. Your 12 monthly installments of <span id="installment-amount">\u00A3${installmentDisplay.toFixed(2)}</span> start on this date.`;
-      }
-
       // Snap any out-of-range typed/picked values back into range
       firstPaymentDateInput.addEventListener('input', () => {
         const v = firstPaymentDateInput.value;
         if (!v) return;
-        if (v < minIso) firstPaymentDateInput.value = minIso;
+        if (v < currentMinIso) firstPaymentDateInput.value = currentMinIso;
         else if (v > maxIso) firstPaymentDateInput.value = maxIso;
       });
 
