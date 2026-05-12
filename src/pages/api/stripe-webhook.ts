@@ -138,15 +138,72 @@ async function handlePaymentIntentSucceeded(
     return;
   }
 
-  // Orphan charge recovery: order row was never written (sync flow failed mid-way).
-  // Recreate from PaymentIntent metadata. For monthly the real total is in metadata,
-  // not in pi.amount (which is just the £20 registration fee). (H7)
+  // Orphan recovery: order row was never written (sync flow failed mid-way).
+  //   - One-time card: just insert the order row from PI metadata
+  //   - Monthly card:  ALSO create the missing Subscription, because the sync
+  //                    flow charged the £20 reg fee but threw before creating
+  //                    the subscription (D12). Without this, the customer is
+  //                    £20 down with no installment plan.
+  // Refunds and cancellations are explicitly NOT performed here — those are
+  // handled by the payments team in a separate system per product decision.
   console.warn(`[WEBHOOK] Orphan PI ${pi.id} for order ${orderNumber} — recreating order`);
-  const { insertOrder } = await import("../../lib/orders");
   const isMonthly = metadata.payment_type === "monthly";
   const courseTotalPence = parseInt(metadata.course_total_inc_vat_pence || "0", 10);
   const installmentPence = parseInt(metadata.installment_pence || "0", 10);
   const orderTotalPounds = isMonthly && courseTotalPence ? courseTotalPence / 100 : pi.amount / 100;
+  const customerIdForOrphan = typeof pi.customer === "string" ? pi.customer : pi.customer?.id || null;
+  const paymentMethodIdForOrphan =
+    typeof pi.payment_method === "string" ? pi.payment_method : pi.payment_method?.id || null;
+
+  // For monthly card flow: create the missing Subscription before inserting the order.
+  let recoveredSubscriptionId: string | null = null;
+  if (isMonthly && customerIdForOrphan && paymentMethodIdForOrphan && installmentPence > 0 && metadata.first_payment_date) {
+    try {
+      const stripe = getStripe();
+      const { createInstallmentSubscription } = await import("../../lib/createInstallmentSubscription");
+      const anchor = new Date(metadata.first_payment_date + "T00:00:00Z");
+      const courseIdsArr = (metadata.course_ids || "").split(",").filter(Boolean);
+      const emailLower = (metadata.customer_email || "").toLowerCase().trim();
+      const sub = await createInstallmentSubscription({
+        stripe,
+        customerId: customerIdForOrphan,
+        paymentMethodId: paymentMethodIdForOrphan,
+        productName: metadata.courses || "Integer Training Monthly Plan",
+        installmentPence,
+        firstPaymentDate: anchor,
+        paymentMethodType: "card",
+        orderNumber,
+        customerEmailLower: emailLower,
+        courseIds: courseIdsArr,
+        metadata: {
+          course_ids: metadata.course_ids || "",
+          courses: metadata.courses || "",
+          customer_name: metadata.customer_name || "",
+          customer_email: metadata.customer_email || "",
+          customer_phone: metadata.customer_phone || "",
+          payment_type: "monthly",
+          terms_accepted: metadata.terms_accepted || new Date().toISOString(),
+          recovered_from_pi: pi.id,
+        },
+      });
+      recoveredSubscriptionId = sub.id;
+      console.log(`[WEBHOOK] Orphan recovery created subscription ${sub.id} for order ${orderNumber}`);
+    } catch (subErr) {
+      console.error(`[WEBHOOK CRITICAL] Orphan PI had no sub and recovery failed for ${orderNumber}:`, subErr);
+      // Continue — still record the order row so ops can see something happened
+    }
+  }
+
+  const { findOrderBySubscription, insertOrder } = await import("../../lib/orders");
+  // Dedupe — if a concurrent retry already wrote this order via the same subscription, skip
+  if (recoveredSubscriptionId) {
+    const existingSubOrder = await findOrderBySubscription(recoveredSubscriptionId);
+    if (existingSubOrder) {
+      console.log(`[WEBHOOK] Order ${orderNumber} dedupe via sub ${recoveredSubscriptionId} — skipping insert`);
+      return;
+    }
+  }
+
   try {
     await insertOrder({
       orderNumber,
@@ -161,8 +218,10 @@ async function handlePaymentIntentSucceeded(
       subscriptionMonths: isMonthly ? 12 : null,
       firstPaymentDate: metadata.first_payment_date || null,
       stripePaymentId: pi.id,
-      stripeCustomerId: typeof pi.customer === "string" ? pi.customer : pi.customer?.id || null,
+      stripeSubscriptionId: recoveredSubscriptionId,
+      stripeCustomerId: customerIdForOrphan,
       status: isMonthly ? "subscription_active" : "paid",
+      subscriptionStatus: isMonthly && recoveredSubscriptionId ? "active" : null,
       paymentType: isMonthly ? "monthly" : "one_time",
       paymentMethod: "card",
       termsAcceptedAt: metadata.terms_accepted || null,
