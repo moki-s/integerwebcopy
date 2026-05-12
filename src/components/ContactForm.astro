@@ -169,11 +169,25 @@ import { siteConfig } from '../data/site-config';
           form.classList.add('hidden');
           formSuccess.classList.remove('hidden');
         } else {
-          const data = await response.json();
-          showError(data.error || 'Something went wrong. Please try again.');
+          // Server returned an error — try JSON first, fall back to text/status
+          // so a non-JSON body (e.g. Astro CSRF block returning text/plain) doesn't
+          // mask itself as a "Network error"
+          let msg = `Something went wrong (HTTP ${response.status}). Please try again.`;
+          try {
+            const data = await response.clone().json();
+            if (data?.error) msg = data.error;
+          } catch {
+            try {
+              const txt = (await response.text()).trim();
+              if (txt) msg = txt;
+            } catch { /* keep default */ }
+          }
+          showError(msg);
         }
-      } catch {
-        showError('Network error. Please check your connection and try again.');
+      } catch (err) {
+        // True network failure (DNS, offline, TLS, etc.)
+        const detail = err instanceof Error ? err.message : 'unknown';
+        showError(`Network error: ${detail}. Please check your connection and try again.`);
       } finally {
         if (submitText) submitText.textContent = 'Send Message';
         if (submitSpinner) submitSpinner.classList.add('hidden');

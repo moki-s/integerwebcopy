@@ -1189,10 +1189,19 @@ const tutorLabel = course.tutorPriceLabel || 'Tutor-Led Learning';
             msg.classList.add('text-green-600');
             f.reset();
           } else {
-            throw new Error('Failed');
+            // Pull the error reason from JSON body (preferred) or text body
+            let reason = `HTTP ${res.status}`;
+            try {
+              const j = await res.clone().json();
+              if (j?.error) reason = j.error;
+            } catch {
+              try { const t = (await res.text()).trim(); if (t) reason = t; } catch { /* */ }
+            }
+            throw new Error(reason);
           }
-        } catch {
-          msg.textContent = 'Something went wrong. Please try again.';
+        } catch (err) {
+          const detail = err instanceof Error ? err.message : 'Please try again.';
+          msg.textContent = `Sorry — ${detail}`;
           msg.classList.remove('hidden', 'text-green-600');
           msg.classList.add('text-red-600');
         } finally {
