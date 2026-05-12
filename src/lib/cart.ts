@@ -68,12 +68,10 @@ export function getCartTotal(): number {
   );
 }
 
-export function getCartMonthlyTotal(): number {
-  return getCart().reduce(
-    (sum, item) => sum + item.course.monthlyPrice * item.quantity,
-    0,
-  );
-}
+// Note: the legacy getCartMonthlyTotal() — which summed course.monthlyPrice and
+// added VAT — was removed when we moved to the "£20 reg + 12 installments,
+// total = course.price" model. Use (getCartTotal() - 20) / 12 for the
+// installment value (see src/lib/pricing.ts for the canonical math).
 
 export function getCartCourseIds(): string[] {
   return Object.keys(getRawCart());

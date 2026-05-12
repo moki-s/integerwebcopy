@@ -51,6 +51,16 @@ export function calculatePlan(courseTotalIncVatPence: number): {
 } {
   const remainder = courseTotalIncVatPence - REG_FEE_PENCE;
   const installmentPence = Math.round(remainder / MONTHS);
+  // Guard against carts so cheap that the monthly installment rounds to 0 or below.
+  // Without this, Stripe would reject the Price create with a vague API error.
+  // For a £20 reg + 12 installments model, cart needs to be > £20 + 12 pence = £20.12
+  // to leave at least 1 pence per installment after rounding.
+  if (installmentPence <= 0) {
+    throw new Error(
+      `Cart total too low for monthly plan. Total £${(courseTotalIncVatPence / 100).toFixed(2)} ` +
+        `would leave nothing left after the £20 registration fee. Pick "Pay in Full" instead.`,
+    );
+  }
   const totalChargedPence = REG_FEE_PENCE + installmentPence * MONTHS;
   return {
     regFeePence: REG_FEE_PENCE,
