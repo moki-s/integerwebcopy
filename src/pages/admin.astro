@@ -468,7 +468,14 @@ export const prerender = false;
               <button class="pill" data-filter="paid" data-target="order">Paid</button>
               <button class="pill" data-filter="subscription_active" data-target="order">Subscription</button>
               <button class="pill" data-filter="failed" data-target="order">Failed</button>
-              <input type="text" class="search-input" id="order-search" placeholder="Search order, name, email..." />
+              <span style="margin-left:0.5rem;color:var(--text-muted);">·</span>
+              <button class="pill" data-filter="card" data-target="order_method">Card</button>
+              <button class="pill" data-filter="bacs_debit" data-target="order_method">BACS</button>
+              <span style="margin-left:0.5rem;color:var(--text-muted);">·</span>
+              <button class="pill" data-filter="past_due" data-target="order_sub">Past Due</button>
+              <button class="pill" data-filter="incomplete" data-target="order_sub">Pending</button>
+              <button class="pill" data-filter="canceled" data-target="order_sub">Canceled</button>
+              <input type="text" class="search-input" id="order-search" placeholder="Search order #, name, email, phone, course, Stripe ID..." />
             </div>
             <div class="table-container">
               <div class="loading-state" id="order-loading"><div class="spinner"></div></div>
@@ -503,7 +510,9 @@ export const prerender = false;
       let enquiries = [];
       let orders = [];
       let enqFilter = 'all';
-      let ordFilter = 'all';
+      let ordFilter = 'all';        // status pill (paid/sub_active/failed/all)
+      let ordMethodFilter = 'all';  // method pill (card/bacs_debit/all)
+      let ordSubFilter = 'all';     // subscription_status pill
       let enqSearch = '';
       let ordSearch = '';
       let currentPage = 'overview';
@@ -734,13 +743,21 @@ export const prerender = false;
         });
 
         let filtered = ordFilter === 'all' ? orders : orders.filter(o => o.status === ordFilter);
+        if (ordMethodFilter !== 'all') filtered = filtered.filter(o => (o.payment_method || (o.payment_type === 'monthly' ? '' : 'card')) === ordMethodFilter);
+        if (ordSubFilter !== 'all') filtered = filtered.filter(o => o.subscription_status === ordSubFilter);
         if (ordSearch) {
           const q = ordSearch.toLowerCase();
           filtered = filtered.filter(o =>
             (o.order_number||'').toLowerCase().includes(q) ||
             (o.customer_name||'').toLowerCase().includes(q) ||
             (o.customer_email||'').toLowerCase().includes(q) ||
-            (o.courses||'').toLowerCase().includes(q)
+            (o.customer_phone||'').toLowerCase().includes(q) ||
+            (o.courses||'').toLowerCase().includes(q) ||
+            (o.course_ids||'').toLowerCase().includes(q) ||
+            (o.stripe_payment_id||'').toLowerCase().includes(q) ||
+            (o.stripe_subscription_id||'').toLowerCase().includes(q) ||
+            (o.stripe_customer_id||'').toLowerCase().includes(q) ||
+            (o.stripe_mandate_id||'').toLowerCase().includes(q)
           );
         }
 
@@ -817,10 +834,22 @@ export const prerender = false;
         if (pill) {
           const target = pill.dataset.target;
           const filter = pill.dataset.filter;
-          pill.parentElement.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+          // Only deactivate pills in the SAME group (target), not all pills in the toolbar
+          pill.parentElement.querySelectorAll(`.pill[data-target="${target}"]`).forEach(p => p.classList.remove('active'));
           pill.classList.add('active');
           if (target === 'enquiry') { enqFilter = filter; renderEnquiries(); }
           else if (target === 'order') { ordFilter = filter; renderOrders(); }
+          else if (target === 'order_method') {
+            // Toggle: clicking the same active pill clears the filter
+            ordMethodFilter = (ordMethodFilter === filter) ? 'all' : filter;
+            if (ordMethodFilter === 'all') pill.classList.remove('active');
+            renderOrders();
+          }
+          else if (target === 'order_sub') {
+            ordSubFilter = (ordSubFilter === filter) ? 'all' : filter;
+            if (ordSubFilter === 'all') pill.classList.remove('active');
+            renderOrders();
+          }
         }
         // Close dropdowns
         if (!e.target.classList.contains('badge')) {
@@ -977,21 +1006,47 @@ export const prerender = false;
       // ==================== CSV EXPORT ====================
       function exportEnquiries() {
         if (!enquiries.length) return;
-        const h = ['Name','Email','Phone','Course Interest','Message','Page','Status','UTM Source','UTM Campaign','Date'];
-        const rows = enquiries.map(e => [e.name,e.email,e.phone||'',e.course_interest||'',(e.message||'').replace(/"/g,'""'),e.page||'',e.status,e.utm_source||'',e.utm_campaign||'',e.created_at||'']);
+        const h = ['Name','Email','Phone','Course Interest','Message','Page','Status','UTM Source','UTM Campaign','Date (UTC)'];
+        const rows = enquiries.map(e => [e.name,e.email,e.phone||'',e.course_interest||'',e.message||'',e.page||'',e.status,e.utm_source||'',e.utm_campaign||'',e.created_at||'']);
         downloadCSV('enquiries', h, rows);
       }
 
       function exportOrders() {
         if (!orders.length) return;
-        const h = ['Order #','Customer','Email','Phone','Courses','Total','Payment Type','Monthly','Status','Stripe Payment ID','Date'];
-        const rows = orders.map(o => [o.order_number,o.customer_name,o.customer_email,o.customer_phone||'',o.courses||'',o.total,o.payment_type||'one_time',o.monthly_amount||'',o.status,o.stripe_payment_id||'',o.created_at||'']);
+        const h = [
+          'Order #','Customer','Email','Phone','Courses','Course IDs',
+          'Total (£)','Payment Type','Payment Method',
+          'Registration Fee','Monthly Amount','Months','First Payment Date',
+          'Status','Subscription Status',
+          'Stripe Customer ID','Stripe Subscription ID','Stripe Payment ID','Stripe Mandate ID',
+          'Terms Accepted (UTC)','Created (UTC)',
+        ];
+        const rows = orders.map(o => [
+          o.order_number, o.customer_name, o.customer_email, o.customer_phone||'',
+          o.courses||'', o.course_ids||'',
+          o.total ?? '', o.payment_type||'one_time', o.payment_method||'',
+          o.registration_fee ?? '', o.monthly_amount ?? '', o.subscription_months ?? '', o.first_payment_date||'',
+          o.status, o.subscription_status||'',
+          o.stripe_customer_id||'', o.stripe_subscription_id||'', o.stripe_payment_id||'', o.stripe_mandate_id||'',
+          o.terms_accepted_at||'', o.created_at||'',
+        ]);
         downloadCSV('orders', h, rows);
       }
 
+      function csvEscape(v) {
+        const s = v == null ? '' : String(v);
+        // RFC 4180: wrap in quotes, double-escape internal quotes, preserve commas/newlines.
+        return '"' + s.replace(/"/g, '""') + '"';
+      }
+
       function downloadCSV(name, headers, rows) {
-        const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${v}"`).join(','))].join('\n');
-        const blob = new Blob([csv], { type: 'text/csv' });
+        // BOM so Excel on Windows recognises UTF-8 (renders £ correctly).
+        // CRLF line endings per RFC 4180.
+        const csv = '﻿' + [
+          headers.map(csvEscape).join(','),
+          ...rows.map(r => r.map(csvEscape).join(',')),
+        ].join('\r\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = `${name}-${new Date().toISOString().slice(0,10)}.csv`;
@@ -1015,16 +1070,19 @@ export const prerender = false;
       // ==================== HELPERS ====================
       function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
+      // Dates render in UK time (Europe/London) so admin sees what the customer's bank
+      // statement / email will show, regardless of which timezone the admin's browser is in.
+      const UK_DATE_OPTS = { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Europe/London' };
+      const UK_DATETIME_OPTS = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' };
+
       function fmtDate(iso) {
         if (!iso) return '\u2014';
-        const d = new Date(iso);
-        return `${d.getDate().toString().padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
+        try { return new Date(iso).toLocaleDateString('en-GB', UK_DATE_OPTS); } catch { return iso; }
       }
 
       function fmtDateFull(iso) {
         if (!iso) return '\u2014';
-        const d = new Date(iso);
-        return `${d.getDate().toString().padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}, ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+        try { return new Date(iso).toLocaleString('en-GB', UK_DATETIME_OPTS) + ' UK'; } catch { return iso; }
       }
     </script>
   </body>
