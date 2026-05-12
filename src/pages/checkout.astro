@@ -72,6 +72,9 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
 
       <h1 class="font-display font-bold text-3xl md:text-4xl text-neutral-900 mb-8 text-center">Secure Checkout</h1>
 
+      <div id="dd-cancelled-banner" class="hidden bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 rounded-xl mb-6 text-center font-medium text-sm">
+        Direct Debit setup was cancelled. Your cart is still here — try again when you're ready.
+      </div>
       <div id="checkout-error-banner" class="hidden bg-red-50 text-red-700 px-4 py-3 rounded-xl mb-6 text-center font-medium text-sm"></div>
 
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -297,6 +300,12 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
 
   document.addEventListener('astro:page-load', () => {
     const items = getCart();
+
+    // Show DD-cancelled banner when customer hit Back on Stripe Checkout
+    if (new URLSearchParams(window.location.search).get('dd_cancelled') === '1') {
+      const banner = document.getElementById('dd-cancelled-banner');
+      if (banner) banner.classList.remove('hidden');
+    }
 
     // Redirect to cart if empty
     if (items.length === 0) {

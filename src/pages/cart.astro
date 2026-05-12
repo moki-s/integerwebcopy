@@ -105,6 +105,8 @@ const breadcrumbs = [
                   <span class="block text-xs mt-0.5 opacity-70">£20 reg + 12 installments</span>
                 </button>
               </div>
+              <p id="monthly-too-low" class="hidden mt-3 text-xs text-amber-600">Monthly plan not available on carts under £20.12 — please pay in full.</p>
+              </div>
             </div>
 
             <!-- Cart Items -->
@@ -375,6 +377,23 @@ const breadcrumbs = [
     const courseTotalIncVat = total; // total is already sum of course.price (inc VAT)
     const installment = Math.round((courseTotalIncVat - REG_FEE) / 12 * 100) / 100;
     const monthlyGrandTotal = REG_FEE + installment * 12;
+
+    // Hide "Pay Monthly" button if cart is too cheap to spread into 12 installments (I3)
+    const monthlyBtn = document.getElementById('mode-monthly') as HTMLButtonElement | null;
+    const monthlyTooLow = document.getElementById('monthly-too-low');
+    if (monthlyBtn && monthlyTooLow) {
+      if (installment < 0.01) {
+        monthlyBtn.disabled = true;
+        monthlyBtn.classList.add('opacity-40','cursor-not-allowed');
+        monthlyTooLow.classList.remove('hidden');
+        // Force back to full if monthly was selected
+        if (mode === 'monthly') setPaymentMode('full');
+      } else {
+        monthlyBtn.disabled = false;
+        monthlyBtn.classList.remove('opacity-40','cursor-not-allowed');
+        monthlyTooLow.classList.add('hidden');
+      }
+    }
 
     document.getElementById('cart-monthly-amount')!.textContent = `${formatCurrency(installment)}/mo`;
     document.getElementById('cart-monthly-total')!.textContent = formatCurrency(monthlyGrandTotal);

@@ -264,8 +264,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           .join('');
       }
 
-      // Clear after rendering (one-time display)
-      sessionStorage.removeItem('last_order');
+      // Intentionally NOT deleting `last_order` from sessionStorage so that a
+      // page refresh keeps the receipt view available. The data is tab-scoped
+      // and only matters until the customer closes the tab — at which point
+      // the email is their source of truth. (G1 fix)
     } catch {
       window.location.href = '/courses';
     }

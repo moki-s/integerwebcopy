@@ -35,15 +35,14 @@ export const POST: APIRoute = async ({ request }) => {
     first_payment_date?: string;
   };
 
-  const {
-    payment_method_id,
-    first_name,
-    last_name,
-    email,
-    phone,
-    course_ids,
-    first_payment_date,
-  } = json;
+  // Trim server-side so whitespace-only inputs are rejected (B4)
+  const payment_method_id = json.payment_method_id?.toString().trim();
+  const first_name = json.first_name?.toString().trim();
+  const last_name = json.last_name?.toString().trim();
+  const email = json.email?.toString().trim();
+  const phone = json.phone?.toString().trim();
+  const course_ids = json.course_ids;
+  const first_payment_date = json.first_payment_date?.toString().trim();
 
   if (!payment_method_id || !first_name || !last_name || !email || !phone || !course_ids?.length || !first_payment_date) {
     return jsonError(400, "Missing required fields. Please include first installment date.");

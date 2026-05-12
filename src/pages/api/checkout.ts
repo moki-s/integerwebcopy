@@ -13,8 +13,13 @@ export const POST: APIRoute = async ({ request }) => {
     course_ids?: string[];
   };
 
-  const { payment_method_id, first_name, last_name, email, phone, course_ids } =
-    json;
+  // Trim string inputs server-side so whitespace-only fields are rejected (B4)
+  const payment_method_id = json.payment_method_id?.toString().trim();
+  const first_name = json.first_name?.toString().trim();
+  const last_name = json.last_name?.toString().trim();
+  const email = json.email?.toString().trim();
+  const phone = json.phone?.toString().trim();
+  const course_ids = json.course_ids;
 
   if (
     !payment_method_id ||
@@ -215,9 +220,9 @@ export const POST: APIRoute = async ({ request }) => {
               to: [email],
               subject: `Order Confirmation - ${orderNumber}`,
               html: `<h2>Thank you for your order!</h2>
-                <p>Hi ${first_name},</p>
-                <p>Your order <strong>${orderNumber}</strong> has been confirmed.</p>
-                <p><strong>Courses:</strong> ${courseNames.join(", ")}</p>
+                <p>Hi ${escapeHtml(first_name)},</p>
+                <p>Your order <strong>${escapeHtml(orderNumber)}</strong> has been confirmed.</p>
+                <p><strong>Courses:</strong> ${escapeHtml(courseNames.join(", "))}</p>
                 <p><strong>Amount:</strong> \u00A3${(totalWithVat / 100).toFixed(2)}</p>
                 <p>Our team will be in touch within 24 hours with your course access details.</p>
                 <p>If you have any questions, contact us at info@integertraining.com or call 0121 690 9563.</p>
@@ -261,6 +266,12 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 };
+
+function escapeHtml(s: string): string {
+  return String(s).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] || c,
+  );
+}
 
 function mapStripeError(error: {
   code?: string;
