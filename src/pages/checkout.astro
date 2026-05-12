@@ -383,17 +383,46 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
       monthlyPlanSection.classList.remove('hidden');
       installmentAmountSpan.textContent = `\u00A3${installmentDisplay.toFixed(2)}`;
 
-      // Date constraints: today+5 .. today+30 calendar days (1 month max from today).
-      // Use UTC midnight to match server-side validateFirstPaymentDate. (H9)
+      // Date constraints \u2014 mirror server-side pricing.validateFirstPaymentDate exactly:
+      //   card: today+5 calendar days .. today+30
+      //   bacs: today+5 WORKING days .. today+30
+      // Recompute min when the radio changes so DD customers never pick a date
+      // the server will reject. UTC midnight throughout to match server math. (H9, C2)
       const today = new Date();
       today.setUTCHours(0,0,0,0);
-      const min = new Date(today); min.setUTCDate(today.getUTCDate() + 5);
       const max = new Date(today); max.setUTCDate(today.getUTCDate() + 30);
-      const minIso = isoDate(min);
       const maxIso = isoDate(max);
-      firstPaymentDateInput.min = minIso;
-      firstPaymentDateInput.max = maxIso;
-      firstPaymentDateInput.value = minIso;
+
+      function addWorkingDays(from: Date, n: number): Date {
+        const d = new Date(from);
+        let added = 0;
+        while (added < n) {
+          d.setUTCDate(d.getUTCDate() + 1);
+          const dow = d.getUTCDay();
+          if (dow !== 0 && dow !== 6) added++;
+        }
+        return d;
+      }
+
+      function computeMin(method: 'card' | 'bacs_debit'): Date {
+        if (method === 'bacs_debit') return addWorkingDays(today, 5);
+        const m = new Date(today); m.setUTCDate(today.getUTCDate() + 5);
+        return m;
+      }
+
+      function applyDateConstraints(method: 'card' | 'bacs_debit') {
+        const min = computeMin(method);
+        const minIso = isoDate(min);
+        firstPaymentDateInput.min = minIso;
+        firstPaymentDateInput.max = maxIso;
+        // If current value is now out of range, snap to min
+        const cur = firstPaymentDateInput.value;
+        if (!cur || cur < minIso || cur > maxIso) {
+          firstPaymentDateInput.value = minIso;
+        }
+      }
+
+      applyDateConstraints('card'); // initial state (card is default-selected)
 
       // Show valid range in the help text
       const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
@@ -412,6 +441,7 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
 
       function selectMethod(method: 'card' | 'bacs_debit') {
         ddMethod = method;
+        applyDateConstraints(method); // DD uses working days; card uses calendar
         if (method === 'card') {
           cardOption.classList.add('border-primary-500', 'bg-primary-50');
           cardOption.classList.remove('border-neutral-200');
@@ -428,7 +458,7 @@ const stripePublishableKey = import.meta.env.PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
           cardOption.classList.add('border-neutral-200');
           cardSection.classList.add('hidden');
           ddRedirectSection.classList.remove('hidden');
-          monthlyNote.innerHTML = `<svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> \u00A320 registration + 12 Direct Debits of \u00A3${installmentDisplay.toFixed(2)}. Allow 3\u20135 working days for first DD to clear.`;
+          monthlyNote.innerHTML = `<svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> \u00A320 registration + 12 Direct Debits of \u00A3${installmentDisplay.toFixed(2)}. Earliest DD date is 5 working days from today.`;
         }
       }
 
