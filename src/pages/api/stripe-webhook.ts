@@ -46,10 +46,16 @@ export const POST: APIRoute = async ({ request }) => {
     return jsonResponse(200, { received: true, error: "internal-config" });
   }
 
-  const claimed = await claimWebhookEvent(supabase, event.id, event.type);
-  if (!claimed) {
+  const claim = await claimWebhookEvent(supabase, event.id, event.type);
+  if (claim === "duplicate") {
     console.log(`[WEBHOOK] Skipping duplicate event ${event.id} (${event.type})`);
     return jsonResponse(200, { received: true, duplicate: true });
+  }
+  if (claim === "error") {
+    // Don't silently drop — return 500 so Stripe retries (up to 3 days).
+    // Better to repeat a webhook than lose one. (F9)
+    console.error(`[WEBHOOK] DB error claiming ${event.id} — returning 500 so Stripe retries`);
+    return jsonResponse(500, { error: "transient_db_error" });
   }
 
   // 3. Route by event type
@@ -94,6 +100,20 @@ export const POST: APIRoute = async ({ request }) => {
 
       case "checkout.session.async_payment_failed":
         await handleCheckoutAsyncFailed(supabase, event.data.object as Stripe.Checkout.Session);
+        break;
+
+      case "checkout.session.expired":
+        await handleCheckoutSessionExpired(supabase, event.data.object as Stripe.Checkout.Session);
+        break;
+
+      case "charge.refunded":
+        await handleChargeRefunded(supabase, event);
+        break;
+
+      case "charge.dispute.created":
+      case "charge.dispute.updated":
+      case "charge.dispute.closed":
+        await handleChargeDispute(supabase, event);
         break;
 
       default:
@@ -594,6 +614,101 @@ async function handleCheckoutAsyncFailed(
   }
 }
 
+/**
+ * checkout.session.expired — Stripe Checkout Sessions auto-expire after 24h.
+ * Customer started a DD signup but never completed it. No financial impact
+ * (no money taken in setup-mode sessions), but worth logging so ops can
+ * spot abandonment patterns.
+ */
+async function handleCheckoutSessionExpired(
+  supabase: { url: string; key: string },
+  session: Stripe.Checkout.Session,
+) {
+  const orderNumber = session.metadata?.order_number;
+  const email = session.metadata?.customer_email || session.customer_details?.email || "unknown";
+  console.log(`[WEBHOOK] Checkout session expired: order=${orderNumber || 'n/a'} email=${email} session=${session.id}`);
+  // No DB row was created for an unfinished setup-mode session, so nothing to update.
+}
+
+/**
+ * charge.refunded — fires when ANYONE issues a refund on a charge (including
+ * the payments team via the Stripe dashboard). We don't initiate refunds here;
+ * we just record the event in payment_log so admin sees the trail. The order's
+ * top-level status is NOT changed — refunds may be partial; status semantics
+ * remain "did this customer pay us?" (yes, at the time of charge).
+ *
+ * Per product decision: refunds are handled by the payments team in their own
+ * system. This handler only records that Stripe registered a refund. (H6)
+ */
+async function handleChargeRefunded(
+  supabase: { url: string; key: string },
+  event: Stripe.Event,
+) {
+  const charge = event.data.object as Stripe.Charge;
+  const orderNumber = charge.metadata?.order_number;
+  if (!orderNumber) {
+    console.warn(`[WEBHOOK] charge.refunded ${charge.id} has no order_number metadata — logging anyway`);
+  }
+  await insertPaymentLog(supabase, {
+    order_id: null,
+    order_number: orderNumber || "UNKNOWN",
+    stripe_event_id: event.id,
+    stripe_payment_intent_id: typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id ?? null,
+    stripe_charge_id: charge.id,
+    amount: charge.amount_refunded / 100,
+    currency: charge.currency,
+    status: "refunded",
+    payment_method: charge.payment_method_details?.type ?? null,
+    raw_event: event,
+  });
+  console.log(
+    `[WEBHOOK] charge.refunded recorded for order ${orderNumber} — £${(charge.amount_refunded / 100).toFixed(2)} ` +
+      `refunded by ops team (not by this site).`,
+  );
+}
+
+/**
+ * charge.dispute.* — fires when a customer initiates a chargeback through
+ * their bank. Critical for ops to know about; we record in payment_log so
+ * it shows up in admin's payment history, and log loudly to console for
+ * monitoring. Dispute resolution is not handled here — that's a Stripe
+ * dashboard / payments team workflow. (F7)
+ */
+async function handleChargeDispute(
+  supabase: { url: string; key: string },
+  event: Stripe.Event,
+) {
+  const dispute = event.data.object as Stripe.Dispute;
+  const chargeId = typeof dispute.charge === "string" ? dispute.charge : dispute.charge?.id;
+  // Best-effort: try to recover order_number from the charge's metadata
+  let orderNumber = "UNKNOWN";
+  try {
+    if (chargeId) {
+      const stripe = getStripe();
+      const charge = await stripe.charges.retrieve(chargeId);
+      orderNumber = charge.metadata?.order_number || "UNKNOWN";
+    }
+  } catch (err) {
+    console.error(`[WEBHOOK] Could not retrieve charge ${chargeId} for dispute ${dispute.id}:`, err);
+  }
+
+  await insertPaymentLog(supabase, {
+    order_id: null,
+    order_number: orderNumber,
+    stripe_event_id: event.id,
+    stripe_charge_id: chargeId || null,
+    amount: dispute.amount / 100,
+    currency: dispute.currency,
+    status: `dispute_${dispute.status}`,
+    payment_method: null,
+    raw_event: event,
+  });
+  console.warn(
+    `[WEBHOOK URGENT] DISPUTE ${event.type} status=${dispute.status} reason=${dispute.reason} ` +
+      `amount=£${(dispute.amount / 100).toFixed(2)} order=${orderNumber} dispute_id=${dispute.id}`,
+  );
+}
+
 // =====================================================================
 // DB helpers — raw REST calls, service_role auth
 // =====================================================================
@@ -680,16 +795,19 @@ async function insertPaymentLog(
 }
 
 /**
- * Atomically claim a webhook event_id. Returns true if we won the race (caller
- * should run the handler), false if it was already processed by a concurrent
- * delivery (caller should respond 200 without running). The UNIQUE constraint
- * on webhook_events.stripe_event_id enforces atomicity at the DB level.
+ * Atomically claim a webhook event_id. Returns:
+ *   - 'claimed'    : we won the race (caller runs the handler)
+ *   - 'duplicate'  : already processed by a concurrent delivery (return 200)
+ *   - 'error'      : unexpected DB error — caller should 500 so Stripe RETRIES
+ *                    rather than silently dropping the event
+ * The UNIQUE constraint on webhook_events.stripe_event_id enforces atomicity at
+ * the DB level. (F9)
  */
 async function claimWebhookEvent(
   supabase: { url: string; key: string },
   eventId: string,
   eventType: string,
-): Promise<boolean> {
+): Promise<"claimed" | "duplicate" | "error"> {
   const res = await fetch(`${supabase.url}/rest/v1/webhook_events`, {
     method: "POST",
     headers: {
@@ -700,11 +818,10 @@ async function claimWebhookEvent(
     },
     body: JSON.stringify({ stripe_event_id: eventId, event_type: eventType }),
   });
-  if (res.status === 201 || res.status === 204) return true;
-  if (res.status === 409) return false; // UNIQUE violation → duplicate
-  // Other error: treat as not-claimed but log; safer to skip than risk double-process
+  if (res.status === 201 || res.status === 204) return "claimed";
+  if (res.status === 409) return "duplicate";
   console.error("[WEBHOOK] claimWebhookEvent unexpected status:", res.status, await res.text());
-  return false;
+  return "error";
 }
 
 function extractInvoicePaymentMethod(invoice: Stripe.Invoice): string | null {
