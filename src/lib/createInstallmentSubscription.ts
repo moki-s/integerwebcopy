@@ -23,6 +23,9 @@ export interface InstallmentSubscriptionParams {
   firstPaymentDate: Date; // already-validated by pricing.validateFirstPaymentDate
   paymentMethodType: "card" | "bacs_debit";
   orderNumber: string;
+  /** Stable inputs for the Stripe idempotency key — prevents two-tab duplicate subscriptions. */
+  customerEmailLower: string;
+  courseIds: string[];
   metadata: Record<string, string>; // course_ids, customer info, terms etc.
 }
 
@@ -47,6 +50,12 @@ export async function createInstallmentSubscription(
   const anchorUnix = Math.floor(p.firstPaymentDate.getTime() / 1000);
   const cancelUnix = cancelAtUnix(p.firstPaymentDate);
 
+  // Idempotency key derived from the STABLE inputs (customer + cart + amount + method).
+  // Two browser tabs submitting the same cart will get the SAME Stripe subscription back
+  // instead of two real subscriptions billing the customer twice for 12 months.
+  const idempotencyKey =
+    `sub-${p.customerEmailLower}-${p.courseIds.slice().sort().join(",")}-${p.installmentPence}-${p.paymentMethodType}`;
+
   return p.stripe.subscriptions.create(
     {
       customer: p.customerId,
@@ -63,6 +72,6 @@ export async function createInstallmentSubscription(
         ...p.metadata,
       },
     },
-    { idempotencyKey: `sub-${p.orderNumber}` },
+    { idempotencyKey },
   );
 }

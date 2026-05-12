@@ -113,6 +113,7 @@ export const POST: APIRoute = async ({ request }) => {
       terms_accepted: termsAcceptedAt,
     };
 
+    const emailLower = (customer_email || "").toLowerCase().trim();
     const subscription = await createInstallmentSubscription({
       stripe,
       customerId,
@@ -122,10 +123,16 @@ export const POST: APIRoute = async ({ request }) => {
       firstPaymentDate: dateCheck.date,
       paymentMethodType: "card",
       orderNumber: order_number,
+      customerEmailLower: emailLower,
+      courseIds: course_ids,
       metadata,
     });
 
-    const { insertOrder, paymentReceivedButDbFailedResponse } = await import("../../lib/orders");
+    const { findOrderBySubscription, insertOrder, paymentReceivedButDbFailedResponse } = await import("../../lib/orders");
+    const existing = await findOrderBySubscription(subscription.id);
+    if (existing) {
+      return jsonOK({ success: true, order_number: existing.order_number, deduped: true });
+    }
     try {
       await insertOrder({
         orderNumber: order_number,

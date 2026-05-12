@@ -39,6 +39,28 @@ export class OrderInsertError extends Error {
   }
 }
 
+/**
+ * Look up an existing order by Stripe subscription ID. Used to dedupe when
+ * two browser tabs both complete the same checkout — Stripe's idempotent
+ * subscription return means both end up with the same sub_id; this helper
+ * lets the caller return the original order_number instead of inserting a
+ * second row.
+ */
+export async function findOrderBySubscription(
+  stripeSubscriptionId: string,
+): Promise<{ order_number: string } | null> {
+  const { getSupabaseServerConfig } = await import("./supabase");
+  const { url, key } = getSupabaseServerConfig();
+  if (!url || !key) return null;
+  const res = await fetch(
+    `${url}/rest/v1/orders?stripe_subscription_id=eq.${encodeURIComponent(stripeSubscriptionId)}&select=order_number&limit=1`,
+    { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+  );
+  if (!res.ok) return null;
+  const rows = (await res.json()) as Array<{ order_number: string }>;
+  return rows[0] ?? null;
+}
+
 export async function insertOrder(input: InsertOrderInput): Promise<void> {
   const row: Record<string, unknown> = {
     order_number: input.orderNumber,

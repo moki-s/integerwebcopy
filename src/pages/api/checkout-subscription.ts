@@ -175,11 +175,19 @@ export const POST: APIRoute = async ({ request }) => {
       firstPaymentDate: dateCheck.date,
       paymentMethodType: "card",
       orderNumber,
+      customerEmailLower: emailLower,
+      courseIds: course_ids,
       metadata,
     });
 
-    // Insert order
-    const { insertOrder, paymentReceivedButDbFailedResponse } = await import("../../lib/orders");
+    // Dedupe: if a previous tab/request already created this subscription,
+    // return the existing order_number instead of inserting a duplicate row.
+    const { findOrderBySubscription, insertOrder, paymentReceivedButDbFailedResponse } = await import("../../lib/orders");
+    const existing = await findOrderBySubscription(subscription.id);
+    if (existing) {
+      return jsonOK({ success: true, order_number: existing.order_number, deduped: true });
+    }
+
     try {
       await insertOrder({
         orderNumber,

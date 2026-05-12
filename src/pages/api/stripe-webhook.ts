@@ -432,6 +432,8 @@ async function handleCheckoutSessionCompleted(
 
   // 4. Create Product + Price + Subscription for the 12 monthly installments
   const anchorDate = new Date(firstPaymentDate + "T00:00:00Z");
+  const customerEmailLower = (metadata.customer_email || "").toLowerCase().trim();
+  const courseIdsArr = (metadata.course_ids || "").split(",").filter(Boolean);
   const { createInstallmentSubscription } = await import("../../lib/createInstallmentSubscription");
   let subscription: Stripe.Subscription;
   try {
@@ -444,6 +446,8 @@ async function handleCheckoutSessionCompleted(
       firstPaymentDate: anchorDate,
       paymentMethodType: "bacs_debit",
       orderNumber,
+      customerEmailLower,
+      courseIds: courseIdsArr,
       metadata: {
         course_ids: metadata.course_ids || "",
         courses: metadata.courses || "",
@@ -460,8 +464,15 @@ async function handleCheckoutSessionCompleted(
     return;
   }
 
+  // Dedupe — if a concurrent webhook delivery already inserted this order, skip the second insert
+  const { findOrderBySubscription, insertOrder } = await import("../../lib/orders");
+  const existingSubOrder = await findOrderBySubscription(subscription.id);
+  if (existingSubOrder) {
+    console.log(`[WEBHOOK] Order already exists for sub ${subscription.id} — skipping duplicate insert`);
+    return;
+  }
+
   // 5. Insert order row
-  const { insertOrder } = await import("../../lib/orders");
   try {
     await insertOrder({
       orderNumber,
