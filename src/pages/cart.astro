@@ -117,35 +117,47 @@ const breadcrumbs = [
               <div id="cart-items" class="divide-y divide-neutral-100"></div>
             </div>
 
-            <!-- Monthly Payment Breakdown Table (visible when Pay Monthly selected) -->
+            <!-- Monthly Payment Plan Schedule (visible when Pay Monthly selected) -->
             <div id="monthly-table-wrapper" class="hidden">
               <div class="bg-white rounded-2xl border border-neutral-100 shadow-brand-sm overflow-hidden">
                 <div class="px-4 sm:px-6 py-4 border-b border-neutral-100 bg-accent-50/50">
                   <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                    <h3 class="font-display font-semibold text-neutral-800 text-sm uppercase tracking-wide">Monthly Payment Breakdown</h3>
+                    <svg class="w-5 h-5 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <h3 class="font-display font-semibold text-neutral-800 text-sm uppercase tracking-wide">Payment Schedule</h3>
                   </div>
                 </div>
-                <div class="overflow-x-auto">
-                  <table class="w-full text-sm">
-                    <thead>
-                      <tr class="text-left text-neutral-500 border-b border-neutral-100">
-                        <th class="px-4 sm:px-6 py-3 font-medium">Course</th>
-                        <th class="px-4 sm:px-6 py-3 font-medium text-right">Monthly</th>
-                        <th class="px-4 sm:px-6 py-3 font-medium text-right">Duration</th>
-                        <th class="px-4 sm:px-6 py-3 font-medium text-right">Total Cost</th>
-                      </tr>
-                    </thead>
-                    <tbody id="monthly-table-body" class="divide-y divide-neutral-50"></tbody>
-                    <tfoot>
-                      <tr class="bg-neutral-50 font-semibold text-neutral-900 border-t border-neutral-200">
-                        <td class="px-4 sm:px-6 py-3">Total</td>
-                        <td class="px-4 sm:px-6 py-3 text-right" id="monthly-table-total-monthly"></td>
-                        <td class="px-4 sm:px-6 py-3 text-right">12 months</td>
-                        <td class="px-4 sm:px-6 py-3 text-right" id="monthly-table-total-cost"></td>
-                      </tr>
-                    </tfoot>
-                  </table>
+                <div class="px-4 sm:px-6 py-5 space-y-4">
+                  <!-- Today: registration fee -->
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                      <div class="w-9 h-9 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                      </div>
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-neutral-900">Today</div>
+                        <div class="text-xs text-neutral-500">Registration fee</div>
+                      </div>
+                    </div>
+                    <div class="text-base font-bold text-neutral-900 whitespace-nowrap">£20.00</div>
+                  </div>
+                  <!-- Monthly installments -->
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                      <div class="w-9 h-9 rounded-full bg-accent-50 text-accent-600 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                      </div>
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-neutral-900">Then 12 monthly installments</div>
+                        <div class="text-xs text-neutral-500">By card or Direct Debit (choose at checkout)</div>
+                      </div>
+                    </div>
+                    <div class="text-base font-bold text-neutral-900 whitespace-nowrap" id="schedule-installment">--</div>
+                  </div>
+                  <!-- Grand total -->
+                  <div class="flex items-center justify-between pt-3 border-t border-neutral-100">
+                    <div class="text-sm font-semibold text-neutral-700">Total over 13 payments</div>
+                    <div class="text-lg font-bold text-neutral-900 whitespace-nowrap" id="schedule-grandtotal">--</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -398,24 +410,11 @@ const breadcrumbs = [
     document.getElementById('cart-monthly-amount')!.textContent = `${formatCurrency(installment)}/mo`;
     document.getElementById('cart-monthly-total')!.textContent = formatCurrency(monthlyGrandTotal);
 
-    // -- Monthly table rows: show per-course total (= course.price inc VAT) --
-    const monthlyTableBody = document.getElementById('monthly-table-body')!;
-    monthlyTableBody.innerHTML = items
-      .map(
-        ({ course }) => `
-        <tr class="text-neutral-700">
-          <td class="px-4 sm:px-6 py-3">
-            <div class="font-medium text-neutral-900">${course.title}</div>
-          </td>
-          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap">${formatCurrency(course.price)}</td>
-          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap">over 13 payments</td>
-          <td class="px-4 sm:px-6 py-3 text-right whitespace-nowrap font-medium">${formatCurrency(course.price)}</td>
-        </tr>`
-      )
-      .join('');
-
-    document.getElementById('monthly-table-total-monthly')!.textContent = `${formatCurrency(installment)}/mo`;
-    document.getElementById('monthly-table-total-cost')!.textContent = formatCurrency(monthlyGrandTotal);
+    // -- Payment schedule card (replaces the old per-course table) --
+    const schedInstallment = document.getElementById('schedule-installment');
+    const schedGrandTotal = document.getElementById('schedule-grandtotal');
+    if (schedInstallment) schedInstallment.textContent = `${formatCurrency(installment)}/mo`;
+    if (schedGrandTotal) schedGrandTotal.textContent = formatCurrency(monthlyGrandTotal);
 
     // -- Render cart item rows --
     itemsEl.innerHTML = items
