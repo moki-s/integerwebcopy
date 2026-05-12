@@ -137,7 +137,7 @@ export const POST: APIRoute = async ({ request }) => {
       await insertOrder({
         orderNumber: order_number,
         customerName: customer_name,
-        customerEmail: customer_email,
+        customerEmail: emailLower,
         customerPhone: customer_phone,
         courses: courseNamesStr,
         courseIds: course_ids.join(","),

@@ -113,7 +113,7 @@ export const POST: APIRoute = async ({ request }) => {
     const yy = String(now.getFullYear()).slice(-2);
     const mm = String(now.getMonth() + 1).padStart(2, "0");
     const dd = String(now.getDate()).padStart(2, "0");
-    const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const rand = Math.random().toString(36).substring(2, 10).toUpperCase();
     const orderNumber = `INT-${yy}${mm}${dd}-${rand}`;
 
     // Create PaymentIntent via Stripe REST API (avoids SDK compatibility issues with Cloudflare Workers)
@@ -189,7 +189,7 @@ export const POST: APIRoute = async ({ request }) => {
         await insertOrder({
           orderNumber,
           customerName: `${first_name} ${last_name}`,
-          customerEmail: email,
+          customerEmail: emailLower,
           customerPhone: phone,
           courses: courseNames.join(", "),
           courseIds: course_ids.join(","),

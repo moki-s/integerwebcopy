@@ -228,7 +228,7 @@ async function handlePaymentIntentSucceeded(
     await insertOrder({
       orderNumber,
       customerName: metadata.customer_name || "",
-      customerEmail: metadata.customer_email || "",
+      customerEmail: (metadata.customer_email || "").toLowerCase().trim(),
       customerPhone: metadata.customer_phone || "",
       courses: metadata.courses || "",
       courseIds: metadata.course_ids || "",
@@ -556,7 +556,7 @@ async function handleCheckoutSessionCompleted(
     await insertOrder({
       orderNumber,
       customerName: metadata.customer_name || "",
-      customerEmail: metadata.customer_email || "",
+      customerEmail: (metadata.customer_email || "").toLowerCase().trim(),
       customerPhone: metadata.customer_phone || "",
       courses: metadata.courses || "",
       courseIds: metadata.course_ids || "",
