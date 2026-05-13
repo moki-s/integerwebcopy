@@ -726,14 +726,14 @@ const tutorLabel = course.tutorPriceLabel || 'Tutor-Led Learning';
                           </div>
                           <div class="text-center">
                             <div class="text-xs text-neutral-500 mb-1">Monthly</div>
-                            <div class="text-2xl font-bold text-neutral-900">&pound;{Math.round(((course.tutorPrice - 50) / 12) * 100) / 100}<span class="text-sm text-neutral-500 font-normal">/mo</span></div>
-                            <div class="mt-1 text-xs text-neutral-500">&pound;50 deposit + 12mo 0% APR</div>
+                            <div class="text-2xl font-bold text-neutral-900">&pound;{(Math.round(((course.tutorPrice - 20) / 12) * 100) / 100).toFixed(2)}<span class="text-sm text-neutral-500 font-normal">/mo</span></div>
+                            <div class="mt-1 text-xs text-neutral-500">&pound;20 reg + 12 monthly installments</div>
                           </div>
                         </div>
                       </div>
                     )}
 
-                    <!-- Add to Cart -->
+                    <!-- Add to Cart (primary CTA for purchasable courses) -->
                     <button
                       id="sidebar-add-to-cart"
                       class="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold py-4 rounded-xl shadow-brand hover:shadow-brand-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-base"
@@ -750,13 +750,12 @@ const tutorLabel = course.tutorPriceLabel || 'Tutor-Led Learning';
                     >
                       In Basket &mdash; View Cart
                     </a>
-
-                    <!-- Enquire button in sidebar -->
+                    <!-- Quiet "have questions?" link, no longer a competing primary button -->
                     <a
                       href="#enquiry-section"
-                      class="block w-full text-center bg-neutral-900 text-white font-bold py-3 rounded-xl hover:bg-neutral-800 transition-colors duration-300 text-sm mt-2"
+                      class="block w-full text-center text-neutral-500 text-xs mt-3 hover:text-primary-600 transition-colors"
                     >
-                      Enquire Now
+                      Have questions? Send an enquiry instead
                     </a>
                   </>
                 )}
@@ -933,19 +932,22 @@ const tutorLabel = course.tutorPriceLabel || 'Tutor-Led Learning';
         </div>
       </div>
       <div class="flex items-center gap-3 flex-shrink-0">
-        <a
-          href="#enquiry-section"
-          class="bg-white border-2 border-neutral-900 text-neutral-900 font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-neutral-50 transition-colors"
-        >
-          Enquire Now
-        </a>
-        <button
-          id="sticky-add-to-cart"
-          class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-brand hover:shadow-brand-lg transition-all duration-300"
-          data-course-id={course.id}
-        >
-          Add to Basket - &pound;{course.price}
-        </button>
+        {course.isEnquiryOnly ? (
+          <a
+            href="#enquiry-section"
+            class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-brand hover:shadow-brand-lg transition-all duration-300"
+          >
+            Enquire Now
+          </a>
+        ) : (
+          <button
+            id="sticky-add-to-cart"
+            class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-brand hover:shadow-brand-lg transition-all duration-300"
+            data-course-id={course.id}
+          >
+            Add to Basket - &pound;{course.price}
+          </button>
+        )}
       </div>
     </div>
   </div>
@@ -961,19 +963,22 @@ const tutorLabel = course.tutorPriceLabel || 'Tutor-Led Learning';
           </div>
           <p id="mobile-sticky-monthly" class="text-xs text-neutral-500" data-online-monthly={installmentPrice}>or &pound;{installmentPrice.toFixed(2)}/mo</p>
         </div>
-        <a
-          href="#enquiry-section"
-          class="bg-white border-2 border-neutral-900 text-neutral-900 font-bold px-4 py-2.5 rounded-xl text-sm flex-shrink-0"
-        >
-          Enquire
-        </a>
-        <button
-          id="mobile-sticky-add-to-cart"
-          class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-brand flex-shrink-0"
-          data-course-id={course.id}
-        >
-          Add to Basket
-        </button>
+        {course.isEnquiryOnly ? (
+          <a
+            href="#enquiry-section"
+            class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-brand flex-shrink-0"
+          >
+            Enquire Now
+          </a>
+        ) : (
+          <button
+            id="mobile-sticky-add-to-cart"
+            class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-brand flex-shrink-0"
+            data-course-id={course.id}
+          >
+            Add to Basket
+          </button>
+        )}
       </div>
     </div>
   </div>
