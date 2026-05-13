@@ -926,10 +926,14 @@ const tutorLabel = course.tutorPriceLabel || 'Tutor-Led Learning';
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
       <div class="min-w-0 flex-1">
         <p class="font-bold text-neutral-900 text-sm truncate">{course.title}</p>
-        <div class="flex items-center gap-2">
-          <span id="desktop-sticky-price" class="text-primary-600 font-bold text-lg">&pound;{course.price}</span>
-          <span id="desktop-sticky-label" class="text-xs text-neutral-500">{course.onlinePriceLabel ? onlineLabel : 'Online'}</span>
-        </div>
+        {course.isEnquiryOnly ? (
+          <p class="text-xs text-neutral-500">Contact us for pricing &amp; availability</p>
+        ) : (
+          <div class="flex items-center gap-2">
+            <span id="desktop-sticky-price" class="text-primary-600 font-bold text-lg">&pound;{course.price}</span>
+            <span id="desktop-sticky-label" class="text-xs text-neutral-500">{course.onlinePriceLabel ? onlineLabel : 'Online'}</span>
+          </div>
+        )}
       </div>
       <div class="flex items-center gap-3 flex-shrink-0">
         {course.isEnquiryOnly ? (
@@ -957,11 +961,18 @@ const tutorLabel = course.tutorPriceLabel || 'Tutor-Led Learning';
     <div class="px-4 py-3">
       <div class="flex items-center gap-2">
         <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-1">
-            <span id="mobile-sticky-price" class="text-neutral-900 font-bold text-lg">&pound;{course.price}</span>
-            <span id="mobile-sticky-label" class="text-[10px] text-neutral-500">{course.onlinePriceLabel ? onlineLabel : 'Online'}</span>
-          </div>
-          <p id="mobile-sticky-monthly" class="text-xs text-neutral-500" data-online-monthly={installmentPrice}>or &pound;{installmentPrice.toFixed(2)}/mo</p>
+          {course.isEnquiryOnly ? (
+            <p class="font-bold text-neutral-900 text-sm truncate">{course.title}</p>
+            <p class="text-[10px] text-neutral-500">Contact for pricing</p>
+          ) : (
+            <>
+              <div class="flex items-center gap-1">
+                <span id="mobile-sticky-price" class="text-neutral-900 font-bold text-lg">&pound;{course.price}</span>
+                <span id="mobile-sticky-label" class="text-[10px] text-neutral-500">{course.onlinePriceLabel ? onlineLabel : 'Online'}</span>
+              </div>
+              <p id="mobile-sticky-monthly" class="text-xs text-neutral-500" data-online-monthly={installmentPrice}>or &pound;{installmentPrice.toFixed(2)}/mo</p>
+            </>
+          )}
         </div>
         {course.isEnquiryOnly ? (
           <a
